@@ -31,7 +31,6 @@
         <a href="/#standards">Standards</a>
         <a href="/#governance">Governance</a>
         <a href="/#members">Members</a>
-        <a href="/#perspectives">Perspectives</a>
         <a href="/#signup">Stay informed</a>
         <a href="/news/launch/">News</a>
         <a href="https://github.com/QuantumAllianceFoundation" class="btn btn-outline" target="_blank" rel="noopener noreferrer">GitHub</a>
@@ -137,7 +136,7 @@
         <p class="intro">
           The Alliance is modeled on the Internet Engineering Task Force. Proposals advance on public
           evidence, rough consensus, and working implementations. Corporate size and token holdings
-          carry no voting weight.
+          carry no voting weight. AI-moderated tooling keeps the process legible at scale.
         </p>
         <div class="grid-2">
           <div class="card"><h3>Open participation</h3><p class="muted">There are no dues, no applications, and no prerequisites. Anyone can contribute.</p></div>
@@ -157,21 +156,25 @@
           <div class="card">
             <span class="tag">WG 1</span>
             <h3>PQC Migration</h3>
+            <p class="lead-line">Standards for transitioning existing chains.</p>
             <p class="muted">How live networks can move funds and keys to post-quantum schemes, including accounts whose public keys are already exposed and coins whose owners have lost access. StarkWare's quantum-safe Bitcoin transaction, mined on mainnet in August 2026, shows both the progress made and the distance remaining. The Alliance's criteria make the gap between a single working demonstration and network-wide readiness visible to everyone.</p>
           </div>
           <div class="card">
             <span class="tag">WG 2</span>
-            <h3>Post-quantum zero-knowledge</h3>
+            <h3>ZK-PQ</h3>
+            <p class="lead-line">Post-quantum zero-knowledge implementations.</p>
             <p class="muted">Privacy networks, rollups, and many cross-chain tools depend on proof systems. Systems built on pairing-friendly elliptic curves carry the same quantum weakness as today's signatures. Hash-based designs such as zk-STARKs avoid those assumptions but produce larger proofs. The group defines how post-quantum proof systems are evaluated and benchmarked.</p>
           </div>
           <div class="card">
             <span class="tag">WG 3</span>
             <h3>Wallet Security</h3>
+            <p class="lead-line">Hardware and software wallet PQC standards.</p>
             <p class="muted">How users and custodians generate, store, and sign with post-quantum keys, from hardware secure elements to recovery flows. The group builds on existing efforts such as Wallet Security for Post-Quantum Ethereum, an initiative co-authored by Dr. Carback and listed with TheDAO Security Fund.</p>
           </div>
           <div class="card">
             <span class="tag">WG 4</span>
-            <h3>Cross-chain compatibility</h3>
+            <h3>Interoperability</h3>
+            <p class="lead-line">Cross-chain PQC compatibility.</p>
             <p class="muted">Interoperability specifications that let wallets, bridges, and hardware signers handle post-quantum keys consistently across chains. A transfer that crosses several networks inherits the weakest protection among them, so shared rules at these junctions carry as much weight as upgrades to any single chain.</p>
           </div>
         </div>
@@ -190,7 +193,7 @@
           <div class="row"><h3>Discussion tooling</h3><p class="muted">Working groups run as a structured debate tree, not a mailing list. Each open question is a node; contributions attach for or against, with evidence. An AI layer removes duplicates, summarizes each branch, surfaces the unresolved crux, and flags convergence. It keeps the record legible but does not decide: chairs assess consensus, members ratify. At Last Call the chair works from the branch summary, with open objections and agreed points laid out and auditable. Converged nodes feed the quarterly report and IETF submissions. The tool and its full record are public; the convening organization provides it as administration only. Until that tool is public, contribution happens on GitHub.</p></div>
           <div class="row"><h3>Rough consensus</h3><p class="muted">A chair declares consensus by issuing a two-week Last Call on the working group channel. If no unresolved objection remains at close, the document advances. The test is that most participants agree and no strong objection stands, not a headcount.</p></div>
           <div class="row"><h3>Deadlock</h3><p class="muted">If a working group cannot resolve a substantive objection, either side may escalate to the Steering Committee, which rules on process only, not on technical merits. Appeals must state numbered, specific objections. The Committee may uphold the chair's call, return the item with instructions (a narrower scope is common), or drop it. An item that cannot reach consensus returns to Discussion Paper status and is subject to the standard 6-month expiry. Where a working group has only two active participants, unanimity is required.</p></div>
-          <div class="row"><h3>New working groups</h3><p class="muted">Used only when a topic fits no existing working group. Require a written charter, three or more participants, and Steering Committee approval.</p></div>
+          <div class="row"><h3>New working groups</h3><div class="muted"><p>Used only when a topic fits no existing working group. A new working group requires:</p><ol class="steps"><li>A written charter</li><li>Three or more participants</li><li>Steering Committee approval</li></ol></div></div>
         </div>
       </div>
     </section>
@@ -248,7 +251,7 @@
       <div class="wrap">
         <p class="eyebrow">Rhythm</p>
         <h2>Cadence</h2>
-        <p class="intro">Working groups meet in the open, and the Alliance reports on its progress every quarter.</p>
+        <p class="intro">Working groups meet in the open, and the Alliance reports on its progress every quarter. First quarterly report: Q3 2026.</p>
         <div class="timeline">
           <div class="item"><p class="when">Monthly</p><p class="muted">Each working group holds an open call.</p></div>
           <div class="item"><p class="when">Quarterly</p><p class="muted">Full Alliance assembly and a published report covering working group progress, new documents, the threat landscape, and member milestones.</p></div>
@@ -372,110 +375,6 @@
       </div>
     </section>
 
-    <section id="perspectives" class="section">
-      <div class="wrap">
-        <p class="eyebrow">Perspectives</p>
-        <h2>Questions from the press</h2>
-        <p class="intro">Founding contributors answer common questions about the quantum threat to blockchain and the Alliance's role.</p>
-
-        <div class="qa">
-          <h3>Is 2028 a realistic window for a quantum computer capable of breaking today's cryptography?</h3>
-          <div class="quotes">
-            <blockquote class="quote">
-              <p>"Very realistic and almost certain at this time barring unforeseen technical barriers. We predicted this and published it in 2024 on the Quantum Doom Clock. IonQ, a publicly traded quantum computer manufacturer, now says they will have a capable quantum computer in 2028."</p>
-              <footer><strong>Dr. Richard T. Carback III</strong>, CTO, Postquant Labs</footer>
-            </blockquote>
-            <blockquote class="quote">
-              <p>"IonQ projects 800 logical qubits next year, which is already enough quantum memory to run Shor's algorithm against Bitcoin keys. For reference, the smallest number of logical qubits necessary is 680, achieved by <a href="https://ecdsa.fail" target="_blank" rel="noopener noreferrer">ecdsa.fail</a> participants. Of course, it remains to be seen if they achieve that goal and if the quantum computer can run long enough to complete the computation, but it's quite clear that AI is accelerating quantum in ways that nobody can fully predict. In my opinion, we shouldn't bet our trillion-dollar asset on quantum slowing down."</p>
-              <footer><strong>Christopher Smith</strong>, CEO, Quantus</footer>
-            </blockquote>
-            <blockquote class="quote">
-              <p>"Nobody knows the date, but the estimates keep falling and the risk is one we can already plan for. The question for custodians isn't whether the date is 2028 or 2035, it's whether you can migrate in time if it arrives early."</p>
-              <p>"Researchers disagree mainly on when error-corrected or physical qubits will reach the scale needed. Many still put it in the 2030s or later, but resource estimates for breaking elliptic-curve cryptography have been dropping."</p>
-              <footer><strong>Bryn Bennett</strong>, Chief Revenue Officer, The Vault</footer>
-            </blockquote>
-          </div>
-        </div>
-
-        <div class="qa">
-          <h3>What does "already exposed" mean for the 6.04 million BTC at risk, and is there still time to protect them?</h3>
-          <div class="quotes">
-            <blockquote class="quote">
-              <p>"When we say 'exposed', we mean the public key is published in the blockchain data, which makes it possible to compute the private key with a quantum computer. To protect them, the owners need to move to a modern system that hides the public key or to a post-quantum secure signature system. The latter, post-quantum secure cryptography, is not yet supported by major cryptocurrency networks, but members of the Alliance do have various solutions we hope to standardize, some of which can be used to protect yourself today."</p>
-              <footer><strong>Colton Dillion</strong>, CEO, Postquant Labs</footer>
-            </blockquote>
-            <blockquote class="quote">
-              <p>"Exposed means the lock is on public display, waiting for a key that doesn't exist yet. The coins are safe today, but the ledger is permanent, so the attacker can simply wait."</p>
-              <p>"For privacy, the risk is worse. Any chain that hides transaction data with classical cryptography faces 'harvest now, decrypt later': records collected today could be de-anonymised once quantum machines arrive. Privacy that expires isn't privacy. That's why we at Abelian built on lattice-based cryptography from launch."</p>
-              <footer><strong>Richard Lee</strong>, Chief Business Officer, Abelian</footer>
-            </blockquote>
-            <blockquote class="quote">
-              <p>"Exposed doesn't mean hacked. It means the public key is visible on-chain, so those coins become vulnerable once a powerful enough quantum computer exists to derive the private key from it."</p>
-              <p>"There is still time. The concrete steps are to move coins to fresh addresses, stop reusing addresses, and use Multi-Party Computation (MPC) custody solutions that can rotate keys and swap signature schemes without a rebuild. Note that MPC alone doesn't make a wallet quantum-safe, because the threshold signature still uses today's curves. The industry needs post-quantum threshold schemes, and since the development time for those is years, not months, we must act now to protect the future of digital assets."</p>
-              <footer><strong>Bryn Bennett</strong>, Chief Revenue Officer, The Vault</footer>
-            </blockquote>
-          </div>
-        </div>
-
-        <div class="qa">
-          <h3>Who is responsible for bitcoin whose owners have lost their keys, including Satoshi Nakamoto's coins?</h3>
-          <div class="quotes">
-            <blockquote class="quote">
-              <p>"QPU operators will be able to recover those keys and claim those coins and tokens. There are proposals to freeze or block such operators, but I would prefer it if funds were moved into a trust where owners who can prove ownership can submit claims to recover their funds, and to work with existing organizations like the DAO fund where unclaimed funds are invested and profits used to support chain security efforts. The Alliance represents the first step to an organized response and I hope we will be able to work with quantum computer vendors to responsibly manage the Q-Day transition."</p>
-              <footer><strong>Dr. Richard T. Carback III</strong>, CTO, Postquant Labs</footer>
-            </blockquote>
-            <blockquote class="quote">
-              <p>"There are technical solutions to the issue of Satoshi's keys, but none of them are politically feasible. The most likely scenario is that whoever gets the first CRQC will take them, probably with the blessing of whichever national government. Hopefully it's a government that likes Bitcoin."</p>
-              <footer><strong>Christopher Smith</strong>, CEO, Quantus</footer>
-            </blockquote>
-            <blockquote class="quote">
-              <p>"Nobody owns that issue, and that's the problem. A custodian protects its clients' assets, not abandoned ones. Freezing coins is a governance decision for the Bitcoin network, not for the industry."</p>
-              <p>"Any freeze would trade quantum risk for a precedent on property rights and neutrality, so it needs broad consensus from the Bitcoin community."</p>
-              <footer><strong>Bryn Bennett</strong>, Chief Revenue Officer, The Vault</footer>
-            </blockquote>
-          </div>
-        </div>
-
-        <div class="qa">
-          <h3>What would migration cost, how long would it take, and will larger signatures raise fees?</h3>
-          <div class="quotes">
-            <blockquote class="quote">
-              <p>"The engineering cost of swapping in new cryptography varies from chain to chain. For Bitcoin, the chief difficulty is its lack of a clear upgrade process and decision makers, aka 'decentralization'. If someone could just decide to do it, the code could be ready and audited within a month. For Ethereum, the technical job is much bigger, as they have pre-quantum cryptography at both the consensus and transaction layer, along with all the L2s and pre-quantum ZK projects, but at least they have the ability to upgrade the network. Privacy chains have an additional layer of cryptography to deal with as well."</p>
-              <footer><strong>Christopher Smith</strong>, CEO, Quantus</footer>
-            </blockquote>
-            <blockquote class="quote">
-              <p>"We can speak to this from experience. Abelian has run a post-quantum chain in production since launch, so larger signatures and their effect on throughput and fees are engineering realities we've designed around, not theory."</p>
-              <p>"Larger signatures are a real cost, but a manageable one when designed in from the start. Retrofitting is much harder, because the cost lies in coordinating wallets, exchanges, custodians and hard forks across an ecosystem. One lesson we learned: no chain should assume its first post-quantum scheme is its last. Cryptographic agility, the ability to swap schemes without a rebuild, is on Abelian's published roadmap for that reason."</p>
-              <footer><strong>Richard Lee</strong>, Chief Business Officer, Abelian</footer>
-            </blockquote>
-            <blockquote class="quote">
-              <p>"Nobody has a credible single number, and anyone offering one is guessing. The real cost isn't the cryptography, it's coordinating wallets, exchanges, custodians and protocol developers."</p>
-              <p>"Expect a multi-year migration with multiple protocol upgrades. Post-quantum signatures are many times larger than today's, so fees and block capacity are a legitimate concern, especially for Bitcoin."</p>
-              <footer><strong>Bryn Bennett</strong>, Chief Revenue Officer, The Vault</footer>
-            </blockquote>
-          </div>
-        </div>
-
-        <div class="qa">
-          <h3>Why should the industry trust a new alliance to define quantum readiness?</h3>
-          <div class="quotes">
-            <blockquote class="quote">
-              <p>"The Alliance already represents a significant portion of the industry focused on post-quantum upgrades to cryptocurrency. Blockchain communities tend to silo around their preferred chain and technology under that chain's foundation or other nonprofit governance body, so they are not set up to work together. We hope that an open access body will facilitate a baseline level of standardization. Variation and optimizations will still occur on every chain, but we hope to avoid dozens of slightly incompatible versions of the same algorithm. We already have several standards in the pipe that we will be releasing in the next quarter, and simply having the reference will drive a lot of the conversation."</p>
-              <footer><strong>Dr. Richard T. Carback III</strong>, CTO, Postquant Labs</footer>
-            </blockquote>
-            <blockquote class="quote">
-              <p>"The issue addressed by the Alliance is that applying the new cryptographic standards to blockchains does involve navigating some fairly complex tradeoff spaces. By pre-digesting these decisions, we can make it easier for other industry players to pull something off the shelf and apply it quickly without having to rediscover all the dead ends."</p>
-              <footer><strong>Christopher Smith</strong>, Co-founder and CEO, Quantus</footer>
-            </blockquote>
-            <blockquote class="quote">
-              <p>"Standards come from NIST and regulators, not alliances. An alliance earns trust by publishing measurable milestones and showing who has signed up."</p>
-              <p>"NIST finalised its first post-quantum standards in 2024, so the technical target already exists. The credible test is public milestones, such as migration guides, readiness benchmarks and named participants. For regulated custodians such as us, readiness will also be judged under regulations like MiCA and DORA, not by industry groups."</p>
-              <footer><strong>Bryn Bennett</strong>, Chief Revenue Officer, The Vault</footer>
-            </blockquote>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <section class="section">
       <div class="wrap">
@@ -524,9 +423,9 @@
           <fieldset class="field">
             <legend>Working groups of interest <span class="opt">(optional)</span></legend>
             <label class="check"><input type="checkbox" name="groups" value="migration"> PQC Migration</label>
-            <label class="check"><input type="checkbox" name="groups" value="zk-pq"> Post-quantum zero-knowledge</label>
+            <label class="check"><input type="checkbox" name="groups" value="zk-pq"> ZK-PQ (post-quantum zero-knowledge)</label>
             <label class="check"><input type="checkbox" name="groups" value="wallet"> Wallet Security</label>
-            <label class="check"><input type="checkbox" name="groups" value="interop"> Cross-chain compatibility</label>
+            <label class="check"><input type="checkbox" name="groups" value="interop"> Interoperability (cross-chain)</label>
           </fieldset>
           <div class="field">
             <label for="f-msg">Message <span class="opt">(optional)</span></label>
