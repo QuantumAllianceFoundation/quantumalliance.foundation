@@ -1,0 +1,7 @@
+CLAUDE.md
+.netlify/
+.beads/
+.beads-*/
+.beads-credential-key
+.dolt/
+.DS_Store

@@ -1,0 +1,34 @@
+[build]
+  publish = "."
+
+# Serve one canonical host. Netlify applies domain-level redirects before files.
+[[redirects]]
+  from = "https://qalliance.foundation/*"
+  to = "https://quantumalliance.foundation/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.qalliance.foundation/*"
+  to = "https://quantumalliance.foundation/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.quantumalliance.foundation/*"
+  to = "https://quantumalliance.foundation/:splat"
+  status = 301
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'none'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
+    Referrer-Policy = "no-referrer"
+    X-Content-Type-Options = "nosniff"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+
+[[headers]]
+  for = "/assets/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
