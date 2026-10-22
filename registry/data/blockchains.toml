@@ -579,3 +579,405 @@ links = [
   { title = "Whitechain L1 to L2 migration guide", url = "https://docs.whitechain.io/learn/general/migration" },
 ]
 logo = "whitechain.svg"
+
+[[chain]]
+name = "Internet Computer"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Judgment call: subnet consensus runs on threshold BLS signatures (ICP docs). DFINITY describes crypto agility and monitoring, per a forum summary, but publishes no post-quantum code, plan or timeline."
+transactions_reason = "The interface specification allows Ed25519, ECDSA P-256 and secp256k1 signatures only. The dfinity/ic repository holds no post-quantum signature code, and no roadmap item or proposal was found."
+website = "https://internetcomputer.org/"
+source = "https://github.com/dfinity/ic"
+algorithms = []
+note = "Threshold BLS in consensus"
+links = [
+  { title = "ICP chain-key cryptography (threshold BLS)", url = "https://docs.internetcomputer.org/concepts/chain-key-cryptography" },
+  { title = "ICP interface specification (signature schemes)", url = "https://docs.internetcomputer.org/references/ic-interface-spec" },
+]
+logo = "internet-computer.svg"
+
+[[chain]]
+name = "Ethereum Classic"
+consensus = "no-signatures"
+transactions = "quantum-vulnerable"
+consensus_reason = "Proof-of-work mining with Etchash (ECIP-1099), so block production uses no digital signatures."
+transactions_reason = "Accounts use secp256k1 ECDSA. An ML-DSA-65 precompile draft (ECIPs PR 557, core-geth PR 5) is open and unmerged, from an outside contributor. Maintainers say the client is in maintenance mode."
+website = "https://ethereumclassic.org/"
+source = "https://github.com/ethereumclassic/core-geth"
+algorithms = []
+note = "PoW consensus has no signatures"
+links = [
+  { title = "ECIP-1099 Etchash", url = "https://github.com/ethereumclassic/ECIPs/blob/master/_specs/ecip-1099.md" },
+  { title = "ML-DSA precompile draft (ECIPs PR 557)", url = "https://github.com/ethereumclassic/ECIPs/pull/557" },
+]
+logo = "ethereum-classic.svg"
+
+[[chain]]
+name = "Kaspa"
+consensus = "no-signatures"
+transactions = "quantum-vulnerable"
+consensus_reason = "Proof-of-work mining (kHeavyHash in the rusty-kaspa pow crate) secures blocks, so consensus uses no digital signatures."
+transactions_reason = "Judgment call: spends use Schnorr and ECDSA. A core developer opened draft KIP-22 on 19 October 2026. It hides public keys until spend and adds no post-quantum signature. A maintainer called the topic low priority."
+website = "https://kaspa.org/"
+source = "https://github.com/kaspanet/rusty-kaspa"
+algorithms = []
+note = "PoW consensus has no signatures"
+links = [
+  { title = "KIP-22 draft (P2PKH via P2SH)", url = "https://github.com/kaspanet/kips/pull/48" },
+  { title = "Quantum security question, rusty-kaspa issue 767", url = "https://github.com/kaspanet/rusty-kaspa/issues/767" },
+]
+logo = "kaspa.svg"
+
+[[chain]]
+name = "Cosmos Hub"
+consensus = "post-quantum-ready"
+transactions = "post-quantum-ready"
+consensus_reason = "Judgment call: CometBFT v0.40.0 and Cosmos SDK v0.55.0 ship ML-DSA-65 validator keys. Gaia v29 still runs CometBFT 0.38 with Ed25519 validators, and no Hub proposal enables the key type."
+transactions_reason = "Judgment call: Cosmos SDK v0.55.0 supports ML-DSA-65 account keys and transaction verification. Gaia v29 runs SDK 0.53.8, so Hub accounts still sign with secp256k1. Support is released but not enabled on the Hub."
+website = "https://cosmos.network/"
+source = "https://github.com/cosmos/gaia"
+algorithms = ["ml-dsa"]
+note = "ML-DSA released, not enabled"
+links = [
+  { title = "Cosmos SDK post-quantum keys", url = "https://docs.cosmos.network/sdk/latest/keys/post-quantum-keys" },
+  { title = "CometBFT ML-DSA-65 key type (PR 5875)", url = "https://github.com/cometbft/cometbft/pull/5875" },
+]
+logo = "cosmos-hub.png"
+
+[[chain]]
+name = "Filecoin"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Block headers carry BLS aggregate signatures, and the F3 finality protocol uses BLS signatures. The FIPs repository, Lotus and builtin-actors hold no post-quantum work, and no roadmap item was found."
+transactions_reason = "Messages are signed with secp256k1 or BLS, per the Lotus signature types. A search of the FIPs repository and Lotus found no post-quantum proposal, code or plan."
+website = "https://filecoin.io/"
+source = "https://github.com/filecoin-project/lotus"
+algorithms = []
+logo = "filecoin.svg"
+
+[[chain]]
+name = "Dash"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Judgment call: X11 proof-of-work mines blocks, but ChainLocks (DIP-8) use LLMQ BLS quorum signatures for chain agreement. No quantum work appears in dashpay/dash, DIPs or the platform repository."
+transactions_reason = "Spending uses secp256k1 ECDSA keys. Searches of dashpay/dash, dashpay/dips and dashpay/platform found no post-quantum proposal or code, and the official roadmap lists none."
+website = "https://www.dash.org/"
+source = "https://github.com/dashpay/dash"
+algorithms = []
+note = "PoW plus BLS ChainLocks"
+links = [
+  { title = "Dash Core 0.14.0 release notes (ChainLocks)", url = "https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.14.0.md" },
+]
+logo = "dash.png"
+
+[[chain]]
+name = "Stacks"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Nakamoto blocks need a 70 percent quorum of signer signatures (SIP-021), and signers sign with secp256k1. Anchoring to Bitcoin proof-of-work adds no protection. No post-quantum work found in stacks-core or the SIPs."
+transactions_reason = "Transactions carry recoverable secp256k1 ECDSA signatures (SIP-005). Searches of stacks-core and stacksgov/sips found no post-quantum proposal, and the official roadmap lists none."
+website = "https://www.stacks.co/"
+source = "https://github.com/stacks-network/stacks-core"
+algorithms = []
+note = "Signers use secp256k1"
+links = [
+  { title = "SIP-021 Nakamoto", url = "https://github.com/stacksgov/sips/blob/main/sips/sip-021/sip-021-nakamoto.md" },
+]
+logo = "stacks.png"
+
+[[chain]]
+name = "VeChain"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Block headers carry secp256k1 ECDSA signatures from the block signer, per the Thor header code. The thor, VIPs and docs repositories contain no post-quantum work, and no roadmap item was found."
+transactions_reason = "Transactions use secp256k1 signatures with a low-s check, per Thor transaction code. No post-quantum proposal appears in the thor or VIPs repositories."
+website = "https://www.vechain.org/"
+source = "https://github.com/vechain/thor"
+algorithms = []
+logo = "vechain.png"
+
+[[chain]]
+name = "Mantle"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Ethereum rollup whose blocks come from a sequencer using classical keys, settled on Ethereum, which also uses BLS validator signatures. No post-quantum work found in the repository or official posts."
+transactions_reason = "EVM accounts use secp256k1 ECDSA. No post-quantum signature work found in the repository, documentation, or official posts."
+website = "https://www.mantle.xyz/"
+source = "https://github.com/mantlenetworkio/mantle-v2"
+algorithms = []
+note = "Ethereum rollup; no quantum work"
+logo = "mantle.png"
+
+[[chain]]
+name = "Polygon PoS"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Heimdall v2 is a CometBFT fork whose validators sign with classical keys; Bor producers sign blocks with ECDSA. No post-quantum code or roadmap found in either repository."
+transactions_reason = "Bor is a go-ethereum fork with secp256k1 ECDSA accounts. No post-quantum work found in the repositories, documentation, or official posts."
+website = "https://polygon.technology/"
+source = "https://github.com/0xPolygon/bor"
+algorithms = []
+note = "No quantum work found"
+logo = "polygon-pos.svg"
+
+[[chain]]
+name = "Injective"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Judgment call: CometBFT validators use classical keys (Ed25519 by default). October 2026 posts say quantum-resistant work is underway, but give no design, schedule, or code."
+transactions_reason = "Judgment call: accounts use secp256k1. A project post from October 2026 says quantum-resistant infrastructure is in development, with no specification, governance proposal, or published code."
+website = "https://injective.com/"
+source = "https://github.com/InjectiveLabs/injective-chain-releases"
+algorithms = []
+note = "Announced work; no details yet"
+logo = "injective.png"
+
+[[chain]]
+name = "XDC Network"
+consensus = "post-quantum-ready"
+transactions = "quantum-aware"
+consensus_reason = "Judgment call: the project's own XDPoSChain repository has a poc_falcon branch that signs and verifies block headers, votes, quorum certificates and timeouts with Falcon. It is unmerged, last changed August 2025, and not deployed."
+transactions_reason = "The poc_falcon branch does not touch transaction signing. A 2026 initiative proposes hybrid ECDSA plus ML-DSA wallets from 2027 and EVM precompiles later. These are proposals with no published transaction code. Accounts use secp256k1 today."
+website = "https://xdc.network/"
+source = "https://github.com/XinFinOrg/XDPoSChain"
+algorithms = ["fn-dsa"]
+note = "Falcon proof of concept only"
+links = [
+  { title = "XDC post-quantum initiative", url = "https://xdc.network/quantum/" },
+  { title = "XDPoSChain poc_falcon branch", url = "https://github.com/XinFinOrg/XDPoSChain/tree/poc_falcon" },
+]
+logo = "xdc-network.svg"
+
+[[chain]]
+name = "Aptos"
+consensus = "quantum-vulnerable"
+transactions = "post-quantum-ready"
+consensus_reason = "Validators sign consensus votes with BLS12-381. AIP-137 states that other parts of the stack, such as consensus, must also become post-quantum, but no consensus work was found."
+transactions_reason = "SLH-DSA-SHA2-128s transaction authenticators are merged in aptos-core (AIP-137, Accepted) behind feature flag 107. The flag is off on mainnet, so the scheme is not deployed."
+website = "https://aptosfoundation.org/"
+source = "https://github.com/aptos-labs/aptos-core"
+algorithms = ["slh-dsa"]
+note = "SLH-DSA merged; mainnet flag off"
+links = [
+  { title = "AIP-137: Post-quantum accounts via SLH-DSA-SHA2-128s", url = "https://github.com/aptos-foundation/AIPs/blob/main/aips/aip-137-post-quantum-aptos-accounts-via-slh-dsa-sha2-128s.md" },
+  { title = "aptos-core pull request 18300: SLH-DSA transaction authenticators", url = "https://github.com/aptos-labs/aptos-core/pull/18300" },
+]
+logo = "aptos.svg"
+
+[[chain]]
+name = "Pi Network"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Judgment call: consensus follows the Stellar Consensus Protocol, whose messages use Ed25519. Press reports suggest quantum plans, but no official Pi document, code, or schedule was found."
+transactions_reason = "Judgment call: accounts are Stellar-style Ed25519. Pi has not published post-quantum code or a roadmap; the node source is not public. Press coverage of Pi quantum plans is unsourced."
+website = "https://minepi.com/"
+source = "https://github.com/PiNetwork/PiRC"
+algorithms = []
+note = "Node source not public"
+logo = "pi-network.png"
+
+[[chain]]
+name = "Pearl"
+consensus = "no-signatures"
+transactions = "post-quantum"
+consensus_reason = "Proof-of-useful-work mining: blocks are found by matrix-multiplication work, so consensus needs no digital signatures."
+transactions_reason = "Judgment call: the node deploys OP_CHECKXMSSSIG (XMSS) for Taproot script-path spends, and the wallet derives such addresses. The Schnorr key path still exists, so protection depends on wallet use."
+website = "https://pearlresearch.ai/"
+source = "https://github.com/pearl-research-labs/pearl"
+algorithms = ["xmss"]
+note = "XMSS spend path is optional"
+links = [
+  { title = "Pearl XMSS library and OP_CHECKXMSSSIG", url = "https://github.com/pearl-research-labs/pearl/tree/master/xmss" },
+]
+logo = "pearl.svg"
+
+[[chain]]
+name = "GateChain"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Tendermint-based proof-of-stake chain with a committee of consensus accounts signing blocks with classical keys. Documentation and node repository show no post-quantum work."
+transactions_reason = "Accounts use classical signatures; its vault accounts add revocable, delayed transactions rather than post-quantum signatures. No post-quantum work found in the documentation or repositories."
+website = "https://gatechain.io/"
+source = "https://github.com/gatechain/node-binary"
+algorithms = []
+note = "Node repository holds binaries only"
+logo = "gatechain.png"
+
+[[chain]]
+name = "KuCoin Community Chain"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Go-ethereum fork using Proof of Staked Authority; validators sign blocks with ECDSA. No post-quantum work found in the repository."
+transactions_reason = "EVM accounts use secp256k1 ECDSA. No post-quantum signature work found in the repository or official documentation."
+website = "https://www.kcc.io/"
+source = "https://github.com/kcc-community/kcc"
+algorithms = []
+note = "Low activity; last release 2025"
+logo = "kcc.png"
+
+[[chain]]
+name = "Cellframe"
+consensus = "post-quantum"
+transactions = "post-quantum"
+consensus_reason = "Judgment call: the ESBOCS validator setup guide creates validator certificates with Dilithium (sig_dil), and the node code defaults emergency-validator keys to Dilithium. This is a pre-standard Dilithium, not FIPS 204 ML-DSA."
+transactions_reason = "The node wallet command defaults to Dilithium signatures; Falcon and SPHINCS+ are also offered. Deprecated BLISS, Picnic and qTESLA wallets are refused. The optional Shipovnik build is off by default, and its verifier accepts a published forgery."
+website = "https://cellframe.net"
+source = "https://github.com/demlabs-cellframe/cellframe-sdk"
+algorithms = ["crystals-dilithium", "fn-dsa", "sphincs-plus", "shipovnik"]
+note = "Shipovnik verifier forgery bug"
+links = [{ title = "Cellframe SDK (node and wallet code)", url = "https://github.com/demlabs-cellframe/cellframe-sdk" }, { title = "Fireblocks: Shipovnik forgery report", url = "https://www.fireblocks.com/blog/shipovnik-signature-forgery-discovered" }]
+logo = "cellframe.png"
+
+[[chain]]
+name = "QANplatform"
+consensus = "quantum-vulnerable"
+transactions = "quantum-aware"
+consensus_reason = "Judgment call: the Proof-of-Randomness validator design is documented, but no source states how validators sign blocks, and no repository publishes consensus code. The public mainnet has not launched."
+transactions_reason = "Judgment call: documentation says the XLINK cross-signer uses Dilithium (ML-DSA) for transactions, but only on the testnet. The public mainnet has not launched, and no signing code is published."
+website = "https://www.qanplatform.com"
+source = "https://github.com/QANplatform"
+algorithms = []
+note = "Testnet only; mainnet pending"
+links = [{ title = "QANplatform quantum-resistant security", url = "https://learn.qanplatform.com/technology/technology-features/quantum-resistant-security" }, { title = "QANplatform roadmap", url = "https://learn.qanplatform.com/about-us/roadmap" }]
+logo = "qanplatform.png"
+
+[[chain]]
+name = "Nervos Network"
+consensus = "no-signatures"
+transactions = "post-quantum"
+consensus_reason = "CKB uses proof-of-work mining, so block production relies on hashing and no digital signatures."
+transactions_reason = "Judgment call: a SPHINCS+ (FIPS 205) lock script is deployed on mainnet and published by the project, but use is opt-in. The default lock script still uses secp256k1."
+website = "https://www.nervos.org"
+source = "https://github.com/nervosnetwork/ckb"
+algorithms = ["slh-dsa"]
+note = "SPHINCS+ lock opt-in"
+links = [{ title = "Native Quantum Resistance (docs)", url = "https://docs.nervos.org/docs/ckb-features/native-quantum-resistance" }, { title = "SPHINCS+ lock script repository", url = "https://github.com/cryptape/quantum-resistant-lock-script" }]
+logo = "nervos-network.png"
+
+[[chain]]
+name = "Qubic"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Judgment call: the core node source uses the FourQ curve and SchnorrQ signatures, with no post-quantum code and no published plan. Computor quorum votes depend on those signatures."
+transactions_reason = "The core node source verifies transactions with SchnorrQ signatures over the FourQ elliptic curve. It contains no post-quantum signature code and no published migration plan."
+website = "https://qubic.org"
+source = "https://github.com/qubic/core"
+algorithms = []
+logo = "qubic.png"
+
+[[chain]]
+name = "Minima"
+consensus = "no-signatures"
+transactions = "post-quantum"
+consensus_reason = "Minima uses Tx-PoW, where every transaction carries its own proof-of-work and all hashing uses SHA3-256. The whitepaper describes no validator signatures."
+transactions_reason = "Documentation and node source use Winternitz one-time signatures with SHA3-256, and Merkle trees of those keys allow repeated signing from one root key. All wallet signatures use this scheme."
+website = "https://minima.global"
+source = "https://github.com/minima-global/Minima"
+algorithms = ["winternitz-ots"]
+note = "Hash-based Winternitz signatures"
+links = [{ title = "Minima whitepaper: Quantum Secure", url = "https://github.com/minima-global/docs/blob/main/content/docs/core/minimawhitepaper/quantumsecure.mdx" }, { title = "Winternitz signing code", url = "https://github.com/minima-global/Minima/blob/master/src/org/minima/objects/keys/Winternitz.java" }]
+logo = "minima.png"
+
+[[chain]]
+name = "Tidecoin"
+consensus = "no-signatures"
+transactions = "post-quantum"
+consensus_reason = "Tidecoin mines with the CPU-oriented YespowerTIDE proof-of-work algorithm, so block production relies on hashing. The project plans merged mining with Litecoin later."
+transactions_reason = "Falcon-512 signatures have replaced ECDSA since genesis in 2020, per the project repository. Falcon-1024 and ML-DSA are planned as later upgrades and are not active."
+website = "https://tidecoin.org"
+source = "https://github.com/tidecoin/tidecoin"
+algorithms = ["fn-dsa"]
+note = "Falcon-512 since genesis"
+links = [{ title = "Tidecoin repository README", url = "https://github.com/tidecoin/tidecoin" }]
+logo = "tidecoin.png"
+
+[[chain]]
+name = "Geeq"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Judgment call: Proof of Honesty documentation and the whitepaper page make no post-quantum claims and name no signature scheme. No public node repository exists to check."
+transactions_reason = "Judgment call: the site and whitepaper page name no post-quantum signature scheme and make no quantum claims. The CoinGecko quantum-resistant tag has no primary-source support. No public repository exists to check."
+website = "https://geeq.io"
+source = "https://geeq.io/docs"
+algorithms = []
+note = "No quantum claims found"
+logo = "geeq.svg"
+
+[[chain]]
+name = "Starknet"
+consensus = "quantum-aware"
+transactions = "quantum-aware"
+consensus_reason = "StarkWare's June 2026 roadmap commits to replacing Pedersen hashes with BLAKE2 and moving consensus signatures on-chain to post-quantum schemes such as Falcon-512. Consensus signatures remain classical today."
+transactions_reason = "Judgment call: account abstraction lets users deploy Falcon-512 wallets today, but those accounts are third-party code and the default remains classical. The roadmap plans PQ tooling and a legacy-contract migration kit."
+website = "https://www.starknet.io"
+source = "https://github.com/starkware-libs/sequencer"
+algorithms = []
+note = "Roadmap published June 2026"
+links = [{ title = "StarkWare: Starknet quantum-readiness roadmap", url = "https://starkware.co/blog/the-architecture-advantage-starknets-quantum-readiness-roadmap/" }]
+logo = "starknet.png"
+
+[[chain]]
+name = "TensorCash"
+consensus = "no-signatures"
+transactions = "post-quantum"
+consensus_reason = "Bitcoin Core fork with proof-of-work where the work is verified AI inference. It has no validators, stakers or votes, so block production needs no signatures."
+transactions_reason = "Judgment call: per the project blog, ML-DSA witness v2 (tc1z addresses) is live from genesis and consensus disables the Schnorr key path there. It is opt-in, ECDSA and Schnorr remain, and no ML-DSA spend had occurred by July 2026."
+website = "https://tensorcash.org/"
+source = "https://git.tensorcash.org/"
+algorithms = ["ml-dsa"]
+note = "ML-DSA opt-in since genesis"
+links = [{ title = "Post-quantum is on TensorCash", url = "https://tensorcash.org/blog/post-quantum-is-on-tensorcash/" }, { title = "Post-Quantum Spending whitepaper", url = "https://tensorcash.org/whitepapers/PostQuantum_Whitepaper-modern.pdf" }]
+logo = "tensorcash.svg"
+
+[[chain]]
+name = "QuantumCoin"
+consensus = "post-quantum"
+transactions = "post-quantum"
+consensus_reason = "Proof-of-stake BFT with deterministic finality. Validator consensus messages use the same hybrid ML-DSA, SLH-DSA and Ed25519 signatures as transactions, and node sessions use X25519 with ML-KEM-768. Live on mainnet."
+transactions_reason = "Every transaction is signed with a hybrid of ML-DSA, SLH-DSA and Ed25519 (compact or full mode), in the node's go-ethereum fork. All verified components must pass, so forging needs both classical and post-quantum breaks."
+website = "https://quantumcoin.org/"
+source = "https://github.com/quantumcoinproject/quantum-coin-go"
+algorithms = ["ml-dsa", "slh-dsa", "ml-kem"]
+note = "Hybrid PQ plus Ed25519 signatures"
+links = [{ title = "Quantum resistance overview", url = "https://quantumcoin.org/quantum-resistance.html" }, { title = "Node repository README", url = "https://github.com/quantumcoinproject/quantum-coin-go" }]
+logo = "quantumcoin.png"
+
+[[chain]]
+name = "Neptune Cash"
+consensus = "no-signatures"
+transactions = "post-quantum"
+consensus_reason = "Proof-of-work chain. Miners and guessers need no validator signatures, and each block carries a single STARK proof built on hash functions."
+transactions_reason = "Spending is authorized by proving knowledge of a hash preimage inside a Triton VM STARK, so no elliptic-curve signature exists. Address notifications use lattice-based encryption. Live on mainnet."
+website = "https://neptune.cash/"
+source = "https://github.com/Neptune-Crypto/neptune-core"
+algorithms = []
+note = "Hash-lock plus STARK spending"
+links = [{ title = "Key types documentation", url = "https://github.com/Neptune-Crypto/neptune-core/blob/master/docs/src/neptune-core/keys.md" }, { title = "Whitepaper", url = "https://neptune.cash/whitepaper/" }]
+logo = "neptune-cash.svg"
+
+[[chain]]
+name = "Neptune Privacy"
+consensus = "no-signatures"
+transactions = "post-quantum"
+consensus_reason = "Proof-of-work chain derived from Neptune Cash, with its own network and coin (XNT). Block production needs no validator signatures."
+transactions_reason = "Spending uses the inherited hash-preimage lock proven by a STARK, with no elliptic-curve signature. Its added address type uses dCTIDH-512, an isogeny scheme, only for payment notifications."
+website = "https://neptune.io/"
+source = "https://github.com/neptuneprivacy/xnt-core"
+algorithms = []
+note = "Separate network from Neptune Cash"
+links = [{ title = "xnt-core repository", url = "https://github.com/neptuneprivacy/xnt-core" }]
+logo = "neptune-privacy.svg"
+
+[[chain]]
+name = "AME Chain"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+consensus_reason = "Hyperledger Besu network with QBFT among four validators using standard Ethereum keys. The quantum feature is a hardware random number source, not post-quantum signatures."
+transactions_reason = "Standard EVM accounts with secp256k1 signatures. The repository has no post-quantum code; the project's quantum claim concerns random number generation only."
+website = "https://amechain.io/"
+source = "https://github.com/AME-AMEChain/amechain_quantum"
+algorithms = []
+note = "Quantum random numbers, not PQC"
+links = [{ title = "Quantum mainnet page", url = "https://amechain.io/quantum-mainnet/" }]
+logo = "amechain.png"
+

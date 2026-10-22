@@ -183,3 +183,42 @@ papers = [
   { title = "Abelian (ABEL) whitepaper, version 1.0 (2022)", url = "https://download.abelian.info/release/docs/whitepaper.pdf" },
   { title = "pqringct reference implementation (Go)", url = "https://github.com/pqabelian/pqringct" },
 ]
+
+[[algorithm]]
+id = "crystals-dilithium"
+name = "CRYSTALS-Dilithium (pre-standard)"
+family = "lattice"
+kind = "signature"
+url = "https://pq-crystals.org/dilithium/"
+summary = "Dilithium is a lattice signature scheme based on module lattices. It was the design submitted to the NIST process, and NIST later standardized a revised form as ML-DSA. Early submission-era versions use different parameters and details from the final standard, so code that follows them is not FIPS 204 compatible and does not interoperate with ML-DSA."
+rationale = "Security rests on module lattice problems, which have had less study than hash functions. The pre-standard parameters were superseded by the revised standard, so deployments should move to ML-DSA. No practical break of the submission-era design is known."
+papers = [
+  { title = "CRYSTALS-Dilithium: A Lattice-Based Digital Signature Scheme (2018)", url = "https://eprint.iacr.org/2017/633" },
+  { title = "CRYSTALS-Dilithium project page and specification", url = "https://pq-crystals.org/dilithium/" },
+]
+
+[[algorithm]]
+id = "shipovnik"
+name = "Shipovnik"
+family = "other"
+kind = "signature"
+url = "https://github.com/QAPP-tech/shipovnik_tc26"
+summary = "Shipovnik is a code-based signature candidate from Russian researchers, proposed to the Russian standards committee TC26. It converts Stern's identification protocol, which proves knowledge of a low-weight vector for a public syndrome, into a signature with the Fiat-Shamir method and the Streebog hash. Reference code exists in C and Python."
+rationale = "Code-based signatures from Stern-type proofs are young and little reviewed. In September 2026 Fireblocks reported a complete forgery against both published verifiers, which never check that a permutation is valid. A verifier with that check is not affected, but no fixed specification has been reviewed."
+papers = [
+  { title = "Shipovnik reference implementation for TC26 (QApp)", url = "https://github.com/QAPP-tech/shipovnik_tc26" },
+  { title = "Shipovnik designers' Python implementation (Kryptonite)", url = "https://github.com/Kryptonite-RU/shipovnik-py" },
+]
+
+[[algorithm]]
+id = "winternitz-ots"
+name = "Winternitz OTS (WOTS)"
+family = "hash-based"
+kind = "signature"
+url = "https://link.springer.com/chapter/10.1007/0-387-34805-0_21"
+summary = "The Winternitz one-time signature scheme signs a message by revealing points along hash chains. One key pair signs exactly one message. It is the original form of the idea that WOTS+ later improved. Merkle trees of such keys let a single root public key authorize many signatures, as Minima does."
+rationale = "Security rests only on the hash function, which is the most conservative assumption. Each key must never sign twice, so wallets must track key use. The original form has weaker security arguments than WOTS+, but no practical attack is known."
+papers = [
+  { title = "A Certified Digital Signature (Merkle, 1989)", url = "https://link.springer.com/chapter/10.1007/0-387-34805-0_21" },
+  { title = "Minima whitepaper: Quantum Secure", url = "https://github.com/minima-global/docs/blob/main/content/docs/core/minimawhitepaper/quantumsecure.mdx" },
+]
