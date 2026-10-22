@@ -892,18 +892,6 @@ links = [{ title = "Tidecoin repository README", url = "https://github.com/tidec
 logo = "tidecoin.png"
 
 [[chain]]
-name = "Geeq"
-consensus = "quantum-vulnerable"
-transactions = "quantum-vulnerable"
-consensus_reason = "Judgment call: Proof of Honesty documentation and the whitepaper page make no post-quantum claims and name no signature scheme. No public node repository exists to check."
-transactions_reason = "Judgment call: the site and whitepaper page name no post-quantum signature scheme and make no quantum claims. The CoinGecko quantum-resistant tag has no primary-source support. No public repository exists to check."
-website = "https://geeq.io"
-source = "https://geeq.io/docs"
-algorithms = []
-note = "No quantum claims found"
-logo = "geeq.svg"
-
-[[chain]]
 name = "Starknet"
 consensus = "quantum-aware"
 transactions = "quantum-aware"
@@ -921,9 +909,9 @@ name = "TensorCash"
 consensus = "no-signatures"
 transactions = "post-quantum"
 consensus_reason = "Bitcoin Core fork with proof-of-work where the work is verified AI inference. It has no validators, stakers or votes, so block production needs no signatures."
-transactions_reason = "Judgment call: per the project blog, ML-DSA witness v2 (tc1z addresses) is live from genesis and consensus disables the Schnorr key path there. It is opt-in, ECDSA and Schnorr remain, and no ML-DSA spend had occurred by July 2026."
+transactions_reason = "Judgment call: the node code in the project bcore repository defines witness v2 (tc1z) outputs that disable the Schnorr key path and verify ML-DSA in the script path, live since genesis. Use is opt-in; ECDSA and Schnorr remain."
 website = "https://tensorcash.org/"
-source = "https://git.tensorcash.org/"
+source = "https://git.tensorcash.org/tensorcash/bcore"
 algorithms = ["ml-dsa"]
 note = "ML-DSA opt-in since genesis"
 links = [{ title = "Post-quantum is on TensorCash", url = "https://tensorcash.org/blog/post-quantum-is-on-tensorcash/" }, { title = "Post-Quantum Spending whitepaper", url = "https://tensorcash.org/whitepapers/PostQuantum_Whitepaper-modern.pdf" }]
