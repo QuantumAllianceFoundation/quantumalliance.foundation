@@ -7,4 +7,5 @@ CLAUDE.md
 .DS_Store
 /registry/index.html
 /registry/*/index.html
+/registry/algorithms/*/index.html
 __pycache__/

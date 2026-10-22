@@ -12,6 +12,8 @@ if __package__ in (None, ""):
 
 from tools.registry.model import Registry, RegistryError, load_registry
 from tools.registry.render import (
+    render_algorithm,
+    render_algorithms_index,
     render_blockchains,
     render_hub,
     render_libraries,
@@ -28,6 +30,10 @@ PAGES: tuple[tuple[str, str, str, str, Callable[[Registry], str]], ...] = (
     ("registry/blockchains/index.html", "/registry/blockchains/",
      "Blockchain registry | Quantum Alliance",
      "Post-quantum readiness of blockchain networks.", render_blockchains),
+    ("registry/algorithms/index.html", "/registry/algorithms/",
+     "Algorithm registry | Quantum Alliance",
+     "Post-quantum signature algorithms, with safety and implementing libraries.",
+     render_algorithms_index),
     ("registry/libraries/index.html", "/registry/libraries/",
      "Library registry | Quantum Alliance",
      "Post-quantum signature libraries, with safety, maturity, and sizes.", render_libraries),
@@ -40,11 +46,12 @@ PAGES: tuple[tuple[str, str, str, str, Callable[[Registry], str]], ...] = (
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=Path("registry/data"))
+    parser.add_argument("--logos", type=Path, default=None)
     parser.add_argument("--out", type=Path, default=Path("."))
     args = parser.parse_args(argv)
 
     try:
-        reg = load_registry(args.data)
+        reg = load_registry(args.data, args.logos)
     except RegistryError as exc:
         for error in exc.errors:
             print(error, file=sys.stderr)
@@ -58,6 +65,18 @@ def main(argv: list[str] | None = None) -> int:
         )
         for out_path, url, title, description, render in PAGES
     ]
+    for algorithm in reg.algorithms.values():
+        url = f"/registry/algorithms/{algorithm.id}/"
+        rendered.append((
+            args.out / f"registry/algorithms/{algorithm.id}/index.html",
+            render_page(
+                template,
+                title=f"{algorithm.name} | Quantum Alliance",
+                description=algorithm.summary,
+                path=url,
+                body=render_algorithm(reg, algorithm.id),
+            ),
+        ))
     for file, html in rendered:
         file.parent.mkdir(parents=True, exist_ok=True)
         file.write_text(html, encoding="utf-8")

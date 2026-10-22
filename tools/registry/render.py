@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from html import escape
+from urllib.parse import urlsplit
 from string import Template
 
 from .model import (
-    CATEGORIES,
     CATEGORY_LABELS,
     LAYER_VALUES,
     SAFETY_BY_FAMILY,
@@ -15,8 +15,11 @@ from .model import (
     Link,
     Registry,
     Size,
+    Algorithm,
+    Chain,
+    Library,
     library_safety,
-    overall_category,
+    library_slug,
 )
 
 REPO_URL = "https://github.com/QuantumAllianceFoundation/quantumalliance.foundation"
@@ -46,6 +49,10 @@ INFO_ICON = (
     "</svg>"
 )
 
+SPRITE = "/assets/icons/registry-icons.svg"
+LOGO_DIR = "/assets/registry/logos"
+SOURCE_ICONS = {"github.com": "github", "gitlab.com": "gitlab"}
+
 EMPTY_STATE = '<p class="intro">No entries yet. Be the first to add one.</p>'
 
 
@@ -59,6 +66,26 @@ def _link(url: str, text: str) -> str:
 
 def _external(url: str, text: str) -> str:
     return f'<a href="{_e(url)}" target="_blank" rel="noopener noreferrer">{_e(text)}</a>'
+
+
+def _icon_link(url: str, label: str, symbol: str) -> str:
+    return (
+        f'<a href="{_e(url)}" class="icon-link" aria-label="{_e(label)}">'
+        '<svg class="icon" aria-hidden="true" focusable="false">'
+        f'<use href="{SPRITE}#{symbol}"/></svg></a>'
+    )
+
+
+def _source_symbol(url: str) -> str:
+    return SOURCE_ICONS.get((urlsplit(url).hostname or "").lower(), "git")
+
+
+def _algorithm_url(algorithm_id: str) -> str:
+    return f"/registry/algorithms/{algorithm_id}/"
+
+
+def _safety(algorithm: Algorithm) -> str:
+    return SAFETY_BY_FAMILY[algorithm.family]
 
 
 def _td(content: str, sort: str | int, css_class: str = "") -> str:
@@ -105,9 +132,16 @@ def _th(label: str, numeric: bool = False, css_class: str = "") -> str:
     return f'<th scope="col"{cls}{kind}>{_e(label)}</th>'
 
 
-def _table(headers: Sequence[str], rows: Sequence[Sequence[str]]) -> str:
+def _table(
+    headers: Sequence[str],
+    rows: Sequence[Sequence[str]],
+    row_ids: Sequence[str] | None = None,
+) -> str:
     head = "".join(headers)
-    body = "\n".join(f"        <tr>{''.join(cells)}</tr>" for cells in rows)
+    ids = [f' id="{_e(i)}"' for i in row_ids] if row_ids else [""] * len(rows)
+    body = "\n".join(
+        f"        <tr{row_id}>{''.join(cells)}</tr>" for row_id, cells in zip(ids, rows)
+    )
     return (
         '<div class="table-wrap">\n'
         "    <table data-sortable>\n"
@@ -164,6 +198,8 @@ def render_hub(reg: Registry) -> str:
     cards = [
         ("Blockchains", "/registry/blockchains/", len(reg.chains),
          "Post-quantum readiness of blockchain networks."),
+        ("Algorithms", "/registry/algorithms/", len(reg.algorithms),
+         "Post-quantum signature algorithms, with safety and research papers."),
         ("Libraries", "/registry/libraries/", len(reg.libraries),
          "Post-quantum cryptography libraries and their maturity."),
         ("Products", "/registry/products/", len(reg.products),
@@ -202,34 +238,41 @@ def render_blockchains(reg: Registry) -> str:
         + "\n        </dl>\n"
         '        <p class="muted">Consensus covers how the network agrees on blocks, '
         "such as validator votes or mining. Transactions covers the signatures "
-        "that authorize moving funds.</p>\n"
-        '        <p class="muted">Overall is the less ready of the two layers.</p>'
+        "that authorize moving funds.</p>"
     )
     chains = sorted(
-        reg.chains, key=lambda c: (CATEGORIES.index(overall_category(c)), c.name.casefold())
+        reg.chains,
+        key=lambda c: (
+            LAYER_VALUES.index(c.transactions),
+            LAYER_VALUES.index(c.consensus),
+            c.name.casefold(),
+        ),
     )
     rows = []
     for index, c in enumerate(chains):
         algs = [reg.algorithms[a] for a in c.algorithms]
         notes_cell, notes_extras = _notes_parts("blockchains", index, c.name, c.note, c.links)
         rows.append([
-            _td(_e(c.name) + notes_extras, c.name.casefold(), "name-cell"),
-            _layer_td(overall_category(c)),
+            _td(_chain_name(c) + notes_extras, c.name.casefold(), "name-cell"),
             _layer_td(c.consensus),
             _layer_td(c.transactions),
             _td(
-                ", ".join(_link(a.url, a.name) for a in algs) or "—",
+                ", ".join(_link(_algorithm_url(a.id), a.name) for a in algs) or "—",
                 ", ".join(a.name for a in algs).casefold(),
             ),
-            _td(_link(c.website, "Website"), c.website.casefold()),
-            _td(_link(c.source, "Source"), c.source.casefold()),
+            _td(_icon_link(c.website, f"{c.name} website", "globe"), c.website.casefold(), "col-icon"),
+            _td(
+                _icon_link(c.source, f"{c.name} source code", _source_symbol(c.source)),
+                c.source.casefold(),
+                "col-icon",
+            ),
             notes_cell,
         ])
     table = (
         _table(
-            [_th("Chain"), _th("Overall", True), _th("Consensus", True),
-             _th("Transactions", True), _th("Algorithms"), _th("Website"),
-             _th("Source"), _th("Notes", css_class="col-notes")],
+            [_th("Chain"), _th("Consensus", True), _th("Transactions", True),
+             _th("Algorithms"), _th("Website", css_class="col-icon"),
+             _th("Source", css_class="col-icon"), _th("Notes", css_class="col-notes")],
             rows,
         )
         if rows
@@ -239,6 +282,15 @@ def render_blockchains(reg: Registry) -> str:
         "Registries", "Blockchains",
         "How ready each blockchain is for quantum computers.",
         "blockchains.toml", "registry-blockchain.yml", table, legend,
+    )
+
+
+def _chain_name(chain: Chain) -> str:
+    if chain.logo is None:
+        return _e(chain.name)
+    return (
+        f'<img src="{LOGO_DIR}/{_e(chain.logo)}" alt="" width="20" height="20" '
+        f'class="chain-logo">{_e(chain.name)}'
     )
 
 
@@ -255,9 +307,8 @@ def render_libraries(reg: Registry) -> str:
     for index, lib in enumerate(libs):
         safety = library_safety(lib, reg.algorithms)
         chips = " ".join(
-            f'<span class="alg safety--{SAFETY_BY_FAMILY[reg.algorithms[a].family].lower()}">'
-            f"{_e(reg.algorithms[a].name)} "
-            f"<small>{SAFETY_BY_FAMILY[reg.algorithms[a].family]}</small></span>"
+            f'<a href="{_algorithm_url(a)}" class="alg safety--{_safety(reg.algorithms[a]).lower()}">'
+            f"{_e(reg.algorithms[a].name)} <small>{_safety(reg.algorithms[a])}</small></a>"
             for a in lib.algorithms
         )
         audited = (
@@ -283,6 +334,7 @@ def render_libraries(reg: Registry) -> str:
              _th("Maturity"), _th("Blockchain friendly"), _th("Min signature", True),
              _th("Min public key", True), _th("Notes", css_class="col-notes")],
             rows,
+            [f"lib-{library_slug(lib.name)}" for lib in libs],
         )
         if rows
         else None
@@ -313,6 +365,75 @@ def render_products(reg: Registry) -> str:
     return _registry_section(
         "Registries", "Products", "Products built by Quantum Alliance members.",
         "products.toml", "registry-product.yml", table,
+    )
+
+
+def _implementers(reg: Registry, algorithm_id: str) -> list[Library]:
+    libs = [lib for lib in reg.libraries if algorithm_id in lib.algorithms]
+    return sorted(libs, key=lambda lib: lib.name.casefold())
+
+
+def render_algorithms_index(reg: Registry) -> str:
+    algorithms = sorted(reg.algorithms.values(), key=lambda a: a.name.casefold())
+    rows = []
+    for a in algorithms:
+        count = len(_implementers(reg, a.id))
+        rows.append([
+            _td(_link(_algorithm_url(a.id), a.name), a.name.casefold()),
+            _td(_e(a.family), a.family),
+            _td(
+                f'<span class="safety safety--{_safety(a).lower()}">{_safety(a)}</span>',
+                SAFETY_RANK[_safety(a)],
+            ),
+            _td(str(count), count),
+        ])
+    table = (
+        _table(
+            [_th("Algorithm"), _th("Family"), _th("Safety", True), _th("Libraries", True)],
+            rows,
+        )
+        if rows
+        else None
+    )
+    return _registry_section(
+        "Registries", "Algorithms",
+        "Post-quantum signature algorithms, with the libraries that implement each one.",
+        "algorithms.toml", "registry-algorithm.yml", table,
+    )
+
+
+def render_algorithm(reg: Registry, algorithm_id: str) -> str:
+    a = reg.algorithms[algorithm_id]
+    safety = _safety(a)
+    libs = _implementers(reg, algorithm_id)
+    papers = "\n".join(f"          <li>{_external(p.url, p.title)}</li>" for p in a.papers)
+    implemented = (
+        '<ul class="link-list">\n'
+        + "\n".join(
+            f'          <li>{_link(f"/registry/libraries/#lib-{library_slug(lib.name)}", lib.name)}</li>'
+            for lib in libs
+        )
+        + "\n        </ul>"
+        if libs
+        else '<p class="muted">No libraries listed yet.</p>'
+    )
+    return (
+        '    <section class="section">\n'
+        '      <div class="wrap">\n'
+        '        <p class="eyebrow">Algorithm</p>\n'
+        f"        <h1>{_e(a.name)}</h1>\n"
+        f'        <p class="muted">Family: {_e(a.family)}. Safety: '
+        f'<span class="safety safety--{safety.lower()}">{safety}</span></p>\n'
+        f'        <p class="intro">{_e(a.summary)}</p>\n'
+        '        <h2 class="link-list-heading">Standard</h2>\n'
+        f"        <p>{_external(a.url, a.url)}</p>\n"
+        '        <h2 class="link-list-heading">Research</h2>\n'
+        f'        <ul class="link-list">\n{papers}\n        </ul>\n'
+        '        <h2 class="link-list-heading">Implemented by</h2>\n'
+        f"        {implemented}\n"
+        f"        {edit_links('algorithms.toml', 'registry-algorithm.yml')}\n"
+        "      </div>\n"
+        "    </section>"
     )
 
 

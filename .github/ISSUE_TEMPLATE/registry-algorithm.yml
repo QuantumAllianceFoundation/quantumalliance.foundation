@@ -1,0 +1,58 @@
+name: Algorithm registry entry
+description: Add a post-quantum algorithm to the registry or change an existing entry.
+title: "[Registry] "
+labels: ["registry"]
+body:
+  - type: input
+    id: id
+    attributes:
+      label: Identifier
+      description: Lowercase slug that is used in the page address, for example ml-dsa.
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      description: Name of the algorithm.
+    validations:
+      required: true
+  - type: dropdown
+    id: family
+    attributes:
+      label: Family
+      description: The hardness assumption. This sets the safety rating.
+      options:
+        - hash-based
+        - lattice
+        - other
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Standard or specification
+      description: HTTPS link to the standard or specification.
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary (up to 80 words)
+      description: A plain-language explanation in your own words.
+    validations:
+      required: true
+  - type: textarea
+    id: papers
+    attributes:
+      label: Research papers (1 to 3)
+      description: The canonical papers, one per line, as a title and an HTTPS link.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Source for this information
+      description: Public links that support the entry. A reader must be able to open each link.
+    validations:
+      required: true

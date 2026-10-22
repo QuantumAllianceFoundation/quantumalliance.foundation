@@ -299,3 +299,14 @@ table[data-sortable] td:first-child { white-space: normal; }
 }
 .section h1 + .intro { margin-top: 12px; }
 .section .wrap > .muted { margin-bottom: 16px; }
+
+/* Registry icon links, chain logos, and algorithm pages */
+.icon-link { display: inline-flex; align-items: center; color: var(--content-60); }
+.icon-link:hover, .icon-link:focus-visible { color: var(--white); }
+.icon { width: 18px; height: 18px; display: block; }
+td.col-icon { white-space: nowrap; }
+.chain-logo { display: inline-block; width: 20px; height: 20px; margin-right: 8px; vertical-align: middle; object-fit: contain; }
+a.alg { text-decoration: none; }
+a.alg:hover { border-color: var(--content-40); }
+.link-list { margin: 0 0 24px; padding-left: 20px; color: var(--content-60); line-height: 1.75; }
+.link-list-heading { margin-top: 24px; }
