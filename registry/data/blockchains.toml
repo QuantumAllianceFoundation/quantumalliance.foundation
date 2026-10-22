@@ -90,6 +90,7 @@ source = "https://github.com/ethereum/go-ethereum"
 notes = [
   { title = "Post-quantum cryptography on Ethereum", url = "https://ethereum.org/roadmap/future-proofing/quantum-resistance/" },
   { title = "Post-Quantum Ethereum roadmap", url = "https://pq.ethereum.org/" },
+  { title = "leanSig: Rust code for hash-based signatures (research devnets)", url = "https://github.com/leanEthereum/leanSig" },
 ]
 
 [[chain]]
@@ -104,10 +105,12 @@ notes = [
 
 [[chain]]
 name = "NEAR"
-category = "quantum-aware"
+category = "post-quantum"
 website = "https://near.org/"
 source = "https://github.com/near/nearcore"
+algorithms = ["ml-dsa"]
 notes = [
+  { title = "Post-quantum signatures (ML-DSA-65), enabled at protocol version 85", url = "https://github.com/near/nearcore/blob/master/docs/architecture/how/post_quantum_signatures.md" },
   { title = "Preparing NEAR for the Quantum Computing Era (2026)", url = "https://www.near.org/blog/making-near-protocol-post-quantum-safe" },
 ]
 
@@ -122,7 +125,7 @@ notes = [
 
 [[chain]]
 name = "Polkadot"
-category = "quantum-aware"
+category = "quantum-vulnerable"
 website = "https://polkadot.com/"
 source = "https://github.com/paritytech/polkadot-sdk"
 notes = [

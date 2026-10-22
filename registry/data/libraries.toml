@@ -77,7 +77,7 @@ notes = [
 name = "algorand/falcon"
 source = "https://github.com/algorand/falcon"
 algorithms = ["fn-dsa"]
-maturity = "pre-production"
+maturity = "production"
 blockchain_friendly = true
 min_signature = { bytes = 713, parameter_set = "Falcon-DET512 (compressed, maximum)" }
 min_public_key = { bytes = 897, parameter_set = "Falcon-DET512" }
@@ -103,6 +103,17 @@ notes = [
   "Includes a hierarchical deterministic wallet crate with hardened derivation only (ML-DSA)",
   "Tested against NIST ACVP vectors (ML-DSA)",
   "Used by the Quantus chain (ML-DSA)",
+]
+
+[[library]]
+name = "aws-lc-rs"
+source = "https://github.com/aws/aws-lc-rs"
+algorithms = ["ml-dsa"]
+maturity = "production"
+blockchain_friendly = false
+notes = [
+  "Rust bindings over AWS-LC; the ML-DSA signature API is marked unstable (ML-DSA)",
+  "Used by the NEAR node for ML-DSA-65 (ML-DSA)",
 ]
 
 [[library]]
@@ -145,7 +156,7 @@ blockchain_friendly = true
 min_signature = { bytes = 731, parameter_set = "Falcon-512 hybrid with ed25519 or sr25519" }
 min_public_key = { bytes = 196, parameter_set = "SHRINCS hybrid (verification input)" }
 notes = [
-  "Pairs a classical signature with a post-quantum signature and accepts a signature only if both verify",
+  "Each suite signs with one classical key and one post-quantum key, and a message passes only when both checks succeed",
   "Includes a deterministic signing mode for finality votes",
   "The Falcon-512 suites follow the pre-standard code and may not match the final standard (FN-DSA)",
   "No test vectors from another implementation exist yet",
@@ -155,7 +166,7 @@ notes = [
 name = "pqringct"
 source = "https://github.com/pqabelian/pqringct"
 algorithms = ["pqringct"]
-maturity = "pre-production"
+maturity = "production"
 blockchain_friendly = true
 notes = ["Go implementation used by the Abelian node (PQRingCT)"]
 
@@ -163,6 +174,6 @@ notes = ["Go implementation used by the Abelian node (PQRingCT)"]
 name = "pqringctx"
 source = "https://github.com/pqabelian/pqringctx"
 algorithms = ["pqringct"]
-maturity = "pre-production"
+maturity = "production"
 blockchain_friendly = true
 notes = ["Go implementation derived from pqringct and used by the Abelian node (PQRingCT)"]
