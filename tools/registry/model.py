@@ -49,6 +49,12 @@ class Link:
 
 
 @dataclass(frozen=True)
+class Broken:
+    reason: str
+    reference: Link
+
+
+@dataclass(frozen=True)
 class Algorithm:
     id: str
     name: str
@@ -58,6 +64,7 @@ class Algorithm:
     summary: str
     rationale: str
     papers: tuple[Link, ...]
+    broken: Broken | None = None
 
 
 @dataclass(frozen=True)
@@ -286,6 +293,7 @@ def _positive_int(value: Any) -> int:
 
 
 _link = _table(Link, title=_text, url=_url)
+_broken = _table(Broken, reason=_reason, reference=_link)
 _repository = _table(Repository, language=_text, url=_url)
 
 
@@ -311,6 +319,7 @@ _SPECS: dict[str, tuple[str, type, dict[str, tuple[Callable[[Any], Any], Any]], 
             "summary": (_summary, _REQUIRED),
             "rationale": (_rationale, _REQUIRED),
             "papers": (_list_of(_link, non_empty=True, max_items=MAX_PAPERS), _REQUIRED),
+            "broken": (_broken, None),
         },
         "id",
     ),
@@ -512,32 +521,69 @@ def load_registry(
 
 
 def algorithm_safety(alg: Algorithm) -> str:
-    """Return the safety rating of one algorithm from its family."""
+    """Return the safety rating of one algorithm: Broken, else from its family."""
+    if alg.broken is not None:
+        return "Broken"
     return SAFETY_BY_FAMILY[alg.family]
 
 
-def _best_family(lib: Library, algorithms: Mapping[str, Algorithm]) -> str:
-    families = [algorithms[a].family for a in lib.algorithms]
+def _best_family(lib: Library, algorithms: Mapping[str, Algorithm]) -> str | None:
+    """Return the best family among unbroken algorithms, or None if all are broken."""
+    families = [
+        algorithms[a].family for a in lib.algorithms if algorithms[a].broken is None
+    ]
+    if not families:
+        return None
     return min(families, key=lambda f: SAFETY_RANK[SAFETY_BY_FAMILY[f]])
 
 
 def library_safety(lib: Library, algorithms: Mapping[str, Algorithm]) -> str:
-    """Rate a library: hybrid is High; otherwise its best family drops one level."""
+    """Rate a library.
+
+    Broken algorithms are ignored; a library with only broken algorithms is
+    Broken. Otherwise a hybrid library is High and a non-hybrid library's best
+    family drops one level.
+    """
+    family = _best_family(lib, algorithms)
+    if family is None:
+        return "Broken"
     if lib.hybrid:
         return "High"
-    best = SAFETY_RANK[SAFETY_BY_FAMILY[_best_family(lib, algorithms)]]
+    best = SAFETY_RANK[SAFETY_BY_FAMILY[family]]
     return SAFETY_LEVELS[min(best + 1, len(SAFETY_LEVELS) - 1)]
 
 
 def library_safety_reason(lib: Library, algorithms: Mapping[str, Algorithm]) -> str:
     """Return a short sentence that explains the library's safety rating."""
+    family = _best_family(lib, algorithms)
+    if family is None:
+        return "Every algorithm in this library is broken."
     if lib.hybrid:
         return "Hybrid design: a classical and a post-quantum signature must both verify."
-    family = FAMILY_LABELS[_best_family(lib, algorithms)]
     return (
-        f"Best algorithm family is {family}; "
+        f"Best algorithm family is {FAMILY_LABELS[family]}; "
         "without a hybrid design the rating drops one level."
     )
+
+
+def _broken_of(
+    ids: tuple[str, ...], algorithms: Mapping[str, Algorithm]
+) -> tuple[Algorithm, ...]:
+    return tuple(algorithms[a] for a in ids if algorithms[a].broken is not None)
+
+
+def chain_broken_algorithms(
+    chain: Chain, algorithms: Mapping[str, Algorithm]
+) -> tuple[Algorithm, ...]:
+    """Return the chain's broken algorithms, in the chain's listed order."""
+    return _broken_of(chain.algorithms, algorithms)
+
+
+def library_broken_algorithms(
+    lib: Library, algorithms: Mapping[str, Algorithm]
+) -> tuple[Algorithm, ...]:
+    """Return the library's broken algorithms, in the library's listed order."""
+    return _broken_of(lib.algorithms, algorithms)
 
 
 def library_slug(name: str) -> str:

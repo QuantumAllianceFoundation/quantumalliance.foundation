@@ -4,10 +4,15 @@ from pathlib import Path
 
 from tools.registry.model import (
     Algorithm,
+    Broken,
+    Chain,
     Library,
     RegistryError,
+    Link,
     Repository,
     algorithm_safety,
+    chain_broken_algorithms,
+    library_broken_algorithms,
     library_safety,
     library_safety_reason,
     chain_slug,
@@ -754,3 +759,125 @@ class AuditLogoTest(RegistryTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+BROKEN_REF = Link("Attack paper", "https://example.org/attack")
+
+
+class BrokenAlgorithmTest(unittest.TestCase):
+    def setUp(self):
+        broken = Broken("A published attack recovers the key.", BROKEN_REF)
+        self.algorithms = {
+            "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "signature", "https://a.org", "S", "R", ()),
+            "slh-dsa": Algorithm("slh-dsa", "SLH-DSA", "hash-based", "signature", "https://b.org", "S", "R", ()),
+            "rainbow": Algorithm(
+                "rainbow", "Rainbow", "other", "signature", "https://c.org", "S", "R", (), broken
+            ),
+            "uov": Algorithm(
+                "uov", "UOV", "other", "signature", "https://d.org", "S", "R", (), broken
+            ),
+        }
+
+    def lib(self, *ids: str, hybrid: bool = False) -> Library:
+        return Library(
+            name="L",
+            repositories=(Repository("Rust", "https://x.org"),),
+            algorithms=ids,
+            hybrid=hybrid,
+            maturity="production",
+            blockchain_friendly=False,
+            audits=(),
+            min_signature=None,
+            min_public_key=None,
+            note=None,
+            links=(),
+        )
+
+    def test_broken_algorithm_safety_is_broken(self):
+        self.assertEqual(algorithm_safety(self.algorithms["rainbow"]), "Broken")
+        self.assertEqual(algorithm_safety(self.algorithms["ml-dsa"]), "Medium")
+
+    def test_library_safety_skips_broken_algorithms(self):
+        lib = self.lib("rainbow", "ml-dsa")
+        self.assertEqual(library_safety(lib, self.algorithms), "Low")
+        self.assertIn("lattice-based", library_safety_reason(lib, self.algorithms))
+        lib = self.lib("slh-dsa", "rainbow")
+        self.assertEqual(library_safety(lib, self.algorithms), "Medium")
+
+    def test_library_all_broken_is_broken(self):
+        for hybrid in (False, True):
+            with self.subTest(hybrid=hybrid):
+                lib = self.lib("rainbow", "uov", hybrid=hybrid)
+                self.assertEqual(library_safety(lib, self.algorithms), "Broken")
+                self.assertIn("broken", library_safety_reason(lib, self.algorithms))
+
+    def test_chain_broken_algorithms(self):
+        chain = write_chain(("ml-dsa", "uov", "rainbow"))
+        self.assertEqual(
+            chain_broken_algorithms(chain, self.algorithms),
+            (self.algorithms["uov"], self.algorithms["rainbow"]),
+        )
+        self.assertEqual(chain_broken_algorithms(write_chain(("ml-dsa",)), self.algorithms), ())
+
+    def test_library_broken_algorithms(self):
+        lib = self.lib("rainbow", "ml-dsa", "uov")
+        self.assertEqual(
+            library_broken_algorithms(lib, self.algorithms),
+            (self.algorithms["rainbow"], self.algorithms["uov"]),
+        )
+
+
+def write_chain(ids: tuple[str, ...]) -> Chain:
+    return Chain(
+        name="C",
+        consensus="post-quantum",
+        transactions="post-quantum",
+        consensus_reason="r",
+        transactions_reason="r",
+        website="https://c.org",
+        source="https://c.org",
+        algorithms=ids,
+        note=None,
+        links=(),
+    )
+
+
+class BrokenLoadTest(RegistryTestCase):
+    BROKEN = (
+        'broken = { reason = "%s", reference = { title = "Attack", url = "%s" } }\n'
+    )
+
+    def algorithms_with(self, reason: str = "Key recovery attack.", url: str = "https://example.org/a") -> str:
+        return ALGORITHMS + self.BROKEN % (reason, url)
+
+    def algorithm_errors(self, algorithms: str) -> list[str]:
+        errors = self.errors_for(algorithms=algorithms)
+        return [e for e in errors if e.startswith("algorithms.toml:")]
+
+    def test_loads_broken_table(self):
+        write_data(self.tmp, algorithms=self.algorithms_with())
+        alg = load_registry(self.tmp).algorithms["ml-dsa"]
+        self.assertEqual(alg.broken, Broken("Key recovery attack.", Link("Attack", "https://example.org/a")))
+
+    def test_broken_is_optional(self):
+        write_data(self.tmp)
+        self.assertIsNone(load_registry(self.tmp).algorithms["ml-dsa"].broken)
+
+    def test_rejects_broken_reason_over_40_words(self):
+        errors = self.algorithm_errors(self.algorithms_with(reason=" ".join(["word"] * 41)))
+        self.assertEqual(
+            errors, ["algorithms.toml: ml-dsa: broken: must be at most 40 words (got 41)"]
+        )
+
+    def test_rejects_broken_reference_non_https(self):
+        errors = self.algorithm_errors(self.algorithms_with(url="http://example.org/a"))
+        self.assertEqual(len(errors), 1)
+        self.assertTrue(errors[0].startswith("algorithms.toml: ml-dsa: broken: "))
+        self.assertIn("https://", errors[0])
+
+    def test_rejects_unknown_broken_key(self):
+        text = ALGORITHMS + (
+            'broken = { reason = "x", extra = 1, reference = { title = "t", url = "https://e.org/" } }\n'
+        )
+        errors = self.algorithm_errors(text)
+        self.assertEqual(errors, ["algorithms.toml: ml-dsa: broken: unknown key(s): extra"])
