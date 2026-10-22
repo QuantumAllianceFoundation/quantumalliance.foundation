@@ -98,7 +98,7 @@ name = "Algorand"
 consensus = "quantum-aware"
 transactions = "post-quantum"
 consensus_reason = "Consensus votes still use Ed25519. Research on post-quantum voting messages and a replacement VRF is active, but no code is published."
-transactions_reason = "Native Falcon-1024 (FN-DSA) accounts are live on Mainnet (Algorand v5.0.0, August 2026), after earlier LogicSig Falcon verification. It is an opt-in account type."
+transactions_reason = "Judgment call: native Falcon-1024 (FN-DSA) accounts are live on Mainnet (v5.0.0, August 2026), but only as an opt-in account type; other accounts stay classical. Earlier LogicSig Falcon verification also exists."
 website = "https://algorand.co/"
 source = "https://github.com/algorand/go-algorand"
 algorithms = ["fn-dsa"]
@@ -130,7 +130,7 @@ name = "Ethereum"
 consensus = "post-quantum-ready"
 transactions = "quantum-aware"
 consensus_reason = "Judgment call: leanSig, leanXMSS and leanVM hash-based signature code targets consensus, but runs only on research devnets. Mainnet validators still sign with BLS."
-transactions_reason = "Roadmap covers post-quantum precompiles and transaction types, but no deployable code exists. Accounts still use secp256k1 ECDSA."
+transactions_reason = "Judgment call: the protocol has no post-quantum account signatures yet, and accounts use secp256k1 ECDSA. A roadmap covers them, and application-layer smart accounts can already add hash-based co-signing."
 website = "https://ethereum.org/"
 source = "https://github.com/ethereum/go-ethereum"
 note = "leanSig code targets consensus signatures"
@@ -271,12 +271,15 @@ name = "INTMAX"
 consensus = "quantum-aware"
 transactions = "post-quantum-ready"
 consensus_reason = "Judgment call: INTMAX3 code replaces a proof and aggregation path with hash-based proofs, which is not clearly a consensus signature layer. It runs only as a Sepolia demo. INTMAX2 mainnet aggregation uses classical BLS."
-transactions_reason = "Judgment call: INTMAX3 code includes Poseidon-based SPHINCS+-128s signatures and lattice balances, run only as a Sepolia demo. INTMAX2 mainnet user signatures are BLS on BN254."
+transactions_reason = "Judgment call: INTMAX3 code signs channel states with Falcon-512 and keeps balances private with lattice cryptography. A separate INTMAX repository aggregates SPHINCS+ proofs. Both are demos; INTMAX2 mainnet user signatures are BLS on BN254."
 website = "https://intmax.io/"
 source = "https://github.com/InternetMaximalism/intmax2-zkp"
-algorithms = ["sphincs-plus"]
+algorithms = ["fn-dsa", "sphincs-plus"]
 note = "INTMAX3 prototype on Sepolia only"
-links = [{ title = "INTMAX3 post-quantum rollup code", url = "https://github.com/InternetMaximalism/intmax3-zkp" }]
+links = [
+  { title = "INTMAX3 post-quantum rollup code", url = "https://github.com/InternetMaximalism/intmax3-zkp" },
+  { title = "Aggregated SPHINCS+ proofs", url = "https://github.com/InternetMaximalism/aggregated_SPHINCS_plus" },
+]
 logo = "intmax.svg"
 
 [[chain]]
@@ -312,7 +315,7 @@ name = "Monero"
 consensus = "no-signatures"
 transactions = "quantum-vulnerable"
 consensus_reason = "RandomX proof-of-work mining; this layer uses no signatures."
-transactions_reason = "Spend authorization uses elliptic-curve signatures. Post-quantum signatures appear only in research-lab issues, with no candidate scheme, code or deployment path."
+transactions_reason = "Judgment call: spend authorization uses elliptic-curve signatures. Post-quantum signatures appear only in research-lab issues, with no candidate scheme, code or deployment path, so we chose the less ready value."
 website = "https://www.getmonero.org/"
 source = "https://github.com/monero-project/monero"
 algorithms = []
@@ -483,7 +486,7 @@ logo = "hyperliquid.png"
 name = "Canton Network"
 consensus = "quantum-vulnerable"
 transactions = "post-quantum-ready"
-consensus_reason = "The Global Synchronizer uses CometBFT node keys and a BFT sequencer. Digital Asset's post-quantum plan names no consensus-key migration."
+consensus_reason = "Judgment call: the Global Synchronizer uses CometBFT node keys and a BFT sequencer. Digital Asset's post-quantum plan names no consensus-key migration, so we chose the less ready value."
 transactions_reason = "Experimental ML-DSA-65 support is published in the Canton code, enabled only with crypto.enable-experimental = true. Not default; Digital Asset plans algorithms over 6 to 12 months."
 website = "https://www.canton.network/"
 source = "https://github.com/digital-asset/canton"
@@ -554,7 +557,7 @@ name = "Qubitcoin"
 consensus = "no-signatures"
 transactions = "quantum-vulnerable"
 consensus_reason = "Bitcoin Core fork with qPoW proof of work (SHA-256 plus quantum circuit simulation); blocks need no validator signatures."
-transactions_reason = "Bitcoin Core fork keeping secp256k1 keys. No post-quantum code in the repository; the website only says it plans quantum-resistant infrastructure, with no design or timeline."
+transactions_reason = "Judgment call: Bitcoin Core fork keeping secp256k1 keys. No post-quantum code in the repository; the website only says it plans quantum-resistant infrastructure, with no design or timeline, so we chose the less ready value."
 website = "https://qubitcoin.superquantum.io"
 source = "https://github.com/super-quantum/qubitcoin"
 algorithms = []
