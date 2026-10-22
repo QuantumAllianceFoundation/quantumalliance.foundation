@@ -33,6 +33,9 @@
 #   links         Optional, default []. At most 2 links to the best sources.
 #                 Each has a `title` that names the document plainly and an
 #                 HTTPS `url`.
+#   logo          Optional. File name in assets/registry/logos/ (.svg, .png,
+#                 or .webp; at most 64 KB; an SVG has no script or on*
+#                 attributes). Use the project's official mark.
 #
 # Example (a copy of the Bitcoin entry below):
 #   [[chain]]
@@ -58,6 +61,7 @@ links = [
   { title = "Mainnet genesis release v1.0.0-gm", url = "https://github.com/Quantus-Network/chain/releases/tag/v1.0.0-gm" },
   { title = "Quantus wallet page (ML-DSA-87)", url = "https://quantus.com/wallet" },
 ]
+logo = "quantus.svg"
 
 [[chain]]
 name = "Abelian"
@@ -71,6 +75,7 @@ links = [
   { title = "Abelian whitepaper (2022)", url = "https://download.abelian.info/release/docs/whitepaper.pdf" },
   { title = "Abelian milestones", url = "https://www.pqabelian.io/milestones" },
 ]
+logo = "abelian.png"
 
 [[chain]]
 name = "Algorand"
@@ -84,6 +89,7 @@ links = [
   { title = "Post-quantum roadmap (2026)", url = "https://algorand.co/blog/algorand-post-quantum-cryptography-roadmap" },
   { title = "Post-quantum ledger (2026)", url = "https://algorand.co/blog/algorand-post-quantum-ledger" },
 ]
+logo = "algorand.svg"
 
 [[chain]]
 name = "Sui"
@@ -97,6 +103,7 @@ links = [
   { title = "Making Sui Quantum Ready (2026)", url = "https://www.sui.io/blog/making-sui-quantum-ready" },
   { title = "Pull request 28413: ML-DSA-65 verification behind a protocol flag", url = "https://github.com/MystenLabs/sui/pull/28413" },
 ]
+logo = "sui.svg"
 
 [[chain]]
 name = "Ethereum"
@@ -109,6 +116,7 @@ links = [
   { title = "Post-Quantum Ethereum roadmap", url = "https://pq.ethereum.org/" },
   { title = "leanSig: Rust code for hash-based signatures (research devnets)", url = "https://github.com/leanEthereum/leanSig" },
 ]
+logo = "ethereum.svg"
 
 [[chain]]
 name = "Solana"
@@ -121,6 +129,7 @@ links = [
   { title = "Solana's Quantum Readiness (2026)", url = "https://solana.com/news/quantum-readiness" },
   { title = "Securing Solana Against a Powerful Quantum Adversary (2026)", url = "https://www.anza.xyz/blog/securing-solana-against-a-powerful-quantum-adversary" },
 ]
+logo = "solana.svg"
 
 [[chain]]
 name = "NEAR"
@@ -134,6 +143,7 @@ links = [
   { title = "Post-quantum signatures (ML-DSA-65), enabled at protocol version 85", url = "https://github.com/near/nearcore/blob/master/docs/architecture/how/post_quantum_signatures.md" },
   { title = "Preparing NEAR for the Quantum Computing Era (2026)", url = "https://www.near.org/blog/making-near-protocol-post-quantum-safe" },
 ]
+logo = "near.png"
 
 [[chain]]
 name = "XRP Ledger"
@@ -145,6 +155,7 @@ note = "Roadmap targets 2028"
 links = [
   { title = "Post-Quantum Readiness on the XRP Ledger (2026)", url = "https://ripple.com/insights/post-quantum-readiness-on-the-xrp-ledger/" },
 ]
+logo = "xrp-ledger.svg"
 
 [[chain]]
 name = "Polkadot"
@@ -156,6 +167,7 @@ note = "Research roadmap only"
 links = [
   { title = "Post-quantum cryptography roadmap for Polkadot and JAM (2025)", url = "https://forum.polkadot.network/t/post-quantum-cryptography-roadmap-for-polkadot-and-jam/13232" },
 ]
+logo = "polkadot.svg"
 
 [[chain]]
 name = "Bitcoin"
@@ -168,3 +180,304 @@ links = [
   { title = "BIP-360", url = "https://github.com/bitcoin/bips/blob/master/bip-0360.mediawiki" },
   { title = "BIP-361", url = "https://github.com/bitcoin/bips/blob/master/bip-0361.mediawiki" },
 ]
+logo = "bitcoin.svg"
+
+[[chain]]
+name = "Hadamard (BB84)"
+consensus = "quantum-vulnerable"
+transactions = "post-quantum"
+website = "https://hadamard.com/"
+source = "https://github.com/Hadamard/op-geth"
+algorithms = []
+note = "Batcher and proposer use ECDSA"
+links = [{ title = "BB84 developer docs and security model", url = "https://bb84.com/docs" }]
+logo = "hadamard.png"
+
+[[chain]]
+name = "QRL"
+consensus = "no-signatures"
+transactions = "post-quantum"
+website = "https://www.theqrl.org/"
+source = "https://github.com/theQRL/QRL"
+algorithms = ["xmss"]
+note = "PoW mining; 2.0 is testnet"
+links = [{ title = "QRL 2.0 roadmap and testnet status", url = "https://www.theqrl.org/2/" }]
+logo = "qrl.svg"
+
+[[chain]]
+name = "xx network"
+consensus = "quantum-vulnerable"
+transactions = "quantum-aware"
+website = "https://xx.network/"
+source = "https://github.com/xx-labs/xxchain"
+algorithms = []
+note = "WOTS+ wallet key derivation only"
+links = [{ title = "Sleeve quantum-safe key derivation", url = "https://github.com/xx-labs/sleeve" }]
+logo = "xx-network.svg"
+
+[[chain]]
+name = "Midnight"
+consensus = "quantum-vulnerable"
+transactions = "quantum-aware"
+website = "https://midnight.network/"
+source = "https://github.com/midnightntwrk/midnight-node"
+algorithms = []
+note = "Roadmap targets post-quantum proofs"
+links = [{ title = "Midnight roadmap, Nightstream", url = "https://midnight.network/roadmap" }]
+logo = "midnight.png"
+
+[[chain]]
+name = "INTMAX"
+consensus = "post-quantum-ready"
+transactions = "post-quantum-ready"
+website = "https://intmax.io/"
+source = "https://github.com/InternetMaximalism/intmax2-zkp"
+algorithms = ["sphincs-plus"]
+note = "INTMAX3 prototype on Sepolia only"
+links = [{ title = "INTMAX3 post-quantum rollup code", url = "https://github.com/InternetMaximalism/intmax3-zkp" }]
+logo = "intmax.svg"
+
+[[chain]]
+name = "Zcash"
+consensus = "no-signatures"
+transactions = "quantum-aware"
+website = "https://z.cash/"
+source = "https://github.com/ZcashFoundation/zebra"
+algorithms = []
+note = "Equihash PoW, no signatures"
+links = [
+  { title = "ZIP 2005: Ironwood quantum recoverability", url = "https://zips.z.cash/zip-2005" },
+  { title = "ZIP 258: NU6.3 deployment", url = "https://zips.z.cash/zip-0258" },
+]
+logo = "zcash.svg"
+
+[[chain]]
+name = "Dogecoin"
+consensus = "no-signatures"
+transactions = "quantum-vulnerable"
+website = "https://dogecoin.com/"
+source = "https://github.com/dogecoin/dogecoin"
+algorithms = []
+note = "Scrypt PoW, no signatures"
+logo = "dogecoin.svg"
+
+[[chain]]
+name = "Monero"
+consensus = "no-signatures"
+transactions = "quantum-vulnerable"
+website = "https://www.getmonero.org/"
+source = "https://github.com/monero-project/monero"
+algorithms = []
+note = "RandomX PoW, no signatures"
+links = [
+  { title = "Monero Research Lab: post-quantum signatures thread", url = "https://github.com/monero-project/research-lab/issues/159" },
+  { title = "Monero Research Lab: post-quantum encryption thread", url = "https://github.com/monero-project/research-lab/issues/151" },
+]
+logo = "monero.svg"
+
+[[chain]]
+name = "Bitcoin Cash"
+consensus = "no-signatures"
+transactions = "post-quantum-ready"
+website = "https://bitcoincash.org/"
+source = "https://gitlab.com/bitcoin-cash-node/bitcoin-cash-node"
+algorithms = ["fn-dsa", "slh-dsa"]
+note = "SHA-256 PoW, no signatures"
+links = [
+  { title = "CHIP-2026-06 specification", url = "https://gitlab.com/mainnet-pat/chip-2026-06-generic-sigs" },
+  { title = "Prototype node branch", url = "https://gitlab.com/mainnet-pat/bitcoin-cash-node/-/tree/generic_sig" },
+]
+logo = "bitcoin-cash.svg"
+
+[[chain]]
+name = "Litecoin"
+consensus = "no-signatures"
+transactions = "quantum-vulnerable"
+website = "https://litecoin.org/"
+source = "https://github.com/litecoin-project/litecoin"
+algorithms = []
+note = "Scrypt PoW, no signatures"
+links = [
+  { title = "Litecoin quantum security issue", url = "https://github.com/litecoin-project/litecoin/issues/1104" },
+]
+logo = "litecoin.svg"
+
+[[chain]]
+name = "BNB Chain"
+consensus = "quantum-aware"
+transactions = "quantum-aware"
+website = "https://www.bnbchain.org/"
+source = "https://github.com/bnb-chain/bsc"
+algorithms = []
+note = "Proof of concept never merged"
+links = [
+  { title = "BSC post-quantum migration report (2026)", url = "https://www.bnbchain.org/en/blog/bsc-post-quantum-cryptography-migration-report" },
+  { title = "Pull request 3660: post-quantum proof of concept (closed)", url = "https://github.com/bnb-chain/bsc/pull/3660" },
+]
+logo = "bnb-chain.svg"
+
+[[chain]]
+name = "TRON"
+consensus = "post-quantum-ready"
+transactions = "post-quantum-ready"
+website = "https://tron.network/"
+source = "https://github.com/tronprotocol/java-tron"
+algorithms = ["fn-dsa", "ml-dsa"]
+note = "Draft TIP, testnet build only"
+links = [
+  { title = "TIP-899: Post-Quantum Signature Support (draft)", url = "https://github.com/tronprotocol/tips/issues/899" },
+  { title = "Nile testnet post-quantum code (release_post_quantum branch)", url = "https://github.com/tron-nile-testnet/nile-testnet/tree/release_post_quantum" },
+]
+logo = "tron.svg"
+
+[[chain]]
+name = "Cardano"
+consensus = "quantum-aware"
+transactions = "quantum-aware"
+website = "https://cardano.org/"
+source = "https://github.com/IntersectMBO/cardano-node"
+algorithms = []
+note = "Funded research, no code yet"
+links = [
+  { title = "Cardano Vision 2026 research program (2026)", url = "https://www.iog.io/news/cardano-vision-2026-the-research-program-securing-cardano" },
+  { title = "CPS-0027: post-quantum signature approaches", url = "https://github.com/cardano-foundation/CIPs/pull/1144" },
+]
+logo = "cardano.svg"
+
+[[chain]]
+name = "Stellar"
+consensus = "quantum-aware"
+transactions = "post-quantum-ready"
+website = "https://stellar.org/"
+source = "https://github.com/stellar/stellar-core"
+algorithms = ["ml-dsa"]
+note = "ML-DSA verification awaits vote"
+links = [
+  { title = "Quantum Preparedness Plan (2026)", url = "https://stellar.org/blog/foundation-news/introducing-the-quantum-preparedness-plan" },
+  { title = "Bell, Protocol 30, with CAP-87 ML-DSA verification", url = "https://stellar.org/blog/developers/introducing-bell-protocol-30-on-stellar" },
+]
+logo = "stellar.png"
+
+[[chain]]
+name = "Avalanche"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+website = "https://www.avax.network/"
+source = "https://github.com/ava-labs/avalanchego"
+algorithms = []
+note = "No public quantum plan found"
+links = [
+  { title = "Avalanche cryptographic primitives", url = "https://build.avax.network/docs/api-reference/standards/cryptographic-primitives" },
+]
+logo = "avalanche.svg"
+
+[[chain]]
+name = "Hedera"
+consensus = "quantum-aware"
+transactions = "quantum-aware"
+website = "https://hedera.com/"
+source = "https://github.com/hiero-ledger/hiero-consensus-node"
+algorithms = []
+note = "Roadmap targets 2027 user keys"
+links = [
+  { title = "Post-quantum cryptography and blockchain (2026)", url = "https://hedera.com/blog/post-quantum-cryptography-and-blockchain/" },
+]
+logo = "hedera.svg"
+
+[[chain]]
+name = "TON"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+website = "https://ton.org/"
+source = "https://github.com/ton-blockchain/ton"
+algorithms = []
+note = "No public quantum plan found"
+links = [
+  { title = "TON blockchain specification (Ed25519 block signatures)", url = "https://docs.ton.org/foundations/whitepapers/tblkch" },
+]
+logo = "ton.svg"
+
+[[chain]]
+name = "Hyperliquid"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+website = "https://hyperliquid.xyz/"
+source = "https://github.com/hyperliquid-dex/node"
+algorithms = []
+note = "HyperBFT; no published quantum plan"
+links = [
+  { title = "Hyperliquid docs: HyperBFT consensus overview", url = "https://hyperliquid.gitbook.io/hyperliquid-docs/hypercore/overview" },
+  { title = "Hyperliquid docs: API signing", url = "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/signing" },
+]
+logo = "hyperliquid.png"
+
+[[chain]]
+name = "Canton Network"
+consensus = "quantum-vulnerable"
+transactions = "post-quantum-ready"
+website = "https://www.canton.network/"
+source = "https://github.com/digital-asset/canton"
+algorithms = ["ml-dsa"]
+note = "ML-DSA-65 behind experimental flag"
+links = [
+  { title = "Digital Asset position on post-quantum cryptography", url = "https://forum.canton.network/t/da-position-on-post-quantum-cryptography/7877" },
+  { title = "Splice release notes: experimental ML-DSA support", url = "https://github.com/canton-network/splice/blob/main/canton/UNRELEASED.md" },
+]
+logo = "canton.png"
+
+[[chain]]
+name = "Bittensor"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+website = "https://bittensor.com/"
+source = "https://github.com/opentensor/subtensor"
+algorithms = []
+note = "Substrate chain; no quantum plan"
+logo = "bittensor.png"
+
+[[chain]]
+name = "Cronos"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+website = "https://cronos.org/"
+source = "https://github.com/crypto-org-chain/cronos"
+algorithms = []
+note = "CometBFT chain; no quantum work"
+logo = "cronos.svg"
+
+[[chain]]
+name = "X Layer"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+website = "https://web3.okx.com/xlayer"
+source = "https://github.com/okx/xlayer-reth"
+algorithms = []
+note = "OP Stack L2; OKB gas"
+links = [
+  { title = "X Layer developer documentation", url = "https://web3.okx.com/xlayer/docs/developer/build-on-xlayer/about-xlayer" },
+]
+logo = "x-layer.png"
+
+[[chain]]
+name = "MemeCore"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+website = "https://memecore.com/"
+source = "https://github.com/memecore-foundation/Go-MemeCore"
+algorithms = []
+note = "Geth fork; Clique-style validator rotation"
+links = [
+  { title = "MemeCore docs: consensus architecture", url = "https://docs.memecore.com/guides/consensus" },
+]
+logo = "memecore.svg"
+
+[[chain]]
+name = "Qubitcoin"
+consensus = "no-signatures"
+transactions = "quantum-vulnerable"
+website = "https://qubitcoin.superquantum.io"
+source = "https://github.com/super-quantum/qubitcoin"
+algorithms = []
+note = "PoW consensus has no signatures"
+links = [{ title = "Project repository README", url = "https://github.com/super-quantum/qubitcoin" }]
+logo = "qubitcoin.png"
