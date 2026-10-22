@@ -346,6 +346,10 @@ class RenderTests(unittest.TestCase):
         self.assertNotIn("<sigs>", out)
         self.assertNotIn("<note>", out)
 
+    def test_render_library_unknown_slug_raises_value_error(self):
+        with self.assertRaisesRegex(ValueError, "unknown library slug: nope"):
+            render_library(registry(libraries=[library("Plain")]), "nope")
+
     def test_library_detail_page_empty_values(self):
         out = render_library(registry(libraries=[library("Plain")]), "plain")
         self.assertIn(

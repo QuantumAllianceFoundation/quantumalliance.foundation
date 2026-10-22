@@ -401,7 +401,9 @@ def _detail_row(label: str, content: str) -> str:
 
 
 def render_library(reg: Registry, slug: str) -> str:
-    lib = next(lib for lib in reg.libraries if library_slug(lib.name) == slug)
+    lib = next((lib for lib in reg.libraries if library_slug(lib.name) == slug), None)
+    if lib is None:
+        raise ValueError(f"unknown library slug: {slug}")
     safety = library_safety(lib, reg.algorithms)
     repos = "\n".join(
         f"          <li>{_repo_icon_link(lib, r)} {_e(r.language)}</li>" for r in lib.repositories

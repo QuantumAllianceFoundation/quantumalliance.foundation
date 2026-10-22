@@ -432,6 +432,7 @@ def _load_kind(
         return []
     entries = []
     seen: set[str] = set()
+    slugs: dict[str, str] = {}
     for index, raw in enumerate(raw_entries, start=1):
         entry = _build_entry(kind, fields, raw, index, filename, errors)
         if entry is None:
@@ -440,6 +441,21 @@ def _load_kind(
         if name.casefold() in seen:
             errors.append(f"{filename}: {name}: {name_key}: duplicate (names compare case-insensitively)")
             continue
+        if kind == "libraries":
+            slug = library_slug(name)
+            if not slug:
+                errors.append(
+                    f"{filename}: {name}: name: needs at least one letter or digit "
+                    "for its page address"
+                )
+                continue
+            if slug in slugs:
+                errors.append(
+                    f'{filename}: {name}: name: page address "{slug}" '
+                    f"is already used by {slugs[slug]}"
+                )
+                continue
+            slugs[slug] = name
         seen.add(name.casefold())
         entries.append(entry)
     return entries

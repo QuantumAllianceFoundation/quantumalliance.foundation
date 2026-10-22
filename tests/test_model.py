@@ -221,6 +221,22 @@ url = "https://example.org/wallet"
         self.assertEqual(len(errors), 2)
         self.assertIn("website", errors[0])
 
+    def test_rejects_empty_library_slug(self):
+        errors = self.errors_for(libraries=LIBRARY.replace("TestLib", "+++"))
+        self.assertEqual(
+            errors,
+            ["libraries.toml: +++: name: needs at least one letter or digit for its page address"],
+        )
+
+    def test_rejects_colliding_library_slugs(self):
+        errors = self.errors_for(
+            libraries=LIBRARY.replace("TestLib", "C") + LIBRARY.replace("TestLib", "C++")
+        )
+        self.assertEqual(
+            errors,
+            ['libraries.toml: C++: name: page address "c" is already used by C'],
+        )
+
     def test_rejects_duplicate_names_case_insensitive(self):
         errors = self.errors_for(
             blockchains=CHAIN + CHAIN.replace("Quantus", "quantus")
