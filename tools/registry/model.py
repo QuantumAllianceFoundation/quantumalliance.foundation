@@ -27,10 +27,14 @@ CATEGORY_LABELS: dict[str, str] = {
 FAMILIES = ("hash-based", "lattice", "other")
 SAFETY_BY_FAMILY = {"hash-based": "High", "lattice": "Medium", "other": "Low"}
 SAFETY_RANK = {"High": 0, "Medium": 1, "Low": 2}
+SAFETY_LEVELS = ("High", "Medium", "Low")
+FAMILY_LABELS = {"hash-based": "hash-based", "lattice": "lattice-based", "other": "other"}
 MAX_LINKS = 2
 MAX_NOTE_WORDS = 5
 MAX_SUMMARY_WORDS = 80
+MAX_RATIONALE_WORDS = 60
 MAX_PAPERS = 3
+MAX_REPOSITORIES = 4
 MAX_LOGO_BYTES = 65536
 LOGO_EXTENSIONS = (".svg", ".png", ".webp")
 MATURITIES = ("experimental", "pre-production", "production")
@@ -49,6 +53,7 @@ class Algorithm:
     family: str
     url: str
     summary: str
+    rationale: str
     papers: tuple[Link, ...]
 
 
@@ -72,13 +77,27 @@ class Chain:
 
 
 @dataclass(frozen=True)
+class Repository:
+    language: str
+    url: str
+
+
+@dataclass(frozen=True)
+class Audit:
+    auditor: str
+    url: str
+    logo: str | None
+
+
+@dataclass(frozen=True)
 class Library:
     name: str
-    source: str
+    repositories: tuple[Repository, ...]
     algorithms: tuple[str, ...]
+    hybrid: bool
     maturity: str
     blockchain_friendly: bool
-    audits: tuple[Link, ...]
+    audits: tuple[Audit, ...]
     min_signature: Size | None
     min_public_key: Size | None
     note: str | None
@@ -179,6 +198,14 @@ def _summary(value: Any) -> str:
     return text
 
 
+def _rationale(value: Any) -> str:
+    text = _text(value)
+    words = len(text.split())
+    if words > MAX_RATIONALE_WORDS:
+        raise ValueError(f"must be at most {MAX_RATIONALE_WORDS} words (got {words})")
+    return text
+
+
 _SCRIPT = re.compile(r"<script", re.IGNORECASE)
 _EVENT_ATTRIBUTE = re.compile(r"\son[a-z]+\s*=", re.IGNORECASE)
 
@@ -231,18 +258,25 @@ def _list_of(
 
 
 def _table(
-    build: Callable[..., Any], **fields: Callable[[Any], Any]
+    build: Callable[..., Any],
+    optional: Mapping[str, Callable[[Any], Any]] | None = None,
+    **fields: Callable[[Any], Any],
 ) -> Callable[[Any], Any]:
+    """Build a table validator; optional keys default to None when absent."""
+    optional = optional or {}
+
     def check(value: Any) -> Any:
         if not isinstance(value, dict):
             raise ValueError("must be a table")
-        extra = sorted(set(value) - set(fields))
+        extra = sorted(set(value) - set(fields) - set(optional))
         if extra:
             raise ValueError(f"unknown key(s): {', '.join(extra)}")
         missing = [k for k in fields if k not in value]
         if missing:
             raise ValueError(f"missing key(s): {', '.join(missing)}")
-        return build(**{k: fields[k](value[k]) for k in fields})
+        built = {k: fields[k](value[k]) for k in fields}
+        built.update({k: optional[k](value[k]) if k in value else None for k in optional})
+        return build(**built)
 
     return check
 
@@ -254,6 +288,13 @@ def _positive_int(value: Any) -> int:
 
 
 _link = _table(Link, title=_text, url=_url)
+_repository = _table(Repository, language=_text, url=_url)
+
+
+def _audit(auditors_dir: Path) -> Callable[[Any], Any]:
+    return _table(Audit, {"logo": _logo(auditors_dir)}, auditor=_text, url=_url)
+
+
 _size = _table(Size, bytes=_positive_int, parameter_set=_text)
 
 _REQUIRED = object()
@@ -269,6 +310,7 @@ _SPECS: dict[str, tuple[str, type, dict[str, tuple[Callable[[Any], Any], Any]], 
             "family": (_choice(FAMILIES), _REQUIRED),
             "url": (_url, _REQUIRED),
             "summary": (_summary, _REQUIRED),
+            "rationale": (_rationale, _REQUIRED),
             "papers": (_list_of(_link, non_empty=True, max_items=MAX_PAPERS), _REQUIRED),
         },
         "id",
@@ -293,11 +335,15 @@ _SPECS: dict[str, tuple[str, type, dict[str, tuple[Callable[[Any], Any], Any]], 
         Library,
         {
             "name": (_text, _REQUIRED),
-            "source": (_url, _REQUIRED),
+            "repositories": (
+                _list_of(_repository, non_empty=True, max_items=MAX_REPOSITORIES),
+                _REQUIRED,
+            ),
             "algorithms": (_list_of(_text, non_empty=True), _REQUIRED),
+            "hybrid": (_flag, _REQUIRED),
             "maturity": (_choice(MATURITIES), _REQUIRED),
             "blockchain_friendly": (_flag, _REQUIRED),
-            "audits": (_list_of(_link), ()),
+            "audits": (_list_of(_audit(Path())), ()),
             "min_signature": (_size, None),
             "min_public_key": (_size, None),
             "note": (_note, None),
@@ -355,13 +401,15 @@ def _build_entry(
 
 
 def _load_kind(
-    data_dir: Path, logos_dir: Path, kind: str, errors: list[str]
+    data_dir: Path, logos_dir: Path, auditors_dir: Path, kind: str, errors: list[str]
 ) -> list[Any]:
     filename = f"{kind}.toml"
     array, _, spec_fields, name_key = _SPECS[kind]
     fields = dict(spec_fields)
     if kind == "blockchains":
         fields["logo"] = (_logo(logos_dir), None)
+    if kind == "libraries":
+        fields["audits"] = (_list_of(_audit(auditors_dir)), ())
     try:
         text = (data_dir / filename).read_text(encoding="utf-8-sig")
         doc = tomllib.loads(text)
@@ -411,19 +459,25 @@ def _check_algorithm_refs(
             )
 
 
-def load_registry(data_dir: Path, logos_dir: Path | None = None) -> Registry:
+def load_registry(
+    data_dir: Path, logos_dir: Path | None = None, auditors_dir: Path | None = None
+) -> Registry:
     """Load and validate the four registry files, raising one RegistryError.
 
     Chain logos are read from logos_dir, which defaults to
-    assets/registry/logos next to the registry directory.
+    assets/registry/logos next to the registry directory. Auditor logos are
+    read from auditors_dir, which defaults to assets/registry/auditors.
     """
+    assets = data_dir.parent.parent / "assets" / "registry"
     if logos_dir is None:
-        logos_dir = data_dir.parent.parent / "assets" / "registry" / "logos"
+        logos_dir = assets / "logos"
+    if auditors_dir is None:
+        auditors_dir = assets / "auditors"
     errors: list[str] = []
-    algorithms = _load_kind(data_dir, logos_dir, "algorithms", errors)
-    chains = _load_kind(data_dir, logos_dir, "blockchains", errors)
-    libraries = _load_kind(data_dir, logos_dir, "libraries", errors)
-    products = _load_kind(data_dir, logos_dir, "products", errors)
+    algorithms = _load_kind(data_dir, logos_dir, auditors_dir, "algorithms", errors)
+    chains = _load_kind(data_dir, logos_dir, auditors_dir, "blockchains", errors)
+    libraries = _load_kind(data_dir, logos_dir, auditors_dir, "libraries", errors)
+    products = _load_kind(data_dir, logos_dir, auditors_dir, "products", errors)
     catalog = {a.id: a for a in algorithms}
     _check_algorithm_refs("blockchains.toml", chains, catalog, errors)
     _check_algorithm_refs("libraries.toml", libraries, catalog, errors)
@@ -432,10 +486,33 @@ def load_registry(data_dir: Path, logos_dir: Path | None = None) -> Registry:
     return Registry(catalog, tuple(chains), tuple(libraries), tuple(products))
 
 
+def algorithm_safety(alg: Algorithm) -> str:
+    """Return the safety rating of one algorithm from its family."""
+    return SAFETY_BY_FAMILY[alg.family]
+
+
+def _best_family(lib: Library, algorithms: Mapping[str, Algorithm]) -> str:
+    families = [algorithms[a].family for a in lib.algorithms]
+    return min(families, key=lambda f: SAFETY_RANK[SAFETY_BY_FAMILY[f]])
+
+
 def library_safety(lib: Library, algorithms: Mapping[str, Algorithm]) -> str:
-    """Return the highest safety rating among the library's algorithms."""
-    ratings = [SAFETY_BY_FAMILY[algorithms[a].family] for a in lib.algorithms]
-    return min(ratings, key=SAFETY_RANK.__getitem__)
+    """Rate a library: hybrid is High; otherwise its best family drops one level."""
+    if lib.hybrid:
+        return "High"
+    best = SAFETY_RANK[SAFETY_BY_FAMILY[_best_family(lib, algorithms)]]
+    return SAFETY_LEVELS[min(best + 1, len(SAFETY_LEVELS) - 1)]
+
+
+def library_safety_reason(lib: Library, algorithms: Mapping[str, Algorithm]) -> str:
+    """Return a short sentence that explains the library's safety rating."""
+    if lib.hybrid:
+        return "Hybrid design: a classical and a post-quantum signature must both verify."
+    family = FAMILY_LABELS[_best_family(lib, algorithms)]
+    return (
+        f"Best algorithm family is {family}; "
+        "without a hybrid design the rating drops one level."
+    )
 
 
 def library_slug(name: str) -> str:

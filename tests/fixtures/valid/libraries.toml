@@ -1,6 +1,8 @@
 [[library]]
 name = "TestLib"
-source = "https://example.org/testlib"
+repositories = [{ language = "Rust", url = "https://example.org/testlib" }]
 algorithms = ["ml-dsa"]
+hybrid = false
 maturity = "production"
 blockchain_friendly = false
+audits = [{ auditor = "Test Auditor", url = "https://example.org/audit", logo = "auditor.svg" }]

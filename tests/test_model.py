@@ -6,13 +6,17 @@ from tools.registry.model import (
     Algorithm,
     Library,
     RegistryError,
+    Repository,
+    algorithm_safety,
     library_safety,
+    library_safety_reason,
     library_slug,
     load_registry,
 )
 
 FIXTURES = Path(__file__).parent / "fixtures"
 LOGOS = FIXTURES / "valid" / "logos"
+AUDITORS = FIXTURES / "valid" / "auditors"
 
 ALGORITHMS = """
 [[algorithm]]
@@ -21,6 +25,7 @@ name = "ML-DSA"
 family = "lattice"
 url = "https://csrc.nist.gov/pubs/fips/204/final"
 summary = "A lattice-based signature scheme."
+rationale = "Relies on structured lattice assumptions with mature cryptanalysis."
 papers = [{ title = "CRYSTALS-Dilithium (2018)", url = "https://example.org/dilithium" }]
 """
 
@@ -37,8 +42,9 @@ algorithms = ["ml-dsa"]
 LIBRARY = """
 [[library]]
 name = "TestLib"
-source = "https://example.org/testlib"
+repositories = [{ language = "Rust", url = "https://example.org/testlib" }]
 algorithms = ["ml-dsa"]
+hybrid = false
 maturity = "production"
 blockchain_friendly = false
 """
@@ -83,7 +89,7 @@ class LoadRegistryTest(RegistryTestCase):
         self.assertIn("not valid UTF-8", message)
 
     def test_loads_valid_registry(self):
-        reg = load_registry(FIXTURES / "valid")
+        reg = load_registry(FIXTURES / "valid", auditors_dir=AUDITORS)
         self.assertEqual(reg.algorithms["ml-dsa"].family, "lattice")
         self.assertEqual(reg.chains[0].algorithms, ("ml-dsa",))
         self.assertIsNone(reg.libraries[0].min_signature)
@@ -93,7 +99,7 @@ class LoadRegistryTest(RegistryTestCase):
         write_data(
             self.tmp,
             libraries=LIBRARY
-            + 'audits = [{ title = "Audit", url = "https://example.org/a" }]\n'
+            + 'audits = [{ auditor = "Audit Co", url = "https://example.org/a" }]\n'
             + 'min_signature = { bytes = 666, parameter_set = "Falcon-512" }\n'
             + 'note = "Fast"\n'
             + 'links = [{ title = "Docs", url = "https://example.org/d" }]\n',
@@ -108,7 +114,8 @@ url = "https://example.org/wallet"
         )
         reg = load_registry(self.tmp)
         lib = reg.libraries[0]
-        self.assertEqual(lib.audits[0].title, "Audit")
+        self.assertEqual(lib.audits[0].auditor, "Audit Co")
+        self.assertIsNone(lib.audits[0].logo)
         assert lib.min_signature is not None
         self.assertEqual(lib.min_signature.bytes, 666)
         self.assertEqual(lib.min_signature.parameter_set, "Falcon-512")
@@ -185,7 +192,7 @@ url = "https://example.org/wallet"
         self.assertEqual(reg.libraries[0].note, "one two three four five")
 
     def test_note_and_links_optional(self):
-        reg = load_registry(FIXTURES / "valid")
+        reg = load_registry(FIXTURES / "valid", auditors_dir=AUDITORS)
         self.assertIsNone(reg.chains[0].note)
         self.assertEqual(reg.chains[0].links, ())
         self.assertIsNone(reg.libraries[0].note)
@@ -269,7 +276,7 @@ class AlgorithmContentTest(RegistryTestCase):
         return [e for e in errors if e.startswith("algorithms.toml:")]
 
     def test_loads_summary_and_papers(self):
-        alg = load_registry(FIXTURES / "valid").algorithms["ml-dsa"]
+        alg = load_registry(FIXTURES / "valid", auditors_dir=AUDITORS).algorithms["ml-dsa"]
         self.assertTrue(alg.summary)
         self.assertEqual(len(alg.papers), 1)
         self.assertEqual(alg.papers[0].url, "https://csrc.nist.gov/pubs/fips/204/final")
@@ -297,6 +304,37 @@ class AlgorithmContentTest(RegistryTestCase):
             algorithms=ALGORITHMS.replace("A lattice-based signature scheme.", eighty),
         )
         self.assertEqual(load_registry(self.tmp).algorithms["ml-dsa"].summary, eighty)
+
+    def test_rejects_missing_rationale(self):
+        errors = self.algorithm_errors(
+            ALGORITHMS.replace(
+                'rationale = "Relies on structured lattice assumptions with mature cryptanalysis."\n',
+                "",
+            )
+        )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("algorithms.toml: ml-dsa: rationale: required", errors[0])
+
+    def test_rejects_rationale_over_60_words(self):
+        errors = self.algorithm_errors(
+            ALGORITHMS.replace(
+                "Relies on structured lattice assumptions with mature cryptanalysis.",
+                " ".join(["word"] * 61),
+            )
+        )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("algorithms.toml: ml-dsa: rationale:", errors[0])
+        self.assertIn("60 words", errors[0])
+
+    def test_accepts_rationale_of_60_words(self):
+        sixty = " ".join(["word"] * 60)
+        write_data(
+            self.tmp,
+            algorithms=ALGORITHMS.replace(
+                "Relies on structured lattice assumptions with mature cryptanalysis.", sixty
+            ),
+        )
+        self.assertEqual(load_registry(self.tmp).algorithms["ml-dsa"].rationale, sixty)
 
     def test_rejects_zero_or_more_than_three_papers(self):
         paper = '{ title = "P", url = "https://example.org/p" }'
@@ -339,7 +377,7 @@ class ChainLogoTest(RegistryTestCase):
         self.assertEqual([c.logo for c in reg.chains], ["mark.svg", "mark.png"])
 
     def test_logo_is_optional(self):
-        self.assertIsNone(load_registry(FIXTURES / "valid").chains[0].logo)
+        self.assertIsNone(load_registry(FIXTURES / "valid", auditors_dir=AUDITORS).chains[0].logo)
 
     def test_default_logos_dir_is_assets_registry_logos(self):
         site = self.tmp / "site"
@@ -411,16 +449,17 @@ class LibrarySlugTest(unittest.TestCase):
 class LibrarySafetyTest(unittest.TestCase):
     def setUp(self):
         self.algorithms = {
-            "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "https://a.org", "S", ()),
-            "slh-dsa": Algorithm("slh-dsa", "SLH-DSA", "hash-based", "https://b.org", "S", ()),
-            "other-alg": Algorithm("other-alg", "Other", "other", "https://c.org", "S", ()),
+            "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "https://a.org", "S", "R", ()),
+            "slh-dsa": Algorithm("slh-dsa", "SLH-DSA", "hash-based", "https://b.org", "S", "R", ()),
+            "other-alg": Algorithm("other-alg", "Other", "other", "https://c.org", "S", "R", ()),
         }
 
-    def lib(self, *ids: str) -> Library:
+    def lib(self, *ids: str, hybrid: bool = False) -> Library:
         return Library(
             name="L",
-            source="https://x.org",
+            repositories=(Repository("Rust", "https://x.org"),),
             algorithms=ids,
+            hybrid=hybrid,
             maturity="production",
             blockchain_friendly=False,
             audits=(),
@@ -430,10 +469,165 @@ class LibrarySafetyTest(unittest.TestCase):
             links=(),
         )
 
-    def test_library_safety_is_highest_of_its_algorithms(self):
-        self.assertEqual(library_safety(self.lib("ml-dsa", "slh-dsa"), self.algorithms), "High")
-        self.assertEqual(library_safety(self.lib("ml-dsa"), self.algorithms), "Medium")
+    def test_library_safety_hybrid_is_high(self):
+        for ids in (("ml-dsa",), ("other-alg",), ("slh-dsa", "ml-dsa")):
+            with self.subTest(ids=ids):
+                lib = self.lib(*ids, hybrid=True)
+                self.assertEqual(library_safety(lib, self.algorithms), "High")
+
+    def test_library_safety_nonhybrid_hash_is_medium(self):
+        self.assertEqual(library_safety(self.lib("slh-dsa"), self.algorithms), "Medium")
+
+    def test_library_safety_nonhybrid_lattice_is_low(self):
+        self.assertEqual(library_safety(self.lib("ml-dsa"), self.algorithms), "Low")
         self.assertEqual(library_safety(self.lib("other-alg"), self.algorithms), "Low")
+
+    def test_library_safety_uses_best_family(self):
+        lib = self.lib("ml-dsa", "slh-dsa")
+        self.assertEqual(library_safety(lib, self.algorithms), "Medium")
+
+    def test_algorithm_safety_family_rule(self):
+        self.assertEqual(algorithm_safety(self.algorithms["slh-dsa"]), "High")
+        self.assertEqual(algorithm_safety(self.algorithms["ml-dsa"]), "Medium")
+        self.assertEqual(algorithm_safety(self.algorithms["other-alg"]), "Low")
+
+    def test_library_safety_reason_hybrid(self):
+        lib = self.lib("ml-dsa", hybrid=True)
+        self.assertEqual(
+            library_safety_reason(lib, self.algorithms),
+            "Hybrid design: a classical and a post-quantum signature must both verify.",
+        )
+
+    def test_library_safety_reason_best_family(self):
+        cases = {
+            ("ml-dsa",): "lattice-based",
+            ("ml-dsa", "slh-dsa"): "hash-based",
+            ("other-alg",): "other",
+        }
+        for ids, family in cases.items():
+            with self.subTest(ids=ids):
+                self.assertEqual(
+                    library_safety_reason(self.lib(*ids), self.algorithms),
+                    f"Best algorithm family is {family}; "
+                    "without a hybrid design the rating drops one level.",
+                )
+
+
+class LibraryFieldsTest(RegistryTestCase):
+    def library_errors(self, libraries: str) -> list[str]:
+        return [e for e in self.errors_for(libraries=libraries) if e.startswith("libraries.toml:")]
+
+    def test_loads_repositories_hybrid_and_audits(self):
+        reg = load_registry(FIXTURES / "valid", auditors_dir=AUDITORS)
+        lib = reg.libraries[0]
+        self.assertEqual(lib.repositories[0], Repository("Rust", "https://example.org/testlib"))
+        self.assertFalse(lib.hybrid)
+        self.assertEqual(lib.audits[0].auditor, "Test Auditor")
+        self.assertEqual(lib.audits[0].logo, "auditor.svg")
+
+    def test_rejects_missing_hybrid(self):
+        errors = self.library_errors(LIBRARY.replace("hybrid = false\n", ""))
+        self.assertEqual(len(errors), 1)
+        self.assertIn("libraries.toml: TestLib: hybrid: required", errors[0])
+
+    def test_rejects_zero_or_five_repositories(self):
+        repo = '{ language = "Rust", url = "https://example.org/r" }'
+        cases = {
+            "repositories = []": "must not be empty",
+            "repositories = [" + ", ".join([repo] * 5) + "]": "at most 4",
+        }
+        for repositories, message in cases.items():
+            with self.subTest(repositories=repositories[:20]):
+                text = LIBRARY.replace(
+                    'repositories = [{ language = "Rust", url = "https://example.org/testlib" }]',
+                    repositories,
+                )
+                errors = self.library_errors(text)
+                self.assertEqual(len(errors), 1)
+                self.assertIn("libraries.toml: TestLib: repositories:", errors[0])
+                self.assertIn(message, errors[0])
+
+    def test_rejects_repository_without_language(self):
+        text = LIBRARY.replace('language = "Rust", ', "")
+        errors = self.library_errors(text)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("libraries.toml: TestLib: repositories:", errors[0])
+        self.assertIn("language", errors[0])
+
+    def test_rejects_old_source_key(self):
+        errors = self.library_errors(LIBRARY + 'source = "https://example.org/x"\n')
+        self.assertEqual(len(errors), 1)
+        self.assertIn("libraries.toml: TestLib: source: unknown key", errors[0])
+
+    def test_audit_requires_auditor_and_url(self):
+        for audit, missing in (
+            ('{ url = "https://example.org/a" }', "auditor"),
+            ('{ auditor = "Audit Co" }', "url"),
+        ):
+            with self.subTest(missing=missing):
+                errors = self.library_errors(LIBRARY + f"audits = [{audit}]\n")
+                self.assertEqual(len(errors), 1)
+                self.assertIn("libraries.toml: TestLib: audits:", errors[0])
+                self.assertIn(missing, errors[0])
+
+
+class AuditLogoTest(RegistryTestCase):
+    def audit_errors(self, logo: str) -> list[str]:
+        audit = f'audits = [{{ auditor = "A", url = "https://example.org/a", logo = "{logo}" }}]\n'
+        return self.errors_for(libraries=LIBRARY + audit)
+
+    def setUp(self):
+        super().setUp()
+        self.auditors = self.tmp / "auditors"
+        self.auditors.mkdir()
+
+    def errors_for(self, **files: str) -> list[str]:
+        write_data(self.tmp, **files)
+        with self.assertRaises(RegistryError) as cm:
+            load_registry(self.tmp, auditors_dir=self.auditors)
+        return cm.exception.errors
+
+    def test_accepts_audit_logo(self):
+        (self.auditors / "a.svg").write_bytes((AUDITORS / "auditor.svg").read_bytes())
+        audit = 'audits = [{ auditor = "A", url = "https://example.org/a", logo = "a.svg" }]\n'
+        write_data(self.tmp, libraries=LIBRARY + audit)
+        reg = load_registry(self.tmp, auditors_dir=self.auditors)
+        self.assertEqual(reg.libraries[0].audits[0].logo, "a.svg")
+
+    def test_default_auditors_dir_is_assets_registry_auditors(self):
+        site = self.tmp / "site"
+        data = site / "registry" / "data"
+        auditors = site / "assets" / "registry" / "auditors"
+        data.mkdir(parents=True)
+        auditors.mkdir(parents=True)
+        (auditors / "a.svg").write_bytes((AUDITORS / "auditor.svg").read_bytes())
+        audit = 'audits = [{ auditor = "A", url = "https://example.org/a", logo = "a.svg" }]\n'
+        write_data(data, libraries=LIBRARY + audit)
+        self.assertEqual(load_registry(data).libraries[0].audits[0].logo, "a.svg")
+
+    def test_rejects_audit_logo_missing_file(self):
+        errors = self.audit_errors("nope.svg")
+        self.assertEqual(len(errors), 1)
+        self.assertIn("libraries.toml: TestLib: audits:", errors[0])
+        self.assertIn("nope.svg", errors[0])
+
+    def test_rejects_svg_audit_logo_with_script(self):
+        (self.auditors / "bad.svg").write_text(
+            '<svg xmlns="http://www.w3.org/2000/svg"><script>1</script></svg>',
+            encoding="utf-8",
+        )
+        errors = self.audit_errors("bad.svg")
+        self.assertEqual(len(errors), 1)
+        self.assertIn("libraries.toml: TestLib: audits:", errors[0])
+        self.assertIn("<script>", errors[0])
+
+    def test_rejects_audit_logo_path_and_extension(self):
+        (self.auditors / "a.gif").write_bytes(b"GIF89a")
+        for name in ("../a.svg", "a.gif"):
+            with self.subTest(name=name):
+                errors = self.audit_errors(name)
+                self.assertEqual(len(errors), 1)
+                self.assertIn("libraries.toml: TestLib: audits:", errors[0])
 
 
 if __name__ == "__main__":
