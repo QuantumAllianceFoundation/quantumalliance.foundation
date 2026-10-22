@@ -493,8 +493,8 @@ class RenderTests(unittest.TestCase):
                 "Tx &lt;i&gt;",
                 ">Algorithms<",
                 '<a href="/registry/algorithms/ml-dsa/" class="alg">ML-DSA</a>',
-                'aria-label="Ch&lt;ain&gt; website"',
-                'aria-label="Ch&lt;ain&gt; source code"',
+                "</svg> Website</a>",
+                "</svg> Source</a>",
                 "Short &lt;note&gt;",
                 '<a href="https://example.org/docs">Docs</a>',
                 "registry/data/blockchains.toml",
@@ -502,9 +502,47 @@ class RenderTests(unittest.TestCase):
         ]
         self.assertEqual(positions, sorted(positions))
 
+    def test_chain_card_website_and_source_text_is_inside_the_link(self):
+        out = render_chain(
+            registry(chains=[chain("Gh", website="https://example.org/", source="https://github.com/a/b")]),
+            "gh",
+        )
+        for url, text in (("https://example.org/", "Website"), ("https://github.com/a/b", "Source")):
+            self.assertRegex(
+                out, rf'<a href="{re.escape(url)}" class="icon-link"><svg[^>]*>.*?</svg> {text}</a>'
+            )
+        self.assertNotIn("aria-label", out.split("Algorithms")[1].split("Note and links")[0])
+
+    def test_chain_card_note_and_links_are_separate_elements(self):
+        c = chain(
+            "Ch",
+            note="Short <note>",
+            links=(Link("Docs", "https://example.org/docs"), Link("Spec", "https://example.org/spec")),
+        )
+        out = render_chain(registry(chains=[c]), "ch")
+        self.assertIn("<p>Short &lt;note&gt;</p>", out)
+        self.assertIn(
+            '<ul class="card-links"><li><a href="https://example.org/docs">Docs</a></li>'
+            '<li><a href="https://example.org/spec">Spec</a></li></ul>',
+            out,
+        )
+
+    def test_library_note_and_links_are_separate_elements(self):
+        lib = library(
+            "Hash",
+            note="Lib note",
+            links=(Link("Docs", "https://example.org/docs"),),
+        )
+        out = render_library(registry(libraries=[lib]), "hash")
+        self.assertIn("<p>Lib note</p>", out)
+        self.assertIn(
+            '<ul class="card-links"><li><a href="https://example.org/docs">Docs</a></li></ul>', out
+        )
+
     def test_chain_card_without_algorithms_or_logo(self):
         out = render_chain(registry(chains=[chain("Plain")]), "plain")
-        self.assertIn("None deployed", out)
+        self.assertIn("None listed", out)
+        self.assertNotIn("None deployed", out)
         self.assertNotIn("<img", out)
 
     def test_chain_card_has_edit_links(self):

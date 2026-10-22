@@ -77,12 +77,22 @@ def _external(url: str, text: str) -> str:
     return f'<a href="{_e(url)}" target="_blank" rel="noopener noreferrer">{_e(text)}</a>'
 
 
-def _icon_link(url: str, label: str, symbol: str) -> str:
+def _icon_link(url: str, label: str, symbol: str, text: str = "") -> str:
+    """Icon link. With `text`, the visible text names the link and is part of it."""
+    name = "" if text else f' aria-label="{_e(label)}"'
     return (
-        f'<a href="{_e(url)}" class="icon-link" aria-label="{_e(label)}">'
+        f'<a href="{_e(url)}" class="icon-link"{name}>'
         '<svg class="icon" aria-hidden="true" focusable="false">'
-        f'<use href="{SPRITE}#{symbol}"/></svg></a>'
+        f'<use href="{SPRITE}#{symbol}"/></svg>{" " + _e(text) if text else ""}</a>'
     )
+
+
+def _note_and_links(note: str | None, links) -> str:
+    parts = [f"<p>{_e(note)}</p>"] if note else []
+    if links:
+        items = "".join(f"<li>{_link(link.url, link.title)}</li>" for link in links)
+        parts.append(f'<ul class="card-links">{items}</ul>')
+    return "".join(parts) or "—"
 
 
 def _source_symbol(url: str) -> str:
@@ -432,9 +442,6 @@ def render_library(reg: Registry, slug: str) -> str:
     repos = "\n".join(
         f"          <li>{_repo_icon_link(lib, r)} {_e(r.language)}</li>" for r in lib.repositories
     )
-    notes = " ".join(
-        ([_e(lib.note)] if lib.note else []) + [_link(link.url, link.title) for link in lib.links]
-    )
     rows = [
         _detail_row("Repositories", f'<ul class="repo-list">\n{repos}\n        </ul>'),
         _detail_row("Algorithms", _algorithm_chips(reg, lib.algorithms)),
@@ -448,7 +455,7 @@ def render_library(reg: Registry, slug: str) -> str:
         _detail_row("Blockchain friendly", _bool_icon(lib.blockchain_friendly)),
         _detail_row("Minimum signature", _e(format_size(lib.min_signature))),
         _detail_row("Minimum public key", _e(format_size(lib.min_public_key))),
-        _detail_row("Note and links", notes or "—"),
+        _detail_row("Note and links", _note_and_links(lib.note, lib.links)),
     ]
     return (
         '    <section class="section">\n'
@@ -468,11 +475,7 @@ def render_chain(reg: Registry, slug: str) -> str:
     if chain is None:
         raise ValueError(f"unknown chain slug: {slug}")
     algorithms = (
-        _algorithm_chips(reg, chain.algorithms) if chain.algorithms else "None deployed"
-    )
-    notes = " ".join(
-        ([_e(chain.note)] if chain.note else [])
-        + [_link(link.url, link.title) for link in chain.links]
+        _algorithm_chips(reg, chain.algorithms) if chain.algorithms else "None listed"
     )
     rows = [
         _detail_row("Consensus", _rating(chain.consensus, chain.consensus_reason)),
@@ -480,14 +483,15 @@ def render_chain(reg: Registry, slug: str) -> str:
         _detail_row("Algorithms", algorithms),
         _detail_row(
             "Website",
-            _icon_link(chain.website, f"{chain.name} website", "globe") + " Website",
+            _icon_link(chain.website, f"{chain.name} website", "globe", "Website"),
         ),
         _detail_row(
             "Source",
-            _icon_link(chain.source, f"{chain.name} source code", _source_symbol(chain.source))
-            + " Source",
+            _icon_link(
+                chain.source, f"{chain.name} source code", _source_symbol(chain.source), "Source"
+            ),
         ),
-        _detail_row("Note and links", notes or "—"),
+        _detail_row("Note and links", _note_and_links(chain.note, chain.links)),
     ]
     return (
         '    <section class="section">\n'

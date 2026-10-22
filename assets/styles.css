@@ -56,8 +56,8 @@ body {
 
 a { color: inherit; text-decoration: none; transition: color .15s, border-color .15s, opacity .15s; }
 a:hover { color: var(--white); }
-p a, li a, td a { color: var(--signal); }
-p a:hover, li a:hover, td a:hover { text-decoration: underline; color: var(--signal); }
+p a, li a, td a, dd a { color: var(--signal); }
+p a:hover, li a:hover, td a:hover, dd a:hover { text-decoration: underline; color: var(--signal); }
 
 h1, h2, h3, h4 { margin: 0; font-weight: 500; color: var(--white); line-height: 1.2; }
 p { margin: 0; }
@@ -334,6 +334,8 @@ a.alg:hover { border-color: var(--content-40); }
 .detail-list > div { display: grid; grid-template-columns: 200px 1fr; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--border-med); }
 .detail-list dt { color: var(--content-60); }
 .detail-list dd { margin: 0; }
+.card-links { list-style: none; margin: 0; padding: 0; }
+.detail-list dd p + .card-links { margin-top: 4px; }
 @media (max-width: 960px) { .detail-list > div { grid-template-columns: 1fr; gap: 4px; } }
 
 /* Libraries table: tighter cells so all 10 columns fit the content width */
