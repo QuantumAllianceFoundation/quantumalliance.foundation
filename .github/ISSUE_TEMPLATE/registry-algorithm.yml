@@ -67,6 +67,20 @@ body:
     validations:
       required: true
   - type: textarea
+    id: broken_reason
+    attributes:
+      label: "Broken: reason (at most 40 words)"
+      description: Fill this in only when a published attack breaks the scheme at its claimed parameters. Say what the attack does.
+    validations:
+      required: false
+  - type: input
+    id: broken_reference
+    attributes:
+      label: "Broken: attack reference URL"
+      description: HTTPS link to the paper that describes the attack.
+    validations:
+      required: false
+  - type: textarea
     id: evidence
     attributes:
       label: Source for this information

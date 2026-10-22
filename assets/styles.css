@@ -261,13 +261,23 @@ td:first-child { color: var(--white); font-weight: 500; white-space: nowrap; }
 .badge--no-signatures { border-color: var(--signal); background: transparent; color: var(--signal); }
 .badge--post-quantum-ready { border-color: var(--content-40); color: var(--content); }
 .badge--quantum-aware { border-color: var(--border-med); color: var(--content-60); }
+.badge--broken { border-color: #f87171; background: #f8717126; color: #f87171; font-weight: 600; }
 .badge--quantum-vulnerable { border: 1px dashed #f87171; background: #f8717114; color: #f87171; }
 
 .alg { display: inline-block; margin: 0 4px 4px 0; padding: 1px 8px; border: 1px solid var(--border-med); border-radius: 4px; font-family: var(--mono); font-size: .75rem; white-space: nowrap; }
+.alg--broken { border-color: #f87171; color: #f87171; }
 .alg small { color: var(--content-40); font-size: inherit; }
 .safety--high { color: var(--signal); }
 .safety--medium { color: var(--content); }
 .safety--low { color: var(--content-60); }
+.safety--broken { color: #f87171; }
+
+.callout { margin: 16px 0; padding: 12px 16px; border: 1px solid var(--border-med); border-left-width: 4px; border-radius: 4px; background: var(--surface); }
+.callout p { margin: 0; line-height: 1.5; }
+.callout--danger { border-color: #f87171; background: #f8717114; }
+.callout--danger a { color: #f87171; text-decoration: underline; }
+.warn-icon { display: inline-flex; margin-left: 6px; vertical-align: middle; color: #f87171; }
+.warn-icon .icon { width: 1em; height: 1em; }
 
 .legend + .muted { margin-bottom: 24px; }
 

@@ -5,6 +5,7 @@ from pathlib import Path
 from tools.registry.model import (
     Algorithm,
     Audit,
+    Broken,
     Chain,
     Library,
     Link,
@@ -755,6 +756,95 @@ class RenderTests(unittest.TestCase):
         template = "<title>$title</title>$description|$path|$body"
         out = render_page(template, title="T & U", description="D", path="/registry/", body="<b>x</b>")
         self.assertEqual(out, "<title>T &amp; U</title>D|/registry/|<b>x</b>")
+
+
+BROKEN_ALGS = {
+    **ALGS,
+    "rainbow": Algorithm(
+        "rainbow", "Rain<bow>", "other", "signature", "https://example.org/rb", "S", "R", (),
+        Broken("Key <recovery> attack.", Link("Attack & paper", "https://example.org/attack")),
+    ),
+}
+
+
+def broken_registry():
+    return Registry(
+        dict(BROKEN_ALGS),
+        (chain("Cell", algorithms=("rainbow", "ml-dsa")), chain("Clean", algorithms=("ml-dsa",))),
+        (library("BrokenLib", algorithms=("rainbow",)), library("GoodLib", algorithms=("ml-dsa",))),
+        (),
+    )
+
+
+def plain(html):
+    return re.sub(r"<[^>]+>", "", html)
+
+
+def row_for(html, name):
+    rows = html[html.index("<tbody"):].split("<tr>")[1:]
+    return next(r for r in rows if name in r)
+
+
+class BrokenWarningTests(unittest.TestCase):
+    def test_algorithm_page_broken_callout_and_badge(self):
+        out = render_algorithm(broken_registry(), "rainbow")
+        self.assertIn('<div class="callout callout--danger" role="note">', out)
+        self.assertIn("Do not trust: Rain&lt;bow&gt; is broken. Key &lt;recovery&gt; attack.", plain(out))
+        self.assertIn("Key &lt;recovery&gt; attack.", out)
+        self.assertIn("Attack &amp; paper</a>", out)
+        self.assertIn('href="https://example.org/attack"', out)
+        self.assertIn("badge--broken", out)
+        self.assertIn(">Broken</span>", out)
+        self.assertNotIn("Do not trust", render_algorithm(broken_registry(), "ml-dsa"))
+
+    def test_chain_card_warns_for_broken_algorithm(self):
+        reg = broken_registry()
+        out = render_chain(reg, "cell")
+        self.assertIn('<div class="callout callout--danger" role="note">', out)
+        self.assertIn("Do not trust Rain&lt;bow&gt; keys: Key &lt;recovery&gt; attack.", plain(out))
+        self.assertIn('href="https://example.org/attack"', out)
+        self.assertEqual(out.count("callout--danger"), 1)
+        self.assertNotIn("Do not trust", render_chain(reg, "clean"))
+
+    def test_library_card_warns_for_broken_algorithm(self):
+        reg = broken_registry()
+        out = render_library(reg, "brokenlib")
+        self.assertIn('<div class="callout callout--danger" role="note">', out)
+        self.assertIn("Do not trust Rain&lt;bow&gt; keys: Key &lt;recovery&gt; attack.", plain(out))
+        self.assertIn('href="https://example.org/attack"', out)
+        self.assertNotIn("Do not trust", render_library(reg, "goodlib"))
+
+    def test_table_rows_show_warning_icon_with_hidden_text(self):
+        reg = broken_registry()
+        icon = "#triangle-alert"
+        hidden = '<span class="visually-hidden">Uses a broken algorithm</span>'
+        pages = (
+            (render_blockchains(reg), "Cell", "Clean"),
+            (render_libraries(reg), "BrokenLib", "GoodLib"),
+            (render_algorithms_index(reg), "Rain&lt;bow&gt;", "ML-DSA"),
+        )
+        for html, bad, good in pages:
+            with self.subTest(bad=bad):
+                self.assertIn(icon, row_for(html, bad))
+                self.assertIn(hidden, row_for(html, bad))
+                self.assertNotIn(icon, row_for(html, good))
+                self.assertNotIn("Uses a broken algorithm", row_for(html, good))
+        self.assertIn(
+            'data-sort="cell"', row_for(render_blockchains(reg), "Cell")
+        )
+
+    def test_broken_chip_modifier(self):
+        out = render_libraries(broken_registry())
+        self.assertIn('class="alg alg--broken">Rain&lt;bow&gt;</a>', out)
+        self.assertIn('class="alg">ML-DSA</a>', out)
+        self.assertIn('class="alg alg--broken"', render_library(broken_registry(), "brokenlib"))
+
+    def test_broken_algorithms_sort_last_and_build(self):
+        reg = broken_registry()
+        out = render_libraries(reg)
+        self.assertLess(out.index("GoodLib"), out.index("BrokenLib"))
+        index = render_algorithms_index(reg)
+        self.assertIn('<td data-sort="3"><span class="safety safety--broken', index)
 
 
 if __name__ == "__main__":

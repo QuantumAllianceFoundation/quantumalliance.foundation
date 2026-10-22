@@ -11,6 +11,7 @@ from .model import (
     CATEGORY_LABELS,
     LAYER_VALUES,
     SAFETY_RANK,
+    Algorithm,
     Audit,
     Link,
     Registry,
@@ -19,7 +20,9 @@ from .model import (
     Library,
     Repository,
     algorithm_safety,
+    chain_broken_algorithms,
     chain_slug,
+    library_broken_algorithms,
     library_capabilities,
     library_safety,
     library_safety_reason,
@@ -104,7 +107,31 @@ def _algorithm_url(algorithm_id: str) -> str:
 
 
 def _safety_badge(safety: str) -> str:
-    return f'<span class="safety safety--{safety.lower()}">{safety}</span>'
+    extra = " badge badge--broken" if safety == "Broken" else ""
+    return f'<span class="safety safety--{safety.lower()}{extra}">{safety}</span>'
+
+
+WARNING_ICON = (
+    '<span class="warn-icon"><svg class="icon" aria-hidden="true" focusable="false">'
+    f'<use href="{SPRITE}#triangle-alert"/></svg>'
+    '<span class="visually-hidden">Uses a broken algorithm</span></span>'
+)
+
+
+def _callout(heading: str, reason: str, reference: Link) -> str:
+    return (
+        '<div class="callout callout--danger" role="note">'
+        f"<p><strong>{_e(heading)}</strong> {_e(reason)} "
+        f"{_external(reference.url, reference.title)}</p></div>"
+    )
+
+
+def _broken_callouts(broken: Sequence[Algorithm]) -> str:
+    return "".join(
+        _callout(f"Do not trust {a.name} keys:", a.broken.reason, a.broken.reference)
+        for a in broken
+        if a.broken
+    )
 
 
 def _library_url(lib: Library) -> str:
@@ -123,7 +150,9 @@ def _capability_tags(reg: Registry, lib: Library) -> str:
 
 def _algorithm_chips(reg: Registry, ids: Sequence[str]) -> str:
     return " ".join(
-        f'<a href="{_algorithm_url(a)}" class="alg">{_e(reg.algorithms[a].name)}</a>' for a in ids
+        f'<a href="{_algorithm_url(a)}" class="alg{" alg--broken" if reg.algorithms[a].broken else ""}">'
+        f"{_e(reg.algorithms[a].name)}</a>"
+        for a in ids
     )
 
 
@@ -322,7 +351,13 @@ def render_blockchains(reg: Registry) -> str:
         algs = [reg.algorithms[a] for a in c.algorithms]
         notes_cell, notes_extras = _notes_parts("blockchains", index, c.name, c.note, c.links)
         rows.append([
-            _td(_link_html(_chain_url(c), _chain_name(c)) + notes_extras, c.name.casefold(), "name-cell"),
+            _td(
+                _link_html(_chain_url(c), _chain_name(c))
+                + (WARNING_ICON if chain_broken_algorithms(c, reg.algorithms) else "")
+                + notes_extras,
+                c.name.casefold(),
+                "name-cell",
+            ),
             _layer_td(c.consensus),
             _layer_td(c.transactions),
             _td(
@@ -387,6 +422,7 @@ def render_libraries(reg: Registry) -> str:
         rows.append([
             _td(
                 _link(_library_url(lib), lib.name)
+                + (WARNING_ICON if library_broken_algorithms(lib, reg.algorithms) else "")
                 + f'<span class="cap-tags">{_capability_tags(reg, lib)}</span>'
                 + notes_extras,
                 lib.name.casefold(),
@@ -463,6 +499,7 @@ def render_library(reg: Registry, slug: str) -> str:
         '        <p class="eyebrow">Library</p>\n'
         f"        <h1>{_e(lib.name)}</h1>\n"
         f'        <p class="cap-tags">{_capability_tags(reg, lib)}</p>\n'
+        f"        {_broken_callouts(library_broken_algorithms(lib, reg.algorithms))}\n"
         '        <dl class="detail-list">\n' + "\n".join(rows) + "\n        </dl>\n"
         f"        {edit_links('libraries.toml', 'registry-library.yml')}\n"
         "      </div>\n"
@@ -498,6 +535,7 @@ def render_chain(reg: Registry, slug: str) -> str:
         '      <div class="wrap">\n'
         '        <p class="eyebrow">Blockchain</p>\n'
         f"        <h1>{_chain_name(chain, 32)}</h1>\n"
+        f"        {_broken_callouts(chain_broken_algorithms(chain, reg.algorithms))}\n"
         '        <dl class="detail-list">\n' + "\n".join(rows) + "\n        </dl>\n"
         f"        {edit_links('blockchains.toml', 'registry-blockchain.yml')}\n"
         "      </div>\n"
@@ -546,7 +584,10 @@ def render_algorithms_index(reg: Registry) -> str:
     for a in algorithms:
         count = len(_implementers(reg, a.id))
         rows.append([
-            _td(_link(_algorithm_url(a.id), a.name), a.name.casefold()),
+            _td(
+                _link(_algorithm_url(a.id), a.name) + (WARNING_ICON if a.broken else ""),
+                a.name.casefold(),
+            ),
             _td(_e(a.family), a.family),
             _td(
                 _safety_badge(algorithm_safety(a)),
@@ -573,6 +614,11 @@ def render_algorithm(reg: Registry, algorithm_id: str) -> str:
     a = reg.algorithms[algorithm_id]
     safety = algorithm_safety(a)
     libs = _implementers(reg, algorithm_id)
+    warning = (
+        _callout(f"Do not trust: {a.name} is broken.", a.broken.reason, a.broken.reference)
+        if a.broken
+        else ""
+    )
     papers = "\n".join(f"          <li>{_external(p.url, p.title)}</li>" for p in a.papers)
     implemented = (
         '<ul class="link-list">\n'
@@ -589,6 +635,7 @@ def render_algorithm(reg: Registry, algorithm_id: str) -> str:
         '      <div class="wrap">\n'
         '        <p class="eyebrow">Algorithm</p>\n'
         f"        <h1>{_e(a.name)}</h1>\n"
+        f"        {warning}\n"
         f'        <p class="muted">Family: {_e(a.family)}.</p>\n'
         f'        <p class="intro">{_e(a.summary)}</p>\n'
         f'        <p class="muted">Safety: {_safety_badge(safety)}</p>\n'

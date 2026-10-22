@@ -757,10 +757,6 @@ class AuditLogoTest(RegistryTestCase):
                 self.assertIn("libraries.toml: TestLib: audits:", errors[0])
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 BROKEN_REF = Link("Attack paper", "https://example.org/attack")
 
 
@@ -881,3 +877,7 @@ class BrokenLoadTest(RegistryTestCase):
         )
         errors = self.algorithm_errors(text)
         self.assertEqual(errors, ["algorithms.toml: ml-dsa: broken: unknown key(s): extra"])
+
+
+if __name__ == "__main__":
+    unittest.main()
