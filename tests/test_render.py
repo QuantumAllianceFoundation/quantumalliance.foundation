@@ -131,6 +131,18 @@ class RenderTests(unittest.TestCase):
         self.assertIn('popovertargetaction="hide"', out)
         self.assertIn('class="notes-popover"', out)
 
+    def test_notes_button_in_name_cell(self):
+        chains = [chain("A", note="Short note"), chain("B")]
+        out = render_blockchains(registry(chains=chains))
+        rows = re.findall(r"<tr>(.*?)</tr>", out[out.index("<tbody"):], re.S)
+        first_cell = re.match(r"<td[^>]*>.*?</td>", rows[0], re.S).group(0)
+        self.assertIn('popovertarget="notes-blockchains-0"', first_cell)
+        self.assertIn('<div id="notes-blockchains-0" popover', first_cell)
+        self.assertNotIn("popovertarget", rows[0][len(first_cell):])
+        self.assertNotIn("popovertarget", rows[1])
+        self.assertIn('<th scope="col" class="col-notes">Notes</th>', out)
+        self.assertEqual(rows[0].count('class="col-notes"'), 1)
+
     def test_empty_notes_has_no_popover(self):
         out = render_blockchains(registry(chains=[chain("A")]))
         self.assertIn('<td data-sort="">—</td>', out)

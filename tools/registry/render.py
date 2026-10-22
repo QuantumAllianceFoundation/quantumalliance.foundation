@@ -61,8 +61,9 @@ def _external(url: str, text: str) -> str:
     return f'<a href="{_e(url)}" target="_blank" rel="noopener noreferrer">{_e(text)}</a>'
 
 
-def _td(content: str, sort: str | int) -> str:
-    return f'<td data-sort="{_e(str(sort))}">{content}</td>'
+def _td(content: str, sort: str | int, css_class: str = "") -> str:
+    cls = f' class="{css_class}"' if css_class else ""
+    return f'<td{cls} data-sort="{_e(str(sort))}">{content}</td>'
 
 
 def _badge(layer: str) -> str:
@@ -73,31 +74,35 @@ def _layer_td(layer: str) -> str:
     return _td(_badge(layer), LAYER_VALUES.index(layer))
 
 
-def _notes_td(table: str, row: int, name: str, note: str | None, links: Sequence[Link]) -> str:
-    """Notes cell: inline text on wide screens, an icon button and popover on narrow ones."""
+def _notes_parts(table: str, row: int, name: str, note: str | None, links: Sequence[Link]):
+    """Return (notes cell, name-cell extras, sort value) for one row.
+
+    Wide screens show the inline notes cell. Narrow screens hide that cell and show the
+    icon button and popover that sit beside the name.
+    """
     if not note and not links:
-        return _td("—", "")
+        return _td("—", "", "col-notes"), ""
     parts = ([_e(note)] if note else []) + [_link(link.url, link.title) for link in links]
     inline = "<br>".join(parts)
     popover_id = f"notes-{table}-{row}"
     sort = " ".join(([note] if note else []) + [link.title for link in links]).casefold()
-    return _td(
-        f'<span class="notes-inline">{inline}</span>'
+    extras = (
         f'<button type="button" class="notes-toggle" popovertarget="{popover_id}" '
         f'aria-label="Notes for {_e(name)}">{INFO_ICON}</button>'
         f'<div id="{popover_id}" popover class="notes-popover">'
-        f'<h3>{_e(name)}</h3>'
-        f'<p>{inline}</p>'
+        f"<h3>{_e(name)}</h3>"
+        f"<p>{inline}</p>"
         f'<button type="button" class="notes-close" popovertarget="{popover_id}" '
         'popovertargetaction="hide">Close</button>'
-        "</div>",
-        sort,
+        "</div>"
     )
+    return _td(inline, sort, "col-notes"), extras
 
 
-def _th(label: str, numeric: bool = False) -> str:
+def _th(label: str, numeric: bool = False, css_class: str = "") -> str:
+    cls = f' class="{css_class}"' if css_class else ""
     kind = ' data-sort-type="number"' if numeric else ""
-    return f'<th scope="col"{kind}>{_e(label)}</th>'
+    return f'<th scope="col"{cls}{kind}>{_e(label)}</th>'
 
 
 def _table(headers: Sequence[str], rows: Sequence[Sequence[str]]) -> str:
@@ -203,8 +208,9 @@ def render_blockchains(reg: Registry) -> str:
     rows = []
     for index, c in enumerate(chains):
         algs = [reg.algorithms[a] for a in c.algorithms]
+        notes_cell, notes_extras = _notes_parts("blockchains", index, c.name, c.note, c.links)
         rows.append([
-            _td(_e(c.name), c.name.casefold()),
+            _td(_e(c.name) + notes_extras, c.name.casefold(), "name-cell"),
             _layer_td(overall_category(c)),
             _layer_td(c.consensus),
             _layer_td(c.transactions),
@@ -214,13 +220,13 @@ def render_blockchains(reg: Registry) -> str:
             ),
             _td(_link(c.website, "Website"), c.website.casefold()),
             _td(_link(c.source, "Source"), c.source.casefold()),
-            _notes_td("blockchains", index, c.name, c.note, c.links),
+            notes_cell,
         ])
     table = (
         _table(
             [_th("Chain"), _th("Overall", True), _th("Consensus", True),
              _th("Transactions", True), _th("Algorithms"), _th("Website"),
-             _th("Source"), _th("Notes")],
+             _th("Source"), _th("Notes", css_class="col-notes")],
             rows,
         )
         if rows
@@ -256,8 +262,9 @@ def render_libraries(reg: Registry) -> str:
             if lib.audits
             else "No"
         )
+        notes_cell, notes_extras = _notes_parts("libraries", index, lib.name, lib.note, lib.links)
         rows.append([
-            _td(_link(lib.source, lib.name), lib.name.casefold()),
+            _td(_link(lib.source, lib.name) + notes_extras, lib.name.casefold(), "name-cell"),
             _td(chips, " ".join(reg.algorithms[a].name for a in lib.algorithms).casefold()),
             _td(f'<span class="safety safety--{safety.lower()}">{safety}</span>', SAFETY_RANK[safety]),
             _td(audited, "yes" if lib.audits else "no"),
@@ -265,13 +272,13 @@ def render_libraries(reg: Registry) -> str:
             _td("Yes" if lib.blockchain_friendly else "No", "yes" if lib.blockchain_friendly else "no"),
             _td(_e(format_size(lib.min_signature)), lib.min_signature.bytes if lib.min_signature else ""),
             _td(_e(format_size(lib.min_public_key)), lib.min_public_key.bytes if lib.min_public_key else ""),
-            _notes_td("libraries", index, lib.name, lib.note, lib.links),
+            notes_cell,
         ])
     table = (
         _table(
             [_th("Library"), _th("Algorithms"), _th("Safety", True), _th("Audited"),
              _th("Maturity"), _th("Blockchain friendly"), _th("Min signature", True),
-             _th("Min public key", True), _th("Notes")],
+             _th("Min public key", True), _th("Notes", css_class="col-notes")],
             rows,
         )
         if rows

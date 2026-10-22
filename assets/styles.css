@@ -280,8 +280,9 @@ td:first-child { color: var(--white); font-weight: 500; white-space: nowrap; }
 .notes-popover p { color: var(--content-70); line-height: 1.5; margin: 0 0 16px; }
 .notes-close { padding: 6px 14px; background: none; border: 1px solid var(--border-med); border-radius: 6px; color: var(--content); font: inherit; font-size: .875rem; cursor: pointer; }
 .notes-close:hover { border-color: var(--content-40); }
+.name-cell .notes-toggle { margin-left: 8px; vertical-align: middle; }
 @media (max-width: 767px) {
-  .notes-inline { display: none; }
+  .col-notes { display: none; }
   .notes-toggle { display: inline-flex; }
 }
 
