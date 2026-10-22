@@ -95,7 +95,10 @@ source = "https://github.com/aws/aws-lc-rs"
 algorithms = ["ml-dsa"]
 maturity = "production"
 blockchain_friendly = false
-note = "ML-DSA API marked unstable"
+note = "ML-DSA stable since v1.18.0"
+links = [
+  { title = "aws-lc-rs v1.18.0 release notes", url = "https://github.com/aws/aws-lc-rs/releases/tag/v1.18.0" },
+]
 
 [[library]]
 name = "hashsigs-rs"
