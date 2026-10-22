@@ -1,0 +1,74 @@
+name: Library registry entry
+description: Add a software library to the registry or change an existing entry.
+title: "[Registry] "
+labels: ["registry"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      description: Name of the library.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source code
+      description: HTTPS link to the source repository.
+    validations:
+      required: true
+  - type: textarea
+    id: algorithms
+    attributes:
+      label: Algorithms
+      description: List every post-quantum algorithm the library implements, one per line.
+    validations:
+      required: true
+  - type: dropdown
+    id: maturity
+    attributes:
+      label: Maturity
+      description: If the project warns against production use, do not choose production.
+      options:
+        - experimental
+        - pre-production
+        - production
+    validations:
+      required: true
+  - type: dropdown
+    id: blockchain_friendly
+    attributes:
+      label: Blockchain friendly
+      description: Choose Yes if the library ships configurations designed for blockchains.
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+  - type: textarea
+    id: audits
+    attributes:
+      label: Audits
+      description: Published audit reports, one per line, as a title and an HTTPS link. Leave empty if there are none.
+  - type: input
+    id: min_signature
+    attributes:
+      label: Smallest signature size
+      description: Size in bytes and the parameter set, for example "666 B (Falcon-512)". Leave empty if not documented.
+  - type: input
+    id: min_public_key
+    attributes:
+      label: Smallest public key size
+      description: Size in bytes and the parameter set, for example "897 B (Falcon-512)". Leave empty if not documented.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Short notes, one per line. Name the algorithm in parentheses when a note applies to one algorithm.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Source for this information
+      description: Public links that support the entry. A reader must be able to open each link.
+    validations:
+      required: true

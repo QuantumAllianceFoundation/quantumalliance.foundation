@@ -1,0 +1,55 @@
+name: Blockchain registry entry
+description: Add a blockchain to the registry or change an existing entry.
+title: "[Registry] "
+labels: ["registry"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      description: Name of the blockchain.
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: If you are not sure which category fits, pick the less ready one.
+      options:
+        - Post-Quantum
+        - Post-Quantum Ready
+        - Quantum-Aware
+        - Quantum-Vulnerable
+    validations:
+      required: true
+  - type: input
+    id: website
+    attributes:
+      label: Website
+      description: HTTPS link to the project website.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source code
+      description: HTTPS link to the GitHub organization or the source code.
+    validations:
+      required: true
+  - type: textarea
+    id: algorithms
+    attributes:
+      label: Post-quantum algorithms
+      description: List the post-quantum algorithms the chain has deployed or implemented, one per line. Leave empty if there are none.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Links to proposals, whitepapers, or other documents, one per line, as a title and an HTTPS link.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Source for this information
+      description: Public links that support the entry. A reader must be able to open each link.
+    validations:
+      required: true
