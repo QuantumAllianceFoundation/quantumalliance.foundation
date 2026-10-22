@@ -15,8 +15,17 @@ CATEGORIES: tuple[str, ...] = (
     "quantum-aware",
     "quantum-vulnerable",
 )
+# Layer values in sort order; "no-signatures" ranks directly after "post-quantum".
+LAYER_VALUES: tuple[str, ...] = (
+    "post-quantum",
+    "no-signatures",
+    "post-quantum-ready",
+    "quantum-aware",
+    "quantum-vulnerable",
+)
 CATEGORY_LABELS: dict[str, str] = {
     "post-quantum": "Post-Quantum",
+    "no-signatures": "No Signatures / Quantum Resistant",
     "post-quantum-ready": "Post-Quantum Ready",
     "quantum-aware": "Quantum-Aware",
     "quantum-vulnerable": "Quantum-Vulnerable",
@@ -24,6 +33,8 @@ CATEGORY_LABELS: dict[str, str] = {
 FAMILIES = ("hash-based", "lattice", "other")
 SAFETY_BY_FAMILY = {"hash-based": "High", "lattice": "Medium", "other": "Low"}
 SAFETY_RANK = {"High": 0, "Medium": 1, "Low": 2}
+MAX_LINKS = 2
+MAX_NOTE_WORDS = 5
 MATURITIES = ("experimental", "pre-production", "production")
 
 
@@ -50,11 +61,13 @@ class Size:
 @dataclass(frozen=True)
 class Chain:
     name: str
-    category: str
+    consensus: str
+    transactions: str
     website: str
     source: str
     algorithms: tuple[str, ...]
-    notes: tuple[Link, ...]
+    note: str | None
+    links: tuple[Link, ...]
 
 
 @dataclass(frozen=True)
@@ -67,7 +80,8 @@ class Library:
     audits: tuple[Link, ...]
     min_signature: Size | None
     min_public_key: Size | None
-    notes: tuple[str, ...]
+    note: str | None
+    links: tuple[Link, ...]
 
 
 @dataclass(frozen=True)
@@ -142,18 +156,30 @@ def _choice(options: tuple[str, ...]) -> Callable[[Any], str]:
     return check
 
 
+def _note(value: Any) -> str:
+    text = _text(value)
+    words = len(text.split())
+    if words > MAX_NOTE_WORDS:
+        raise ValueError(f"must be at most {MAX_NOTE_WORDS} words (got {words})")
+    return text
+
+
 def _flag(value: Any) -> bool:
     if not isinstance(value, bool):
         raise ValueError("must be true or false")
     return value
 
 
-def _list_of(item: Callable[[Any], Any], *, non_empty: bool = False) -> Callable[[Any], tuple]:
+def _list_of(
+    item: Callable[[Any], Any], *, non_empty: bool = False, max_items: int | None = None
+) -> Callable[[Any], tuple]:
     def check(value: Any) -> tuple:
         if not isinstance(value, list):
             raise ValueError("must be a list")
         if non_empty and not value:
             raise ValueError("must not be empty")
+        if max_items is not None and len(value) > max_items:
+            raise ValueError(f"must have at most {max_items} entries (got {len(value)})")
         return tuple(item(v) for v in value)
 
     return check
@@ -205,11 +231,16 @@ _SPECS: dict[str, tuple[str, type, dict[str, tuple[Callable[[Any], Any], Any]], 
         Chain,
         {
             "name": (_text, _REQUIRED),
-            "category": (_choice(CATEGORIES), _REQUIRED),
+            "consensus": (_choice(LAYER_VALUES), _REQUIRED),
+            "transactions": (
+                _choice(tuple(v for v in LAYER_VALUES if v != "no-signatures")),
+                _REQUIRED,
+            ),
             "website": (_url, _REQUIRED),
             "source": (_url, _REQUIRED),
             "algorithms": (_list_of(_text), ()),
-            "notes": (_list_of(_link), ()),
+            "note": (_note, None),
+            "links": (_list_of(_link, max_items=MAX_LINKS), ()),
         },
         "name",
     ),
@@ -225,7 +256,8 @@ _SPECS: dict[str, tuple[str, type, dict[str, tuple[Callable[[Any], Any], Any]], 
             "audits": (_list_of(_link), ()),
             "min_signature": (_size, None),
             "min_public_key": (_size, None),
-            "notes": (_list_of(_text), ()),
+            "note": (_note, None),
+            "links": (_list_of(_link, max_items=MAX_LINKS), ()),
         },
         "name",
     ),
@@ -344,3 +376,12 @@ def library_safety(lib: Library, algorithms: Mapping[str, Algorithm]) -> str:
     """Return the highest safety rating among the library's algorithms."""
     ratings = [SAFETY_BY_FAMILY[algorithms[a].family] for a in lib.algorithms]
     return min(ratings, key=SAFETY_RANK.__getitem__)
+
+
+def overall_category(chain: Chain) -> str:
+    """Return the less ready of the two layers; no-signatures counts as post-quantum."""
+
+    def rank(layer: str) -> int:
+        return CATEGORIES.index("post-quantum" if layer == "no-signatures" else layer)
+
+    return CATEGORIES[max(rank(chain.consensus), rank(chain.transactions))]

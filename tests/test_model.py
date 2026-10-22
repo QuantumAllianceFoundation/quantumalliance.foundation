@@ -4,8 +4,10 @@ from pathlib import Path
 
 from tools.registry.model import (
     Algorithm,
+    Chain,
     Library,
     RegistryError,
+    overall_category,
     library_safety,
     load_registry,
 )
@@ -23,7 +25,8 @@ url = "https://csrc.nist.gov/pubs/fips/204/final"
 CHAIN = """
 [[chain]]
 name = "Quantus"
-category = "post-quantum"
+consensus = "post-quantum"
+transactions = "post-quantum"
 website = "https://quantus.com/"
 source = "https://github.com/Quantus-Network"
 algorithms = ["ml-dsa"]
@@ -88,7 +91,8 @@ class LoadRegistryTest(RegistryTestCase):
             libraries=LIBRARY
             + 'audits = [{ title = "Audit", url = "https://example.org/a" }]\n'
             + 'min_signature = { bytes = 666, parameter_set = "Falcon-512" }\n'
-            + 'notes = ["Fast"]\n',
+            + 'note = "Fast"\n'
+            + 'links = [{ title = "Docs", url = "https://example.org/d" }]\n',
             products="""
 [[product]]
 name = "Wallet"
@@ -103,14 +107,83 @@ url = "https://example.org/wallet"
         self.assertEqual(lib.audits[0].title, "Audit")
         self.assertEqual(lib.min_signature.bytes, 666)
         self.assertEqual(lib.min_signature.parameter_set, "Falcon-512")
-        self.assertEqual(lib.notes, ("Fast",))
+        self.assertEqual(lib.note, "Fast")
+        self.assertEqual(lib.links[0].url, "https://example.org/d")
         self.assertEqual(reg.products[0].chains, ("Ethereum",))
 
-    def test_rejects_unknown_category(self):
+    def test_rejects_unknown_layer_value(self):
         errors = self.errors_for(
             blockchains=CHAIN.replace("post-quantum", "quantum-safe", 1)
         )
-        self.assertIn("blockchains.toml: Quantus: category:", errors[0])
+        self.assertIn("blockchains.toml: Quantus: consensus:", errors[0])
+
+    def test_rejects_no_signatures_for_transactions(self):
+        errors = self.errors_for(
+            blockchains=CHAIN.replace(
+                'transactions = "post-quantum"', 'transactions = "no-signatures"'
+            )
+        )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("blockchains.toml: Quantus: transactions:", errors[0])
+
+    def test_accepts_no_signatures_for_consensus(self):
+        write_data(
+            self.tmp,
+            blockchains=CHAIN.replace(
+                'consensus = "post-quantum"', 'consensus = "no-signatures"'
+            ),
+        )
+        self.assertEqual(load_registry(self.tmp).chains[0].consensus, "no-signatures")
+
+    def test_rejects_old_category_key(self):
+        errors = self.errors_for(
+            blockchains=CHAIN + 'category = "post-quantum"\n'
+        )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("blockchains.toml: Quantus: category: unknown key", errors[0])
+
+    def test_rejects_old_notes_key(self):
+        errors = self.errors_for(libraries=LIBRARY + 'notes = ["Fast"]\n')
+        self.assertIn("libraries.toml: TestLib: notes: unknown key", errors[0])
+
+    def test_rejects_more_than_two_links(self):
+        links = ", ".join(
+            f'{{ title = "T{i}", url = "https://example.org/{i}" }}' for i in range(3)
+        )
+        for files, name in (
+            ({"blockchains": CHAIN + f"links = [{links}]\n"}, "Quantus"),
+            ({"libraries": LIBRARY + f"links = [{links}]\n"}, "TestLib"),
+        ):
+            with self.subTest(name=name):
+                errors = self.errors_for(**files)
+                self.assertEqual(len(errors), 1)
+                self.assertIn(f": {name}: links:", errors[0])
+                self.assertIn("2", errors[0])
+
+    def test_rejects_note_over_five_words(self):
+        errors = self.errors_for(
+            blockchains=CHAIN + 'note = "one two three four five six"\n'
+        )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("blockchains.toml: Quantus: note:", errors[0])
+        self.assertIn("5 words", errors[0])
+
+    def test_accepts_five_word_note(self):
+        write_data(
+            self.tmp,
+            blockchains=CHAIN + 'note = "one two three four five"\n',
+            libraries=LIBRARY + 'note = "one two three four five"\n',
+        )
+        reg = load_registry(self.tmp)
+        self.assertEqual(reg.chains[0].note, "one two three four five")
+        self.assertEqual(reg.libraries[0].note, "one two three four five")
+
+    def test_note_and_links_optional(self):
+        reg = load_registry(FIXTURES / "valid")
+        self.assertIsNone(reg.chains[0].note)
+        self.assertEqual(reg.chains[0].links, ())
+        self.assertIsNone(reg.libraries[0].note)
+        self.assertEqual(reg.libraries[0].links, ())
 
     def test_rejects_unknown_key(self):
         errors = self.errors_for(
@@ -169,9 +242,9 @@ url = "https://example.org/wallet"
 
     def test_rejects_missing_required_field(self):
         errors = self.errors_for(
-            blockchains=CHAIN.replace('category = "post-quantum"\n', "")
+            blockchains=CHAIN.replace('transactions = "post-quantum"\n', "")
         )
-        self.assertIn("blockchains.toml: Quantus: category:", errors[0])
+        self.assertIn("blockchains.toml: Quantus: transactions:", errors[0])
 
     def test_reports_every_error_with_location(self):
         errors = self.errors_for(
@@ -181,6 +254,29 @@ url = "https://example.org/wallet"
         )
         self.assertEqual(len(errors), 3)
         self.assertTrue(all(": " in e for e in errors))
+
+
+class OverallCategoryTest(unittest.TestCase):
+    def chain(self, consensus: str, transactions: str) -> Chain:
+        return Chain("C", consensus, transactions, "https://a.org", "https://b.org", (), None, ())
+
+    def test_overall_is_less_ready_layer(self):
+        cases = (
+            ("no-signatures", "quantum-vulnerable", "quantum-vulnerable"),
+            ("post-quantum", "post-quantum", "post-quantum"),
+            ("quantum-aware", "post-quantum-ready", "quantum-aware"),
+        )
+        for consensus, transactions, expected in cases:
+            with self.subTest(consensus=consensus, transactions=transactions):
+                self.assertEqual(
+                    overall_category(self.chain(consensus, transactions)), expected
+                )
+
+    def test_overall_maps_no_signatures_to_post_quantum(self):
+        self.assertEqual(
+            overall_category(self.chain("no-signatures", "post-quantum")),
+            "post-quantum",
+        )
 
 
 class LibrarySafetyTest(unittest.TestCase):
@@ -201,7 +297,8 @@ class LibrarySafetyTest(unittest.TestCase):
             audits=(),
             min_signature=None,
             min_public_key=None,
-            notes=(),
+            note=None,
+            links=(),
         )
 
     def test_library_safety_is_highest_of_its_algorithms(self):

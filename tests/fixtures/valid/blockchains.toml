@@ -1,6 +1,7 @@
 [[chain]]
 name = "Quantus"
-category = "post-quantum"
+consensus = "post-quantum"
+transactions = "post-quantum"
 website = "https://quantus.com/"
 source = "https://github.com/Quantus-Network"
 algorithms = ["ml-dsa"]
