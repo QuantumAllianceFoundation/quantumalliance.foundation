@@ -1,0 +1,89 @@
+# Algorithm catalog
+#
+# Blockchains and libraries refer to these entries by `id`. To add an
+# algorithm, copy an existing [[algorithm]] block, change the values, and open
+# a pull request. The "Safety" rating shown on the site comes from `family`:
+# hash-based = High, lattice = Medium, other = Low.
+#
+# Fields (all required):
+#   id      Unique lowercase slug: letters, digits, and single hyphens.
+#           Example: "ml-dsa"
+#   name    Display name. Example: "ML-DSA"
+#   family  One of: "hash-based", "lattice", "other"
+#   url     HTTPS link to the standard or the specification. Use the
+#           publication page of the standards body, the RFC page, or the
+#           paper that defines the scheme. The link must start with the
+#           secure scheme and must open without a login.
+#
+# Example:
+#   [[algorithm]]
+#   id = "ml-dsa"
+#   name = "ML-DSA"
+#   family = "lattice"
+#   url = "https://csrc.nist.gov/pubs/fips/204/final"
+
+[[algorithm]]
+id = "ml-dsa"
+name = "ML-DSA"
+family = "lattice"
+url = "https://csrc.nist.gov/pubs/fips/204/final"
+
+[[algorithm]]
+id = "fn-dsa"
+name = "FN-DSA (Falcon)"
+family = "lattice"
+url = "https://falcon-sign.info/"
+
+[[algorithm]]
+id = "slh-dsa"
+name = "SLH-DSA"
+family = "hash-based"
+url = "https://csrc.nist.gov/pubs/fips/205/final"
+
+[[algorithm]]
+id = "xmss"
+name = "XMSS"
+family = "hash-based"
+url = "https://www.rfc-editor.org/info/rfc8391"
+
+[[algorithm]]
+id = "lms"
+name = "LMS"
+family = "hash-based"
+url = "https://www.rfc-editor.org/info/rfc8554"
+
+[[algorithm]]
+id = "ml-kem"
+name = "ML-KEM"
+family = "lattice"
+url = "https://csrc.nist.gov/pubs/fips/203/final"
+
+[[algorithm]]
+id = "sphincs-plus"
+name = "SPHINCS+"
+family = "hash-based"
+url = "https://sphincs.org/"
+
+[[algorithm]]
+id = "sphincs-plus-c"
+name = "SPHINCS+C"
+family = "hash-based"
+url = "https://eprint.iacr.org/2022/778"
+
+[[algorithm]]
+id = "wots-plus"
+name = "WOTS+"
+family = "hash-based"
+url = "https://eprint.iacr.org/2017/965"
+
+[[algorithm]]
+id = "shrincs"
+name = "SHRINCS"
+family = "hash-based"
+url = "https://eprint.iacr.org/2025/2203"
+
+[[algorithm]]
+id = "pqringct"
+name = "PQRingCT"
+family = "lattice"
+url = "https://download.abelian.info/release/docs/whitepaper.pdf"

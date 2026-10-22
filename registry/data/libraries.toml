@@ -1,0 +1,168 @@
+# Library registry
+#
+# One [[library]] block per software library. To add or change an entry, edit
+# this file and open a pull request. Take every value from the library's own
+# documentation, its source, or a published audit report. If a value is not
+# documented, leave out the optional field.
+#
+# Fields:
+#   name                 Required. Unique, compared without regard to case.
+#   source               Required. HTTPS link to the source repository.
+#   algorithms           Required, not empty. List of ids from algorithms.toml.
+#                        List every algorithm the library implements.
+#   maturity             Required. One of:
+#                          "experimental"    early or unstable, or not maintained
+#                          "pre-production"  usable, but the project does not
+#                                            yet call it ready for production
+#                          "production"      the project or a live network uses
+#                                            it in production
+#                        If the project warns against production use, do not
+#                        choose "production".
+#   blockchain_friendly  Required. true or false. Use true only if the library
+#                        ships code or configurations made for blockchains,
+#                        such as on-chain verifiers.
+#   audits               Optional, default []. Published audit reports. Each
+#                        has a `title` that names the auditor and the year and
+#                        an HTTPS `url`. A library with at least one audit
+#                        shows as audited.
+#   min_signature        Optional. Smallest signature size in bytes across the
+#                        parameter sets the library ships, as
+#                        { bytes = 666, parameter_set = "Falcon-512" }.
+#   min_public_key       Optional. Smallest public key size in bytes, in the
+#                        same form as min_signature.
+#   notes                Optional, default []. Short facts. Name the algorithm
+#                        in parentheses when a note applies to one algorithm,
+#                        for example "Constant-time AVX2 code paths (ML-DSA)".
+#
+# Example (a copy of the qp-rusty-crystals entry below, shortened):
+#   [[library]]
+#   name = "qp-rusty-crystals"
+#   source = "https://github.com/Quantus-Network/qp-rusty-crystals"
+#   algorithms = ["ml-dsa"]
+#   maturity = "production"
+#   blockchain_friendly = true
+#   audits = [{ title = "Neodyme audit of Dilithium and HDWallet (2025)", url = "https://github.com/Quantus-Network/qp-rusty-crystals/blob/master/audits/Neodyme-Audit.pdf" }]
+#   min_signature = { bytes = 2420, parameter_set = "ML-DSA-44" }
+#   min_public_key = { bytes = 1312, parameter_set = "ML-DSA-44" }
+#   notes = ["Pure Rust with no unsafe code (ML-DSA)"]
+
+[[library]]
+name = "liboqs"
+source = "https://github.com/open-quantum-safe/liboqs"
+algorithms = ["ml-kem", "ml-dsa", "fn-dsa", "slh-dsa", "xmss", "lms"]
+maturity = "pre-production"
+blockchain_friendly = false
+min_signature = { bytes = 666, parameter_set = "Falcon-padded-512" }
+min_public_key = { bytes = 32, parameter_set = "SLH-DSA-SHA2-128s" }
+notes = [
+  "The project does not recommend production use and says the library is for research and prototyping",
+  "The default build includes experimental algorithms",
+  "Falcon names can change before the final standard (FN-DSA)",
+]
+
+[[library]]
+name = "PQClean"
+source = "https://github.com/PQClean/PQClean"
+algorithms = ["ml-kem", "ml-dsa", "fn-dsa", "sphincs-plus"]
+maturity = "experimental"
+blockchain_friendly = false
+min_signature = { bytes = 666, parameter_set = "Falcon-padded-512" }
+min_public_key = { bytes = 32, parameter_set = "SPHINCS+-sha2-128s-simple" }
+notes = [
+  "Retired and archived as read-only by its maintainers",
+  "Signature sets use SPHINCS+ names, not the SLH-DSA standard (SPHINCS+)",
+]
+
+[[library]]
+name = "algorand/falcon"
+source = "https://github.com/algorand/falcon"
+algorithms = ["fn-dsa"]
+maturity = "pre-production"
+blockchain_friendly = true
+min_signature = { bytes = 713, parameter_set = "Falcon-DET512 (compressed, maximum)" }
+min_public_key = { bytes = 897, parameter_set = "Falcon-DET512" }
+notes = [
+  "Deterministic signing mode (FN-DSA)",
+  "The README warns that deterministic signing needs floating-point emulation for safe results across devices (FN-DSA)",
+  "Used by the go-algorand node (FN-DSA)",
+]
+
+[[library]]
+name = "qp-rusty-crystals"
+source = "https://github.com/Quantus-Network/qp-rusty-crystals"
+algorithms = ["ml-dsa"]
+maturity = "production"
+blockchain_friendly = true
+audits = [
+  { title = "Neodyme audit of Dilithium and HDWallet (2025)", url = "https://github.com/Quantus-Network/qp-rusty-crystals/blob/master/audits/Neodyme-Audit.pdf" },
+]
+min_signature = { bytes = 2420, parameter_set = "ML-DSA-44" }
+min_public_key = { bytes = 1312, parameter_set = "ML-DSA-44" }
+notes = [
+  "Pure Rust with no unsafe code (ML-DSA)",
+  "Includes a hierarchical deterministic wallet crate with hardened derivation only (ML-DSA)",
+  "Tested against NIST ACVP vectors (ML-DSA)",
+  "Used by the Quantus chain (ML-DSA)",
+]
+
+[[library]]
+name = "hashsigs-rs"
+source = "https://github.com/QuipNetwork/hashsigs-rs"
+algorithms = ["shrincs", "sphincs-plus-c", "wots-plus"]
+maturity = "pre-production"
+blockchain_friendly = true
+min_signature = { bytes = 1092, parameter_set = "SHRINCS 128s-q18 (stateful, first leaf)" }
+min_public_key = { bytes = 64, parameter_set = "SPHINCS+C (stateless public key)" }
+notes = [
+  "Ships a verify-only Solana program and a WebAssembly build",
+  "Generates the test vectors for the Solidity verifiers",
+  "WOTS+ is legacy and the README says to use SHRINCS for new work (WOTS+)",
+  "Stateful signatures grow by 32 bytes per used leaf and the signer must never reuse a leaf (SHRINCS)",
+  "The 128s-q20 profile needs more security analysis before production use (SHRINCS)",
+]
+
+[[library]]
+name = "hashsigs-solidity"
+source = "https://github.com/QuipNetwork/hashsigs-solidity"
+algorithms = ["shrincs", "sphincs-plus-c", "wots-plus"]
+maturity = "pre-production"
+blockchain_friendly = true
+audits = [
+  { title = "Oak Security audit of Quip contracts (2026)", url = "https://github.com/QuipNetwork/hashsigs-solidity/blob/chore/audit-report/audit/audit-quip-network-oak-security-2026-09-24.pdf" },
+]
+notes = [
+  "On-chain verifiers only; signing code is for tests (SHRINCS)",
+  "The default branch holds the WOTS+ contract; the SHRINCS and SPHINCS+C verifiers are on the audit branch (SHRINCS)",
+  "The 128s profiles are marked experimental in the project documentation (SHRINCS)",
+]
+
+[[library]]
+name = "pqhybridsign"
+source = "https://github.com/QuipNetwork/pqhybridsign"
+algorithms = ["ml-dsa", "fn-dsa", "shrincs"]
+maturity = "pre-production"
+blockchain_friendly = true
+min_signature = { bytes = 731, parameter_set = "Falcon-512 hybrid with ed25519 or sr25519" }
+min_public_key = { bytes = 196, parameter_set = "SHRINCS hybrid (verification input)" }
+notes = [
+  "Pairs a classical signature with a post-quantum signature and accepts a signature only if both verify",
+  "Includes a deterministic signing mode for finality votes",
+  "The Falcon-512 suites follow the pre-standard code and may not match the final standard (FN-DSA)",
+  "No test vectors from another implementation exist yet",
+]
+
+[[library]]
+name = "pqringct"
+source = "https://github.com/pqabelian/pqringct"
+algorithms = ["pqringct"]
+maturity = "pre-production"
+blockchain_friendly = true
+notes = ["Go implementation used by the Abelian node (PQRingCT)"]
+
+[[library]]
+name = "pqringctx"
+source = "https://github.com/pqabelian/pqringctx"
+algorithms = ["pqringct"]
+maturity = "pre-production"
+blockchain_friendly = true
+notes = ["Go implementation derived from pqringct and used by the Abelian node (PQRingCT)"]

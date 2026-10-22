@@ -1,0 +1,140 @@
+# Blockchain registry
+#
+# One [[chain]] block per blockchain. To add or change an entry, edit this file
+# and open a pull request. Every claim needs a public source that a reader can
+# open. If you are not sure which category fits, pick the less ready one.
+#
+# Categories (field `category`):
+#   post-quantum         The chain has deployed a post-quantum solution.
+#   post-quantum-ready   The chain has published source code for a
+#                        post-quantum solution that is not yet deployed.
+#   quantum-aware        The chain is not yet post-quantum, but it is working
+#                        on solutions expected to mitigate most of the risk,
+#                        and a team is on top of the transition.
+#   quantum-vulnerable   No work, or some work with no clear deployment path.
+#
+# Fields:
+#   name        Required. Unique, compared without regard to case.
+#   category    Required. One of the four values above.
+#   website     Required. HTTPS link to the project website.
+#   source      Required. HTTPS link to the GitHub organization or the
+#               main source code repository.
+#   algorithms  Optional, default []. List of ids from algorithms.toml. Name
+#               only post-quantum algorithms that the chain has deployed or
+#               implemented. A quantum-vulnerable chain can leave it empty.
+#   notes       Optional, default []. Links to documents that support the
+#               category. Each note has a `title` that names the document
+#               plainly and an HTTPS `url`.
+#
+# Example (a copy of the Sui entry below):
+#   [[chain]]
+#   name = "Sui"
+#   category = "post-quantum-ready"
+#   website = "https://www.sui.io/"
+#   source = "https://github.com/MystenLabs/sui"
+#   algorithms = ["ml-dsa"]
+#   notes = [
+#     { title = "Making Sui Quantum Ready (2026)", url = "https://www.sui.io/blog/making-sui-quantum-ready" },
+#   ]
+
+[[chain]]
+name = "Quantus"
+category = "post-quantum"
+website = "https://quantus.com/"
+source = "https://github.com/Quantus-Network/chain"
+algorithms = ["ml-dsa"]
+notes = [
+  { title = "Mainnet genesis release v1.0.0-gm", url = "https://github.com/Quantus-Network/chain/releases/tag/v1.0.0-gm" },
+  { title = "Quantus wallet page (ML-DSA-87)", url = "https://quantus.com/wallet" },
+]
+
+[[chain]]
+name = "Abelian"
+category = "post-quantum"
+website = "https://www.pqabelian.io/"
+source = "https://github.com/pqabelian/abec"
+algorithms = ["pqringct"]
+notes = [
+  { title = "Abelian whitepaper (2022)", url = "https://download.abelian.info/release/docs/whitepaper.pdf" },
+  { title = "Abelian milestones", url = "https://www.pqabelian.io/milestones" },
+]
+
+[[chain]]
+name = "Algorand"
+category = "post-quantum"
+website = "https://algorand.co/"
+source = "https://github.com/algorand/go-algorand"
+algorithms = ["fn-dsa"]
+notes = [
+  { title = "Post-quantum roadmap (2026)", url = "https://algorand.co/blog/algorand-post-quantum-cryptography-roadmap" },
+  { title = "Post-quantum ledger (2026)", url = "https://algorand.co/blog/algorand-post-quantum-ledger" },
+  { title = "Technical brief: Falcon transactions (2025)", url = "https://algorand.co/blog/technical-brief-quantum-resistant-transactions-on-algorand-with-falcon-signatures" },
+]
+
+[[chain]]
+name = "Sui"
+category = "post-quantum-ready"
+website = "https://www.sui.io/"
+source = "https://github.com/MystenLabs/sui"
+algorithms = ["ml-dsa"]
+notes = [
+  { title = "Making Sui Quantum Ready (2026)", url = "https://www.sui.io/blog/making-sui-quantum-ready" },
+  { title = "Pull request 28413: ML-DSA-65 verification behind a protocol flag", url = "https://github.com/MystenLabs/sui/pull/28413" },
+]
+
+[[chain]]
+name = "Ethereum"
+category = "quantum-aware"
+website = "https://ethereum.org/"
+source = "https://github.com/ethereum/go-ethereum"
+notes = [
+  { title = "Post-quantum cryptography on Ethereum", url = "https://ethereum.org/roadmap/future-proofing/quantum-resistance/" },
+  { title = "Post-Quantum Ethereum roadmap", url = "https://pq.ethereum.org/" },
+]
+
+[[chain]]
+name = "Solana"
+category = "quantum-aware"
+website = "https://solana.com/"
+source = "https://github.com/anza-xyz/agave"
+notes = [
+  { title = "Solana's Quantum Readiness (2026)", url = "https://solana.com/news/quantum-readiness" },
+  { title = "Securing Solana Against a Powerful Quantum Adversary (2026)", url = "https://www.anza.xyz/blog/securing-solana-against-a-powerful-quantum-adversary" },
+]
+
+[[chain]]
+name = "NEAR"
+category = "quantum-aware"
+website = "https://near.org/"
+source = "https://github.com/near/nearcore"
+notes = [
+  { title = "Preparing NEAR for the Quantum Computing Era (2026)", url = "https://www.near.org/blog/making-near-protocol-post-quantum-safe" },
+]
+
+[[chain]]
+name = "XRP Ledger"
+category = "quantum-aware"
+website = "https://xrpl.org/"
+source = "https://github.com/XRPLF/rippled"
+notes = [
+  { title = "Post-Quantum Readiness on the XRP Ledger (2026)", url = "https://ripple.com/insights/post-quantum-readiness-on-the-xrp-ledger/" },
+]
+
+[[chain]]
+name = "Polkadot"
+category = "quantum-aware"
+website = "https://polkadot.com/"
+source = "https://github.com/paritytech/polkadot-sdk"
+notes = [
+  { title = "Post-quantum cryptography roadmap for Polkadot and JAM (2025)", url = "https://forum.polkadot.network/t/post-quantum-cryptography-roadmap-for-polkadot-and-jam/13232" },
+]
+
+[[chain]]
+name = "Bitcoin"
+category = "quantum-vulnerable"
+website = "https://bitcoin.org/"
+source = "https://github.com/bitcoin/bitcoin"
+notes = [
+  { title = "BIP-360", url = "https://github.com/bitcoin/bips/blob/master/bip-0360.mediawiki" },
+  { title = "BIP-361", url = "https://github.com/bitcoin/bips/blob/master/bip-0361.mediawiki" },
+]
