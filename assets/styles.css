@@ -243,3 +243,41 @@ td:first-child { color: var(--white); font-weight: 500; white-space: nowrap; }
 .card .lead-line { color: var(--content); font-size: .875rem; margin-bottom: 8px; }
 .steps { margin: 8px 0 0; padding-left: 20px; }
 .steps li { margin-bottom: 2px; }
+
+/* Registries */
+.registry-actions { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; margin-bottom: 24px; }
+.registry-actions p { flex-basis: 100%; margin: 0; }
+.registry-actions a { color: var(--signal); font-size: .875rem; }
+.registry-actions a:hover { text-decoration: underline; }
+.table-wrap + .registry-actions { margin-top: -16px; }
+
+.legend { display: grid; gap: 8px; margin: 0 0 24px; }
+.legend > div { display: grid; grid-template-columns: 12rem 1fr; gap: 12px; align-items: baseline; }
+.legend dt, .legend dd { margin: 0; }
+.legend dd { color: var(--content-60); font-size: .875rem; line-height: 1.5; }
+
+.badge { display: inline-block; padding: 2px 10px; border: 1px solid var(--border-med); border-radius: 999px; font-size: .75rem; white-space: nowrap; color: var(--content-70); }
+.badge--post-quantum { border-color: var(--signal); background: #a78bfa26; color: var(--signal); }
+.badge--post-quantum-ready { border-color: var(--content-40); color: var(--content); }
+.badge--quantum-aware { border-color: var(--border-med); color: var(--content-60); }
+.badge--quantum-vulnerable { border: 1px dashed #f87171; background: #f8717114; color: #f87171; }
+
+.alg { display: inline-block; margin: 0 4px 4px 0; padding: 1px 8px; border: 1px solid var(--border-med); border-radius: 4px; font-family: var(--mono); font-size: .75rem; white-space: nowrap; }
+.alg small { color: var(--content-40); font-size: inherit; }
+.safety--high { color: var(--signal); }
+.safety--medium { color: var(--content); }
+.safety--low { color: var(--content-60); }
+
+table[data-sortable] th button { all: unset; cursor: pointer; font: inherit; color: inherit; }
+table[data-sortable] th button:hover, table[data-sortable] th button:focus-visible { color: var(--white); }
+table[data-sortable] th button:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+table[data-sortable] th[aria-sort="ascending"] button::after { content: " \25B2"; font-size: .7em; }
+table[data-sortable] th[aria-sort="descending"] button::after { content: " \25BC"; font-size: .7em; }
+table[data-sortable] td:first-child { white-space: normal; }
+
+@media (max-width: 960px) {
+  .legend > div { grid-template-columns: 1fr; gap: 4px; }
+  .table-wrap table { min-width: 720px; }
+}
+.section h1 + .intro { margin-top: 12px; }
+.section .wrap > .muted { margin-bottom: 16px; }

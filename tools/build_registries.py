@@ -1,0 +1,68 @@
+"""Build the registry pages from the TOML data files."""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from collections.abc import Callable
+from pathlib import Path
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from tools.registry.model import Registry, RegistryError, load_registry
+from tools.registry.render import (
+    render_blockchains,
+    render_hub,
+    render_libraries,
+    render_page,
+    render_products,
+)
+
+TEMPLATE = Path(__file__).parent / "registry" / "page.html"
+
+# (output path, URL path, title, description, renderer)
+PAGES: tuple[tuple[str, str, str, str, Callable[[Registry], str]], ...] = (
+    ("registry/index.html", "/registry/", "Registries | Quantum Alliance",
+     "Open, community-maintained records of post-quantum readiness.", render_hub),
+    ("registry/blockchains/index.html", "/registry/blockchains/",
+     "Blockchain registry | Quantum Alliance",
+     "Post-quantum readiness of blockchain networks.", render_blockchains),
+    ("registry/libraries/index.html", "/registry/libraries/",
+     "Library registry | Quantum Alliance",
+     "Post-quantum signature libraries, with safety, maturity, and sizes.", render_libraries),
+    ("registry/products/index.html", "/registry/products/",
+     "Product registry | Quantum Alliance",
+     "Products built by Quantum Alliance members.", render_products),
+)
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--data", type=Path, default=Path("registry/data"))
+    parser.add_argument("--out", type=Path, default=Path("."))
+    args = parser.parse_args(argv)
+
+    try:
+        reg = load_registry(args.data)
+    except RegistryError as exc:
+        for error in exc.errors:
+            print(error, file=sys.stderr)
+        return 1
+
+    template = TEMPLATE.read_text(encoding="utf-8")
+    rendered = [
+        (
+            args.out / out_path,
+            render_page(template, title=title, description=description, path=url, body=render(reg)),
+        )
+        for out_path, url, title, description, render in PAGES
+    ]
+    for file, html in rendered:
+        file.parent.mkdir(parents=True, exist_ok=True)
+        file.write_text(html, encoding="utf-8")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
