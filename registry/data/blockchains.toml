@@ -5,11 +5,11 @@
 # open. If you are not sure which value fits, pick the less ready one.
 #
 # Each chain gets a value for two layers, `consensus` and `transactions`. The
-# page shows an Overall badge that is the less ready of the two. Values:
+# page lists chains by transactions, then consensus, then name. Values:
 #   post-quantum         The layer has deployed a post-quantum solution.
 #   no-signatures        Consensus only. The layer does not use digital
 #                        signatures, for example proof-of-work mining, which
-#                        relies on hashing. Counts as post-quantum for Overall.
+#                        relies on hashing.
 #   post-quantum-ready   The layer has published source code for a
 #                        post-quantum solution that is not yet deployed.
 #   quantum-aware        The layer is not yet post-quantum, but it is working

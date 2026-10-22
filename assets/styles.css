@@ -305,6 +305,8 @@ table[data-sortable] td:first-child { white-space: normal; }
 .icon-link:hover, .icon-link:focus-visible { color: var(--white); }
 .icon { width: 18px; height: 18px; display: block; }
 td.col-icon { white-space: nowrap; }
+td.col-source { white-space: nowrap; }
+.repo-line { display: flex; align-items: center; gap: 6px; }
 .chain-logo { display: inline-block; width: 20px; height: 20px; margin-right: 8px; vertical-align: middle; object-fit: contain; }
 a.alg { text-decoration: none; }
 a.alg:hover { border-color: var(--content-40); }
@@ -327,3 +329,8 @@ a.alg:hover { border-color: var(--content-40); }
 .detail-list dt { color: var(--content-60); }
 .detail-list dd { margin: 0; }
 @media (max-width: 960px) { .detail-list > div { grid-template-columns: 1fr; gap: 4px; } }
+
+/* Libraries table: tighter cells so all 10 columns fit the content width */
+.libraries-table th, .libraries-table td { padding-left: 10px; padding-right: 10px; }
+.libraries-table th:first-child, .libraries-table td:first-child { padding-left: 16px; }
+.libraries-table th:last-child, .libraries-table td:last-child { padding-right: 16px; }

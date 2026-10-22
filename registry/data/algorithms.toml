@@ -78,7 +78,7 @@ name = "XMSS"
 family = "hash-based"
 url = "https://www.rfc-editor.org/info/rfc8391"
 summary = "XMSS signs messages with one-time keys that are organized under a single Merkle tree root, so one short public key covers many signatures. Each one-time key may be used once only, so the signer must record how many it has used. Signatures are small for a hash-based scheme. RFC 8391 specifies it, and NIST approves it for stateful use."
-rationale = "Security rests only on the properties of the hash function. The scheme is stateful: signing twice with the same one-time key can expose the private key and allow forgeries. A restored backup, a cloned device, or a crash before state is saved can cause this, so safe use needs strict state management."
+rationale = "Security rests only on the properties of the hash function. The scheme is stateful: signing twice with the same one-time key reveals enough of that key's secrets for an attacker to forge signatures. A restored backup, a cloned device, or a crash before state is saved can cause this, so safe use needs strict state management."
 papers = [
   { title = "XMSS: A Practical Forward Secure Signature Scheme Based on Minimal Security Assumptions (2011)", url = "https://eprint.iacr.org/2011/484" },
   { title = "RFC 8391: XMSS: eXtended Merkle Signature Scheme", url = "https://www.rfc-editor.org/info/rfc8391" },
@@ -126,7 +126,7 @@ id = "sphincs-plus-c"
 name = "SPHINCS+C"
 family = "hash-based"
 url = "https://eprint.iacr.org/2022/778"
-summary = "SPHINCS+C is a variant of SPHINCS+ that makes signatures smaller. The signer searches for a hash value with a required property, which lets the signature leave out some data that the verifier can then work out on its own. The saving costs a little extra signing work. The scheme stays stateless and uses hash functions only."
+summary = "SPHINCS+C is a variant of SPHINCS+ that makes signatures smaller. The signer tries different random values until the hash of the message has a required form. For such hashes, part of the signature is not needed, so the signer omits it and the verifier never uses it. The search adds a small amount of signing work, and verification gets faster. The scheme stays stateless and uses hash functions only."
 rationale = "Security rests only on the properties of the hash function, and the scheme is stateless. It is newer and less widely reviewed than SPHINCS+ and SLH-DSA, and it is not a NIST standard. The signer's extra search adds signing time, and implementations need review."
 papers = [
   { title = "SPHINCS+C: Compressing SPHINCS+ With (Almost) No Cost (2022)", url = "https://eprint.iacr.org/2022/778" },
@@ -140,7 +140,7 @@ url = "https://eprint.iacr.org/2017/965"
 summary = "WOTS+ is a one-time signature scheme: a key pair can safely sign a single message. It works by revealing selected points along chains of hash computations. It is a building block inside XMSS and SPHINCS+, not a full system for many signatures. LMS uses a related Winternitz scheme, LM-OTS. Some blockchain designs use it directly, with a fresh key for every transaction."
 rationale = "Security rests only on the properties of the hash function. A key is strictly one-time: signing two different messages with it can reveal enough of the secret to forge signatures. Used alone, the user or wallet must never reuse a key, so state tracking is essential."
 papers = [
-  { title = "WOTS+: Shorter Signatures for Hash-Based Signature Schemes (2017)", url = "https://eprint.iacr.org/2017/965" },
+  { title = "WOTS+: Shorter Signatures for Hash-Based Signature Schemes (2013)", url = "https://eprint.iacr.org/2017/965" },
   { title = "RFC 8391: XMSS: eXtended Merkle Signature Scheme", url = "https://www.rfc-editor.org/info/rfc8391" },
 ]
 

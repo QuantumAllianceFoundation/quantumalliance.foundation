@@ -142,6 +142,9 @@ audits = [
 min_signature = { bytes = 1092, parameter_set = "SHRINCS 128s-q18 (stateful, first leaf)" }
 min_public_key = { bytes = 64, parameter_set = "SPHINCS+C (stateless public key)" }
 note = "Audit covers Solidity only"
+links = [
+  { title = "Audited verifiers branch", url = "https://github.com/QuipNetwork/hashsigs-solidity/tree/chore/audit-report" },
+]
 
 [[library]]
 name = "pqhybridsign"

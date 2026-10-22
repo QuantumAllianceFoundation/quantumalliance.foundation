@@ -178,14 +178,15 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(library_slug("Open C++ Lib (v2)"), "open-c-lib-v2")
         self.assertIn('<a href="/registry/libraries/open-c-lib-v2/">Open C++ Lib (v2)</a>', out)
         self.assertNotIn('id="lib-', out)
-        self.assertNotIn("https://example.org/lib\"", out.split("<tbody")[1].split("Rust")[0])
+        name_cell = out.split("<tbody")[1].split("</td>")[0]
+        self.assertNotIn("https://example.org/lib", name_cell)
 
     def test_library_table_columns(self):
         out = render_libraries(registry(libraries=[library()]))
         heads = re.findall(r"<th [^>]*>([^<]*)</th>", out)
         self.assertEqual(
             heads,
-            ["Library", "Algorithms", "Languages", "Source", "Safety", "Audited", "Maturity",
+            ["Library", "Algorithms", "Source", "Safety", "Audited", "Maturity",
              "Blockchain friendly", "Min signature", "Min public key", "Notes"],
         )
 
@@ -197,13 +198,20 @@ class RenderTests(unittest.TestCase):
         self.assertNotIn("<small>", out)
         self.assertNotIn("alg safety--", out)
 
-    def test_languages_column(self):
-        lib = library(repositories=(
+    def test_source_cell_lists_each_language_with_icon_link(self):
+        lib = library("L", repositories=(
             Repository("Rust", "https://github.com/a/b"),
             Repository("Solidity", "https://github.com/a/c"),
         ))
         out = render_libraries(registry(libraries=[lib]))
-        self.assertIn('<td data-sort="rust, solidity">Rust, Solidity</td>', out)
+        self.assertNotIn("Languages", out)
+        self.assertIn('<td class="col-source" data-sort="rust, solidity">', out)
+        for lang, url in (("Rust", "https://github.com/a/b"), ("Solidity", "https://github.com/a/c")):
+            self.assertRegex(
+                out,
+                rf'<span class="repo-line"><a href="{url}" class="icon-link" '
+                rf'aria-label="L {lang} source code">.*?</a> {lang}</span>',
+            )
 
     def test_one_source_icon_per_repository_with_labels(self):
         lib = library("Hashsigs", repositories=(
@@ -382,6 +390,8 @@ class RenderTests(unittest.TestCase):
         self.assertIn("Why this rating", out)
         self.assertIn("Only hashes matter &amp; &lt;b&gt;nothing&lt;/b&gt; else.", out)
         self.assertNotIn("<b>", out)
+        self.assertLess(out.index("Summary."), out.index('<span class="safety'))
+        self.assertLess(out.index("Family:"), out.index("Summary."))
         self.assertLess(out.index('<span class="safety'), out.index("Why this rating"))
         self.assertLess(out.index("Why this rating"), out.index("Only hashes"))
         self.assertNotIn("Why this rating", render_algorithms_index(Registry(algs, (), (), ())))

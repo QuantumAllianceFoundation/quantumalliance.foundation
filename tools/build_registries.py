@@ -33,7 +33,7 @@ PAGES: tuple[tuple[str, str, str, str, Callable[[Registry], str]], ...] = (
      "Post-quantum readiness of blockchain networks.", render_blockchains),
     ("registry/algorithms/index.html", "/registry/algorithms/",
      "Algorithm registry | Quantum Alliance",
-     "Post-quantum signature algorithms, with safety and implementing libraries.",
+     "Post-quantum algorithms, with safety and implementing libraries.",
      render_algorithms_index),
     ("registry/libraries/index.html", "/registry/libraries/",
      "Library registry | Quantum Alliance",

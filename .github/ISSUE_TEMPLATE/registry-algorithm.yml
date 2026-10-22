@@ -43,6 +43,13 @@ body:
     validations:
       required: true
   - type: textarea
+    id: rationale
+    attributes:
+      label: Why this safety rating (at most 60 words)
+      description: What its security rests on, and known caveats such as one-time-key state or implementation pitfalls. In your own words.
+    validations:
+      required: true
+  - type: textarea
     id: papers
     attributes:
       label: Research papers (1 to 3)

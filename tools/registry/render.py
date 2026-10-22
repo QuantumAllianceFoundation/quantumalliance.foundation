@@ -15,7 +15,6 @@ from .model import (
     Link,
     Registry,
     Size,
-    Algorithm,
     Chain,
     Library,
     Repository,
@@ -181,16 +180,14 @@ def _th(label: str, numeric: bool = False, css_class: str = "") -> str:
 def _table(
     headers: Sequence[str],
     rows: Sequence[Sequence[str]],
-    row_ids: Sequence[str] | None = None,
+    table_class: str = "",
 ) -> str:
     head = "".join(headers)
-    ids = [f' id="{_e(i)}"' for i in row_ids] if row_ids else [""] * len(rows)
-    body = "\n".join(
-        f"        <tr{row_id}>{''.join(cells)}</tr>" for row_id, cells in zip(ids, rows)
-    )
+    body = "\n".join(f"        <tr>{''.join(cells)}</tr>" for cells in rows)
+    cls = f' class="{table_class}"' if table_class else ""
     return (
         '<div class="table-wrap">\n'
-        "    <table data-sortable>\n"
+        f"    <table data-sortable{cls}>\n"
         f"      <thead><tr>{head}</tr></thead>\n"
         f"      <tbody>\n{body}\n      </tbody>\n"
         "    </table>\n"
@@ -245,7 +242,7 @@ def render_hub(reg: Registry) -> str:
         ("Blockchains", "/registry/blockchains/", len(reg.chains),
          "Post-quantum readiness of blockchain networks."),
         ("Algorithms", "/registry/algorithms/", len(reg.algorithms),
-         "Post-quantum signature algorithms, with safety and research papers."),
+         "Post-quantum algorithms, with safety and research papers."),
         ("Libraries", "/registry/libraries/", len(reg.libraries),
          "Post-quantum cryptography libraries and their maturity."),
         ("Products", "/registry/products/", len(reg.products),
@@ -364,11 +361,13 @@ def render_libraries(reg: Registry) -> str:
                 _algorithm_chips(reg, lib.algorithms),
                 " ".join(reg.algorithms[a].name for a in lib.algorithms).casefold(),
             ),
-            _td(_e(languages), languages.casefold()),
             _td(
-                " ".join(_repo_icon_link(lib, r) for r in lib.repositories),
-                " ".join(r.url for r in lib.repositories).casefold(),
-                "col-icon",
+                "".join(
+                    f'<span class="repo-line">{_repo_icon_link(lib, r)} {_e(r.language)}</span>'
+                    for r in lib.repositories
+                ),
+                languages.casefold(),
+                "col-source",
             ),
             _td(_safety_badge(safety), SAFETY_RANK[safety]),
             _td(_audits_html(lib.audits), "yes" if lib.audits else "no"),
@@ -380,11 +379,11 @@ def render_libraries(reg: Registry) -> str:
         ])
     table = (
         _table(
-            [_th("Library"), _th("Algorithms"), _th("Languages"),
-             _th("Source", css_class="col-icon"), _th("Safety", True), _th("Audited"),
+            [_th("Library"), _th("Algorithms"), _th("Source"), _th("Safety", True), _th("Audited"),
              _th("Maturity"), _th("Blockchain friendly"), _th("Min signature", True),
              _th("Min public key", True), _th("Notes", css_class="col-notes")],
             rows,
+            "libraries-table",
         )
         if rows
         else None
@@ -409,7 +408,7 @@ def render_library(reg: Registry, slug: str) -> str:
         f"          <li>{_repo_icon_link(lib, r)} {_e(r.language)}</li>" for r in lib.repositories
     )
     notes = " ".join(
-        ([_e(lib.note)] if lib.note else []) + [_link(l.url, l.title) for l in lib.links]
+        ([_e(lib.note)] if lib.note else []) + [_link(link.url, link.title) for link in lib.links]
     )
     rows = [
         _detail_row("Repositories", f'<ul class="repo-list">\n{repos}\n        </ul>'),
@@ -489,7 +488,7 @@ def render_algorithms_index(reg: Registry) -> str:
     )
     return _registry_section(
         "Registries", "Algorithms",
-        "Post-quantum signature algorithms, with the libraries that implement each one.",
+        "Post-quantum algorithms, with the libraries that implement each one.",
         "algorithms.toml", "registry-algorithm.yml", table,
     )
 
@@ -514,9 +513,9 @@ def render_algorithm(reg: Registry, algorithm_id: str) -> str:
         '      <div class="wrap">\n'
         '        <p class="eyebrow">Algorithm</p>\n'
         f"        <h1>{_e(a.name)}</h1>\n"
-        f'        <p class="muted">Family: {_e(a.family)}. Safety: '
-        f"{_safety_badge(safety)}</p>\n"
+        f'        <p class="muted">Family: {_e(a.family)}.</p>\n'
         f'        <p class="intro">{_e(a.summary)}</p>\n'
+        f'        <p class="muted">Safety: {_safety_badge(safety)}</p>\n'
         '        <h2 class="link-list-heading">Why this rating</h2>\n'
         f"        <p>{_e(a.rationale)}</p>\n"
         '        <h2 class="link-list-heading">Standard</h2>\n'
