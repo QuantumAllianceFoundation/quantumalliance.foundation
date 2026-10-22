@@ -7,9 +7,17 @@
 #
 # Fields:
 #   name                 Required. Unique, compared without regard to case.
-#   source               Required. HTTPS link to the source repository.
+#   repositories         Required, 1 to 4 entries. Each is
+#                        { language = "Rust", url = "https://..." }: the main
+#                        implementation first, then official bindings that the
+#                        project itself maintains. Take the language from the
+#                        repository's primary language.
 #   algorithms           Required, not empty. List of ids from algorithms.toml.
 #                        List every algorithm the library implements.
+#   hybrid               Required. true or false. Use true only if the code
+#                        combines a classical signature and a post-quantum
+#                        signature, and both must verify. A mix of stateful
+#                        and stateless hash-based parts is not hybrid.
 #   maturity             Required. One of:
 #                          "experimental"    early or unstable, or not maintained
 #                          "pre-production"  usable, but the project does not
@@ -22,9 +30,13 @@
 #                        ships code or configurations made for blockchains,
 #                        such as on-chain verifiers.
 #   audits               Optional, default []. Published audit reports. Each
-#                        has a `title` that names the auditor and the year and
-#                        an HTTPS `url`. A library with at least one audit
-#                        shows as audited.
+#                        is { auditor = "...", url = "https://...", logo =
+#                        "name.svg" }. The logo is optional: a file name in
+#                        assets/registry/auditors/ (.svg, .png, or .webp, at
+#                        most 64 KB; an SVG has no script or on* handlers).
+#                        If the audit left out the post-quantum code, say so
+#                        in `note`. A library with at least one audit shows
+#                        as audited.
 #   min_signature        Optional. Smallest signature size in bytes across the
 #                        parameter sets the library ships, as
 #                        { bytes = 666, parameter_set = "Falcon-512" }.
@@ -37,29 +49,40 @@
 # Example (a copy of the qp-rusty-crystals entry below, shortened):
 #   [[library]]
 #   name = "qp-rusty-crystals"
-#   source = "https://github.com/Quantus-Network/qp-rusty-crystals"
+#   repositories = [{ language = "Rust", url = "https://github.com/Quantus-Network/qp-rusty-crystals" }]
 #   algorithms = ["ml-dsa"]
+#   hybrid = false
 #   maturity = "production"
 #   blockchain_friendly = true
-#   audits = [{ title = "Neodyme audit of Dilithium and HDWallet (2025)", url = "https://github.com/Quantus-Network/qp-rusty-crystals/blob/master/audits/Neodyme-Audit.pdf" }]
+#   audits = [{ auditor = "Neodyme", url = "https://github.com/Quantus-Network/qp-rusty-crystals/blob/master/audits/Neodyme-Audit.pdf", logo = "neodyme.svg" }]
 #   min_signature = { bytes = 2420, parameter_set = "ML-DSA-44" }
 #   min_public_key = { bytes = 1312, parameter_set = "ML-DSA-44" }
 #   note = "Audit covered ML-DSA-87 only"
 
 [[library]]
 name = "liboqs"
-source = "https://github.com/open-quantum-safe/liboqs"
+repositories = [
+  { language = "C", url = "https://github.com/open-quantum-safe/liboqs" },
+  { language = "Python", url = "https://github.com/open-quantum-safe/liboqs-python" },
+  { language = "Rust", url = "https://github.com/open-quantum-safe/liboqs-rust" },
+  { language = "Go", url = "https://github.com/open-quantum-safe/liboqs-go" },
+]
 algorithms = ["ml-kem", "ml-dsa", "fn-dsa", "slh-dsa", "xmss", "lms"]
+hybrid = false
 maturity = "pre-production"
 blockchain_friendly = false
+audits = [
+  { auditor = "Trail of Bits", url = "https://github.com/trailofbits/publications/blob/master/reviews/2025-04-quantum-open-safe-liboqs-securityreview.pdf", logo = "trail-of-bits.svg" },
+]
 min_signature = { bytes = 666, parameter_set = "Falcon-padded-512" }
 min_public_key = { bytes = 32, parameter_set = "SLH-DSA-SHA2-128s" }
-note = "Not recommended for production"
+note = "Audit excluded algorithm code"
 
 [[library]]
 name = "PQClean"
-source = "https://github.com/PQClean/PQClean"
+repositories = [{ language = "C", url = "https://github.com/PQClean/PQClean" }]
 algorithms = ["ml-kem", "ml-dsa", "fn-dsa", "sphincs-plus"]
+hybrid = false
 maturity = "experimental"
 blockchain_friendly = false
 min_signature = { bytes = 666, parameter_set = "Falcon-padded-512" }
@@ -68,8 +91,9 @@ note = "Retired; archived read-only"
 
 [[library]]
 name = "algorand/falcon"
-source = "https://github.com/algorand/falcon"
+repositories = [{ language = "C", url = "https://github.com/algorand/falcon" }]
 algorithms = ["fn-dsa"]
+hybrid = false
 maturity = "production"
 blockchain_friendly = true
 min_signature = { bytes = 713, parameter_set = "Falcon-DET512 (compressed, maximum)" }
@@ -78,12 +102,13 @@ note = "Deterministic signing mode"
 
 [[library]]
 name = "qp-rusty-crystals"
-source = "https://github.com/Quantus-Network/qp-rusty-crystals"
+repositories = [{ language = "Rust", url = "https://github.com/Quantus-Network/qp-rusty-crystals" }]
 algorithms = ["ml-dsa"]
+hybrid = false
 maturity = "production"
 blockchain_friendly = true
 audits = [
-  { title = "Neodyme audit of Dilithium and HDWallet (2025)", url = "https://github.com/Quantus-Network/qp-rusty-crystals/blob/master/audits/Neodyme-Audit.pdf" },
+  { auditor = "Neodyme", url = "https://github.com/Quantus-Network/qp-rusty-crystals/blob/master/audits/Neodyme-Audit.pdf", logo = "neodyme.svg" },
 ]
 min_signature = { bytes = 2420, parameter_set = "ML-DSA-44" }
 min_public_key = { bytes = 1312, parameter_set = "ML-DSA-44" }
@@ -91,8 +116,9 @@ note = "Audit covered ML-DSA-87 only"
 
 [[library]]
 name = "aws-lc-rs"
-source = "https://github.com/aws/aws-lc-rs"
+repositories = [{ language = "Rust", url = "https://github.com/aws/aws-lc-rs" }]
 algorithms = ["ml-dsa"]
+hybrid = false
 maturity = "production"
 blockchain_friendly = false
 note = "ML-DSA stable since v1.18.0"
@@ -101,30 +127,27 @@ links = [
 ]
 
 [[library]]
-name = "hashsigs-rs"
-source = "https://github.com/QuipNetwork/hashsigs-rs"
+name = "hashsigs"
+repositories = [
+  { language = "Rust", url = "https://github.com/QuipNetwork/hashsigs-rs" },
+  { language = "Solidity", url = "https://github.com/QuipNetwork/hashsigs-solidity" },
+]
 algorithms = ["shrincs", "sphincs-plus-c", "wots-plus"]
-maturity = "pre-production"
-blockchain_friendly = true
-min_signature = { bytes = 1092, parameter_set = "SHRINCS 128s-q18 (stateful, first leaf)" }
-min_public_key = { bytes = 64, parameter_set = "SPHINCS+C (stateless public key)" }
-note = "Includes verify-only Solana program"
-
-[[library]]
-name = "hashsigs-solidity"
-source = "https://github.com/QuipNetwork/hashsigs-solidity"
-algorithms = ["shrincs", "sphincs-plus-c", "wots-plus"]
-maturity = "pre-production"
+hybrid = false
+maturity = "production"
 blockchain_friendly = true
 audits = [
-  { title = "Oak Security audit of Quip contracts (2026)", url = "https://github.com/QuipNetwork/hashsigs-solidity/blob/chore/audit-report/audit/audit-quip-network-oak-security-2026-09-24.pdf" },
+  { auditor = "Oak Security", url = "https://github.com/oak-security/audit-reports/blob/main/Quip/2026-09-24%20Audit%20Report%20-%20Quip%20v1.0.pdf", logo = "oak-security.svg" },
 ]
-note = "SHRINCS verifiers on audit branch"
+min_signature = { bytes = 1092, parameter_set = "SHRINCS 128s-q18 (stateful, first leaf)" }
+min_public_key = { bytes = 64, parameter_set = "SPHINCS+C (stateless public key)" }
+note = "Audit covers Solidity only"
 
 [[library]]
 name = "pqhybridsign"
-source = "https://github.com/QuipNetwork/pqhybridsign"
+repositories = [{ language = "Rust", url = "https://github.com/QuipNetwork/pqhybridsign" }]
 algorithms = ["ml-dsa", "fn-dsa", "shrincs"]
+hybrid = true
 maturity = "pre-production"
 blockchain_friendly = true
 min_signature = { bytes = 731, parameter_set = "Falcon-512 hybrid with ed25519 or sr25519" }
@@ -133,16 +156,18 @@ note = "No cross-implementation test vectors"
 
 [[library]]
 name = "pqringct"
-source = "https://github.com/pqabelian/pqringct"
+repositories = [{ language = "Go", url = "https://github.com/pqabelian/pqringct" }]
 algorithms = ["pqringct"]
+hybrid = false
 maturity = "production"
 blockchain_friendly = true
 note = "Used by Abelian node"
 
 [[library]]
 name = "pqringctx"
-source = "https://github.com/pqabelian/pqringctx"
+repositories = [{ language = "Go", url = "https://github.com/pqabelian/pqringctx" }]
 algorithms = ["pqringct"]
+hybrid = false
 maturity = "production"
 blockchain_friendly = true
 note = "Derived from pqringct"
