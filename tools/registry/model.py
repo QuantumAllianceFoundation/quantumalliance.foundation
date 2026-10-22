@@ -9,12 +9,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-CATEGORIES: tuple[str, ...] = (
-    "post-quantum",
-    "post-quantum-ready",
-    "quantum-aware",
-    "quantum-vulnerable",
-)
 # Layer values in sort order; "no-signatures" ranks directly after "post-quantum".
 LAYER_VALUES: tuple[str, ...] = (
     "post-quantum",
@@ -35,6 +29,10 @@ SAFETY_BY_FAMILY = {"hash-based": "High", "lattice": "Medium", "other": "Low"}
 SAFETY_RANK = {"High": 0, "Medium": 1, "Low": 2}
 MAX_LINKS = 2
 MAX_NOTE_WORDS = 5
+MAX_SUMMARY_WORDS = 80
+MAX_PAPERS = 3
+MAX_LOGO_BYTES = 65536
+LOGO_EXTENSIONS = (".svg", ".png", ".webp")
 MATURITIES = ("experimental", "pre-production", "production")
 
 
@@ -50,6 +48,8 @@ class Algorithm:
     name: str
     family: str
     url: str
+    summary: str
+    papers: tuple[Link, ...]
 
 
 @dataclass(frozen=True)
@@ -68,6 +68,7 @@ class Chain:
     algorithms: tuple[str, ...]
     note: str | None
     links: tuple[Link, ...]
+    logo: str | None = None
 
 
 @dataclass(frozen=True)
@@ -170,6 +171,44 @@ def _note(value: Any) -> str:
     return text
 
 
+def _summary(value: Any) -> str:
+    text = _text(value)
+    words = len(text.split())
+    if words > MAX_SUMMARY_WORDS:
+        raise ValueError(f"must be at most {MAX_SUMMARY_WORDS} words (got {words})")
+    return text
+
+
+_SCRIPT = re.compile(r"<script", re.IGNORECASE)
+_EVENT_ATTRIBUTE = re.compile(r"\son[a-z]+\s*=", re.IGNORECASE)
+
+
+def _logo(logos_dir: Path) -> Callable[[Any], str]:
+    def check(value: Any) -> str:
+        name = _text(value)
+        if name != Path(name).name:
+            raise ValueError(f"must be a file name without a directory (got {name!r})")
+        if Path(name).suffix.lower() not in LOGO_EXTENSIONS:
+            raise ValueError(f"must end in .svg, .png, or .webp (got {name!r})")
+        try:
+            data = (logos_dir / name).read_bytes()
+        except OSError as exc:
+            raise ValueError(
+                f"cannot read {name} in {logos_dir}: {exc.strerror or exc}"
+            ) from exc
+        if len(data) > MAX_LOGO_BYTES:
+            raise ValueError(
+                f"{name} must be at most {MAX_LOGO_BYTES} bytes (got {len(data)})"
+            )
+        if name.lower().endswith(".svg"):
+            text = data.decode("utf-8", errors="replace")
+            if _SCRIPT.search(text) or _EVENT_ATTRIBUTE.search(text):
+                raise ValueError(f"{name} must not contain <script> or on* attributes")
+        return name
+
+    return check
+
+
 def _flag(value: Any) -> bool:
     if not isinstance(value, bool):
         raise ValueError("must be true or false")
@@ -229,6 +268,8 @@ _SPECS: dict[str, tuple[str, type, dict[str, tuple[Callable[[Any], Any], Any]], 
             "name": (_text, _REQUIRED),
             "family": (_choice(FAMILIES), _REQUIRED),
             "url": (_url, _REQUIRED),
+            "summary": (_summary, _REQUIRED),
+            "papers": (_list_of(_link, non_empty=True, max_items=MAX_PAPERS), _REQUIRED),
         },
         "id",
     ),
@@ -280,10 +321,15 @@ _SPECS: dict[str, tuple[str, type, dict[str, tuple[Callable[[Any], Any], Any]], 
 
 
 def _build_entry(
-    kind: str, raw: Any, index: int, filename: str, errors: list[str]
+    kind: str,
+    fields: dict[str, tuple[Callable[[Any], Any], Any]],
+    raw: Any,
+    index: int,
+    filename: str,
+    errors: list[str],
 ) -> Any | None:
     """Validate one entry; append errors and return None if it is invalid."""
-    _, cls, fields, name_key = _SPECS[kind]
+    _, cls, _, name_key = _SPECS[kind]
     if not isinstance(raw, dict):
         errors.append(f"{filename}: #{index}: entry: must be a table")
         return None
@@ -308,9 +354,14 @@ def _build_entry(
     return None if problems else cls(**values)
 
 
-def _load_kind(data_dir: Path, kind: str, errors: list[str]) -> list[Any]:
+def _load_kind(
+    data_dir: Path, logos_dir: Path, kind: str, errors: list[str]
+) -> list[Any]:
     filename = f"{kind}.toml"
-    array, _, _, name_key = _SPECS[kind]
+    array, _, spec_fields, name_key = _SPECS[kind]
+    fields = dict(spec_fields)
+    if kind == "blockchains":
+        fields["logo"] = (_logo(logos_dir), None)
     try:
         text = (data_dir / filename).read_text(encoding="utf-8-sig")
         doc = tomllib.loads(text)
@@ -334,7 +385,7 @@ def _load_kind(data_dir: Path, kind: str, errors: list[str]) -> list[Any]:
     entries = []
     seen: set[str] = set()
     for index, raw in enumerate(raw_entries, start=1):
-        entry = _build_entry(kind, raw, index, filename, errors)
+        entry = _build_entry(kind, fields, raw, index, filename, errors)
         if entry is None:
             continue
         name = getattr(entry, name_key)
@@ -360,13 +411,19 @@ def _check_algorithm_refs(
             )
 
 
-def load_registry(data_dir: Path) -> Registry:
-    """Load and validate the four registry files, raising one RegistryError."""
+def load_registry(data_dir: Path, logos_dir: Path | None = None) -> Registry:
+    """Load and validate the four registry files, raising one RegistryError.
+
+    Chain logos are read from logos_dir, which defaults to
+    assets/registry/logos next to the registry directory.
+    """
+    if logos_dir is None:
+        logos_dir = data_dir.parent.parent / "assets" / "registry" / "logos"
     errors: list[str] = []
-    algorithms = _load_kind(data_dir, "algorithms", errors)
-    chains = _load_kind(data_dir, "blockchains", errors)
-    libraries = _load_kind(data_dir, "libraries", errors)
-    products = _load_kind(data_dir, "products", errors)
+    algorithms = _load_kind(data_dir, logos_dir, "algorithms", errors)
+    chains = _load_kind(data_dir, logos_dir, "blockchains", errors)
+    libraries = _load_kind(data_dir, logos_dir, "libraries", errors)
+    products = _load_kind(data_dir, logos_dir, "products", errors)
     catalog = {a.id: a for a in algorithms}
     _check_algorithm_refs("blockchains.toml", chains, catalog, errors)
     _check_algorithm_refs("libraries.toml", libraries, catalog, errors)
@@ -381,10 +438,6 @@ def library_safety(lib: Library, algorithms: Mapping[str, Algorithm]) -> str:
     return min(ratings, key=SAFETY_RANK.__getitem__)
 
 
-def overall_category(chain: Chain) -> str:
-    """Return the less ready of the two layers; no-signatures counts as post-quantum."""
-
-    def rank(layer: str) -> int:
-        return CATEGORIES.index("post-quantum" if layer == "no-signatures" else layer)
-
-    return CATEGORIES[max(rank(chain.consensus), rank(chain.transactions))]
+def library_slug(name: str) -> str:
+    """Return the anchor slug for a library name."""
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")

@@ -3,15 +3,21 @@ id = "ml-dsa"
 name = "ML-DSA"
 family = "lattice"
 url = "https://csrc.nist.gov/pubs/fips/204/final"
+summary = "A lattice-based digital signature scheme standardized by NIST."
+papers = [{ title = "ML-DSA (FIPS 204)", url = "https://csrc.nist.gov/pubs/fips/204/final" }]
 
 [[algorithm]]
 id = "slh-dsa"
 name = "SLH-DSA"
 family = "hash-based"
 url = "https://csrc.nist.gov/pubs/fips/205/final"
+summary = "A hash-based digital signature scheme standardized by NIST."
+papers = [{ title = "SLH-DSA (FIPS 205)", url = "https://csrc.nist.gov/pubs/fips/205/final" }]
 
 [[algorithm]]
 id = "other-alg"
 name = "Other"
 family = "other"
 url = "https://example.org/other"
+summary = "A placeholder scheme used only in tests."
+papers = [{ title = "Other paper", url = "https://example.org/other-paper" }]

@@ -26,8 +26,10 @@ from tools.registry.render import (
 VALID = Path(__file__).parent / "fixtures" / "valid"
 
 ALGS = {
-    "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "https://example.org/ml"),
-    "slh-dsa": Algorithm("slh-dsa", "SLH-DSA", "hash-based", "https://example.org/slh"),
+    "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "https://example.org/ml", "S", ()),
+    "slh-dsa": Algorithm(
+        "slh-dsa", "SLH-DSA", "hash-based", "https://example.org/slh", "S", ()
+    ),
 }
 
 
@@ -38,21 +40,29 @@ def chain(name, consensus="post-quantum", transactions="post-quantum", note=None
     )
 
 
-def library(name="Lib", **overrides):
-    fields = dict(
+def library(
+    name="Lib",
+    algorithms=("ml-dsa",),
+    maturity="production",
+    blockchain_friendly=False,
+    audits=(),
+    min_signature: Size | None = None,
+    min_public_key: Size | None = None,
+    note: str | None = None,
+    links=(),
+):
+    return Library(
         name=name,
         source="https://example.org/lib",
-        algorithms=("ml-dsa",),
-        maturity="production",
-        blockchain_friendly=False,
-        audits=(),
-        min_signature=None,
-        min_public_key=None,
-        note=None,
-        links=(),
+        algorithms=algorithms,
+        maturity=maturity,
+        blockchain_friendly=blockchain_friendly,
+        audits=audits,
+        min_signature=min_signature,
+        min_public_key=min_public_key,
+        note=note,
+        links=links,
     )
-    fields.update(overrides)
-    return Library(**fields)
 
 
 def registry(chains=(), libraries=(), products=()):

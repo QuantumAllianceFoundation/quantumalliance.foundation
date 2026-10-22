@@ -4,15 +4,15 @@ from pathlib import Path
 
 from tools.registry.model import (
     Algorithm,
-    Chain,
     Library,
     RegistryError,
-    overall_category,
     library_safety,
+    library_slug,
     load_registry,
 )
 
 FIXTURES = Path(__file__).parent / "fixtures"
+LOGOS = FIXTURES / "valid" / "logos"
 
 ALGORITHMS = """
 [[algorithm]]
@@ -20,6 +20,8 @@ id = "ml-dsa"
 name = "ML-DSA"
 family = "lattice"
 url = "https://csrc.nist.gov/pubs/fips/204/final"
+summary = "A lattice-based signature scheme."
+papers = [{ title = "CRYSTALS-Dilithium (2018)", url = "https://example.org/dilithium" }]
 """
 
 CHAIN = """
@@ -61,10 +63,12 @@ class RegistryTestCase(unittest.TestCase):
         self.addCleanup(tmp.cleanup)
         self.tmp = Path(tmp.name)
 
+    logos_dir: Path | None = None
+
     def errors_for(self, **files: str) -> list[str]:
         write_data(self.tmp, **files)
         with self.assertRaises(RegistryError) as cm:
-            load_registry(self.tmp)
+            load_registry(self.tmp, self.logos_dir)
         return cm.exception.errors
 
 
@@ -105,6 +109,7 @@ url = "https://example.org/wallet"
         reg = load_registry(self.tmp)
         lib = reg.libraries[0]
         self.assertEqual(lib.audits[0].title, "Audit")
+        assert lib.min_signature is not None
         self.assertEqual(lib.min_signature.bytes, 666)
         self.assertEqual(lib.min_signature.parameter_set, "Falcon-512")
         self.assertEqual(lib.note, "Fast")
@@ -257,35 +262,158 @@ url = "https://example.org/wallet"
         self.assertTrue(all(": " in e for e in errors))
 
 
-class OverallCategoryTest(unittest.TestCase):
-    def chain(self, consensus: str, transactions: str) -> Chain:
-        return Chain("C", consensus, transactions, "https://a.org", "https://b.org", (), None, ())
+class AlgorithmContentTest(RegistryTestCase):
+    def algorithm_errors(self, algorithms: str) -> list[str]:
+        """Return the algorithms.toml errors; dangling references add others."""
+        errors = self.errors_for(algorithms=algorithms)
+        return [e for e in errors if e.startswith("algorithms.toml:")]
 
-    def test_overall_is_less_ready_layer(self):
-        cases = (
-            ("no-signatures", "quantum-vulnerable", "quantum-vulnerable"),
-            ("post-quantum", "post-quantum", "post-quantum"),
-            ("quantum-aware", "post-quantum-ready", "quantum-aware"),
-        )
-        for consensus, transactions, expected in cases:
-            with self.subTest(consensus=consensus, transactions=transactions):
-                self.assertEqual(
-                    overall_category(self.chain(consensus, transactions)), expected
-                )
+    def test_loads_summary_and_papers(self):
+        alg = load_registry(FIXTURES / "valid").algorithms["ml-dsa"]
+        self.assertTrue(alg.summary)
+        self.assertEqual(len(alg.papers), 1)
+        self.assertEqual(alg.papers[0].url, "https://csrc.nist.gov/pubs/fips/204/final")
 
-    def test_overall_maps_no_signatures_to_post_quantum(self):
-        self.assertEqual(
-            overall_category(self.chain("no-signatures", "post-quantum")),
-            "post-quantum",
+    def test_rejects_missing_summary(self):
+        errors = self.algorithm_errors(
+            ALGORITHMS.replace('summary = "A lattice-based signature scheme."\n', "")
         )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("algorithms.toml: ml-dsa: summary: required", errors[0])
+
+    def test_rejects_summary_over_80_words(self):
+        too_long = " ".join(["word"] * 81)
+        errors = self.algorithm_errors(
+            ALGORITHMS.replace("A lattice-based signature scheme.", too_long)
+        )
+        self.assertEqual(len(errors), 1)
+        self.assertIn("algorithms.toml: ml-dsa: summary:", errors[0])
+        self.assertIn("80 words", errors[0])
+
+    def test_accepts_summary_of_80_words(self):
+        eighty = " ".join(["word"] * 80)
+        write_data(
+            self.tmp,
+            algorithms=ALGORITHMS.replace("A lattice-based signature scheme.", eighty),
+        )
+        self.assertEqual(load_registry(self.tmp).algorithms["ml-dsa"].summary, eighty)
+
+    def test_rejects_zero_or_more_than_three_papers(self):
+        paper = '{ title = "P", url = "https://example.org/p" }'
+        cases = {
+            "papers = []": "must not be empty",
+            "papers = [" + ", ".join([paper] * 4) + "]": "at most 3",
+        }
+        for papers, message in cases.items():
+            with self.subTest(papers=papers[:20]):
+                text = ALGORITHMS.split("papers =")[0] + papers + "\n"
+                errors = self.algorithm_errors(text)
+                self.assertEqual(len(errors), 1)
+                self.assertIn("algorithms.toml: ml-dsa: papers:", errors[0])
+                self.assertIn(message, errors[0])
+
+    def test_rejects_missing_papers(self):
+        errors = self.algorithm_errors(ALGORITHMS.split("papers =")[0])
+        self.assertIn("algorithms.toml: ml-dsa: papers: required", errors[0])
+
+
+class ChainLogoTest(RegistryTestCase):
+    def logo_errors(self, logo: str) -> list[str]:
+        return self.errors_for(blockchains=CHAIN + f'logo = "{logo}"\n')
+
+    def setUp(self):
+        super().setUp()
+        self.logos = self.tmp / "logos"
+        self.logos.mkdir()
+        self.logos_dir = self.logos
+
+    def test_accepts_valid_logos(self):
+        write_data(
+            self.tmp,
+            blockchains=CHAIN
+            + 'logo = "mark.svg"\n'
+            + CHAIN.replace("Quantus", "Other")
+            + 'logo = "mark.png"\n',
+        )
+        reg = load_registry(self.tmp, LOGOS)
+        self.assertEqual([c.logo for c in reg.chains], ["mark.svg", "mark.png"])
+
+    def test_logo_is_optional(self):
+        self.assertIsNone(load_registry(FIXTURES / "valid").chains[0].logo)
+
+    def test_default_logos_dir_is_assets_registry_logos(self):
+        site = self.tmp / "site"
+        data = site / "registry" / "data"
+        logos = site / "assets" / "registry" / "logos"
+        data.mkdir(parents=True)
+        logos.mkdir(parents=True)
+        (logos / "mark.svg").write_bytes((LOGOS / "mark.svg").read_bytes())
+        write_data(data, blockchains=CHAIN + 'logo = "mark.svg"\n')
+        self.assertEqual(load_registry(data).chains[0].logo, "mark.svg")
+
+    def test_rejects_logo_missing_file(self):
+        errors = self.logo_errors("nope.svg")
+        self.assertEqual(len(errors), 1)
+        self.assertIn("blockchains.toml: Quantus: logo:", errors[0])
+        self.assertIn("nope.svg", errors[0])
+
+    def test_rejects_logo_bad_extension(self):
+        (self.logos / "mark.gif").write_bytes(b"GIF89a")
+        errors = self.logo_errors("mark.gif")
+        self.assertEqual(len(errors), 1)
+        self.assertIn("blockchains.toml: Quantus: logo:", errors[0])
+        self.assertIn(".svg, .png, or .webp", errors[0])
+
+    def test_rejects_logo_over_64kb(self):
+        (self.logos / "big.png").write_bytes(b"0" * (65536 + 1))
+        errors = self.logo_errors("big.png")
+        self.assertEqual(len(errors), 1)
+        self.assertIn("blockchains.toml: Quantus: logo:", errors[0])
+        self.assertIn("65536", errors[0])
+
+    def test_accepts_logo_of_exactly_64kb(self):
+        (self.logos / "edge.png").write_bytes(b"0" * 65536)
+        write_data(self.tmp, blockchains=CHAIN + 'logo = "edge.png"\n')
+        self.assertEqual(load_registry(self.tmp, self.logos).chains[0].logo, "edge.png")
+
+    def test_rejects_svg_logo_with_script(self):
+        cases = {
+            "script.svg": '<svg xmlns="http://www.w3.org/2000/svg"><SCRIPT>1</SCRIPT></svg>',
+            "onload.svg": '<svg xmlns="http://www.w3.org/2000/svg" onload="x()"></svg>',
+            "onclick.svg": '<svg xmlns="http://www.w3.org/2000/svg"><g\nOnClick = "x()"/></svg>',
+        }
+        for name, text in cases.items():
+            with self.subTest(name=name):
+                (self.logos / name).write_text(text, encoding="utf-8")
+                errors = self.logo_errors(name)
+                self.assertEqual(len(errors), 1)
+                self.assertIn("blockchains.toml: Quantus: logo:", errors[0])
+
+    def test_rejects_logo_path_outside_logos_dir(self):
+        errors = self.logo_errors("../mark.svg")
+        self.assertEqual(len(errors), 1)
+        self.assertIn("blockchains.toml: Quantus: logo:", errors[0])
+
+
+class LibrarySlugTest(unittest.TestCase):
+    def test_library_slug(self):
+        cases = {
+            "qp-rusty-crystals": "qp-rusty-crystals",
+            "AWS LC (rs)": "aws-lc-rs",
+            "PQClean": "pqclean",
+            "  --Bouncy  Castle!! ": "bouncy-castle",
+        }
+        for name, slug in cases.items():
+            with self.subTest(name=name):
+                self.assertEqual(library_slug(name), slug)
 
 
 class LibrarySafetyTest(unittest.TestCase):
     def setUp(self):
         self.algorithms = {
-            "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "https://a.org"),
-            "slh-dsa": Algorithm("slh-dsa", "SLH-DSA", "hash-based", "https://b.org"),
-            "other-alg": Algorithm("other-alg", "Other", "other", "https://c.org"),
+            "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "https://a.org", "S", ()),
+            "slh-dsa": Algorithm("slh-dsa", "SLH-DSA", "hash-based", "https://b.org", "S", ()),
+            "other-alg": Algorithm("other-alg", "Other", "other", "https://c.org", "S", ()),
         }
 
     def lib(self, *ids: str) -> Library:
