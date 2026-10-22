@@ -278,14 +278,14 @@ logo = "monero.svg"
 [[chain]]
 name = "Bitcoin Cash"
 consensus = "no-signatures"
-transactions = "post-quantum-ready"
+transactions = "quantum-aware"
 website = "https://bitcoincash.org/"
 source = "https://gitlab.com/bitcoin-cash-node/bitcoin-cash-node"
-algorithms = ["fn-dsa", "slh-dsa"]
-note = "SHA-256 PoW, no signatures"
+algorithms = []
+note = "Draft CHIP; no merged code"
 links = [
-  { title = "CHIP-2026-06 specification", url = "https://gitlab.com/mainnet-pat/chip-2026-06-generic-sigs" },
-  { title = "Prototype node branch", url = "https://gitlab.com/mainnet-pat/bitcoin-cash-node/-/tree/generic_sig" },
+  { title = "CHIP-2026-06 proposal", url = "https://gitlab.com/mainnet-pat/chip-2026-06-generic-sigs" },
+  { title = "CHIP-2026-06 discussion forum thread", url = "https://bitcoincashresearch.org/t/chip-2026-06-post-quantum-and-hybrid-signatures/1864" },
 ]
 logo = "bitcoin-cash.svg"
 
@@ -481,3 +481,16 @@ algorithms = []
 note = "PoW consensus has no signatures"
 links = [{ title = "Project repository README", url = "https://github.com/super-quantum/qubitcoin" }]
 logo = "qubitcoin.png"
+
+[[chain]]
+name = "Whitechain"
+consensus = "quantum-vulnerable"
+transactions = "quantum-vulnerable"
+website = "https://whitechain.io/"
+source = "https://github.com/whitechain-labs/node"
+algorithms = []
+note = "Single-validator PoA; OP Stack move"
+links = [
+  { title = "Whitechain L1 to L2 migration guide", url = "https://docs.whitechain.io/learn/general/migration" },
+]
+logo = "whitechain.svg"
