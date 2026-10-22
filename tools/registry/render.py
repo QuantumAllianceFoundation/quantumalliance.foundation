@@ -200,6 +200,9 @@ def render_blockchains(reg: Registry) -> str:
             for key in LAYER_VALUES
         )
         + "\n        </dl>\n"
+        '        <p class="muted">Consensus covers how the network agrees on blocks, '
+        "such as validator votes or mining. Transactions covers the signatures "
+        "that authorize moving funds.</p>\n"
         '        <p class="muted">Overall is the less ready of the two layers.</p>'
     )
     chains = sorted(

@@ -135,7 +135,9 @@ class RenderTests(unittest.TestCase):
         chains = [chain("A", note="Short note"), chain("B")]
         out = render_blockchains(registry(chains=chains))
         rows = re.findall(r"<tr>(.*?)</tr>", out[out.index("<tbody"):], re.S)
-        first_cell = re.match(r"<td[^>]*>.*?</td>", rows[0], re.S).group(0)
+        match = re.match(r"<td[^>]*>.*?</td>", rows[0], re.S)
+        assert match is not None
+        first_cell = match.group(0)
         self.assertIn('popovertarget="notes-blockchains-0"', first_cell)
         self.assertIn('<div id="notes-blockchains-0" popover', first_cell)
         self.assertNotIn("popovertarget", rows[0][len(first_cell):])
@@ -174,6 +176,12 @@ class RenderTests(unittest.TestCase):
         self.assertIn('<a href="https://csrc.nist.gov/pubs/fips/204/final">ML-DSA</a>', out)
         self.assertIn('<th scope="col" data-sort-type="number">Overall</th>', out)
         self.assertIn('<table data-sortable>', out)
+        self.assertIn(
+            "Consensus covers how the network agrees on blocks, such as validator "
+            "votes or mining. Transactions covers the signatures that authorize "
+            "moving funds.",
+            out,
+        )
 
     def test_escapes_data_text(self):
         lib = library(note="<script>alert(1)</script>")

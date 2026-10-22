@@ -125,6 +125,7 @@ url = "https://example.org/wallet"
         )
         self.assertEqual(len(errors), 1)
         self.assertIn("blockchains.toml: Quantus: transactions:", errors[0])
+        self.assertIn("allowed for consensus only", errors[0])
 
     def test_accepts_no_signatures_for_consensus(self):
         write_data(

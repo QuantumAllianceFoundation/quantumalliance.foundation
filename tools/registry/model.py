@@ -156,6 +156,12 @@ def _choice(options: tuple[str, ...]) -> Callable[[Any], str]:
     return check
 
 
+def _transactions(value: Any) -> str:
+    if value == "no-signatures":
+        raise ValueError("no-signatures is allowed for consensus only")
+    return _choice(tuple(v for v in LAYER_VALUES if v != "no-signatures"))(value)
+
+
 def _note(value: Any) -> str:
     text = _text(value)
     words = len(text.split())
@@ -232,10 +238,7 @@ _SPECS: dict[str, tuple[str, type, dict[str, tuple[Callable[[Any], Any], Any]], 
         {
             "name": (_text, _REQUIRED),
             "consensus": (_choice(LAYER_VALUES), _REQUIRED),
-            "transactions": (
-                _choice(tuple(v for v in LAYER_VALUES if v != "no-signatures")),
-                _REQUIRED,
-            ),
+            "transactions": (_transactions, _REQUIRED),
             "website": (_url, _REQUIRED),
             "source": (_url, _REQUIRED),
             "algorithms": (_list_of(_text), ()),

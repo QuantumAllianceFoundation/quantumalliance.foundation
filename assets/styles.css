@@ -274,7 +274,7 @@ td:first-child { color: var(--white); font-weight: 500; white-space: nowrap; }
 .notes-toggle { display: none; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; background: none; border: 1px solid var(--border-med); border-radius: 50%; color: var(--content-70); cursor: pointer; }
 .notes-toggle:hover { color: var(--white); border-color: var(--content-40); }
 .notes-toggle:focus-visible, .notes-close:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
-.notes-popover { max-width: 22rem; width: calc(100vw - 48px); padding: 20px; background: var(--surface); border: 1px solid var(--border-med); border-radius: 8px; color: var(--content); }
+.notes-popover { max-width: 22rem; width: calc(100vw - 48px); padding: 20px; background: var(--surface); border: 1px solid var(--border-med); border-radius: 8px; color: var(--content); font-weight: 400; }
 .notes-popover::backdrop { background: #00000080; }
 .notes-popover h3 { font-size: 1rem; margin: 0 0 8px; }
 .notes-popover p { color: var(--content-70); line-height: 1.5; margin: 0 0 16px; }
