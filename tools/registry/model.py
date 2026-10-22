@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import tomllib
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
@@ -113,6 +114,18 @@ def _text(value: Any) -> str:
     return value
 
 
+_SLUG = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+
+
+def _slug(value: Any) -> str:
+    text = _text(value)
+    if not _SLUG.fullmatch(text):
+        raise ValueError(
+            f"must be a lowercase slug such as ml-dsa (got {text!r})"
+        )
+    return text
+
+
 def _url(value: Any) -> str:
     text = _text(value)
     if not text.startswith("https://"):
@@ -180,7 +193,7 @@ _SPECS: dict[str, tuple[str, type, dict[str, tuple[Callable[[Any], Any], Any]], 
         "algorithm",
         Algorithm,
         {
-            "id": (_text, _REQUIRED),
+            "id": (_slug, _REQUIRED),
             "name": (_text, _REQUIRED),
             "family": (_choice(FAMILIES), _REQUIRED),
             "url": (_url, _REQUIRED),

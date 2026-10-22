@@ -146,6 +146,14 @@ url = "https://example.org/wallet"
         )
         self.assertIn("libraries.toml: TestLib: min_signature:", errors[0])
 
+    def test_rejects_non_slug_algorithm_id(self):
+        errors = self.errors_for(
+            algorithms=ALGORITHMS.replace('"ml-dsa"', '"ML DSA!"')
+        )
+        self.assertTrue(
+            any(e.startswith("algorithms.toml:") and ": id:" in e for e in errors)
+        )
+
     def test_rejects_invalid_toml_with_file_name(self):
         errors = self.errors_for(blockchains="[[chain]\nname=")
         self.assertTrue(errors[0].startswith("blockchains.toml:"))
