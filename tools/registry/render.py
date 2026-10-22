@@ -9,17 +9,24 @@ from string import Template
 from .model import (
     CATEGORIES,
     CATEGORY_LABELS,
+    LAYER_VALUES,
     SAFETY_BY_FAMILY,
     SAFETY_RANK,
+    Link,
     Registry,
     Size,
     library_safety,
+    overall_category,
 )
 
 REPO_URL = "https://github.com/QuantumAllianceFoundation/quantumalliance.foundation"
 
 CATEGORY_DEFINITIONS = {
     "post-quantum": "Has deployed a post-quantum solution.",
+    "no-signatures": (
+        "The layer does not use digital signatures, for example proof-of-work mining, "
+        "which relies on hashing."
+    ),
     "post-quantum-ready": "Has published source code for a post-quantum solution that is not yet deployed.",
     "quantum-aware": (
         "Not yet post-quantum, but working on solutions that we believe will mitigate "
@@ -30,6 +37,14 @@ CATEGORY_DEFINITIONS = {
         "Example: Bitcoin, where BIP-360 is proposed but has no deployment path."
     ),
 }
+
+INFO_ICON = (
+    '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">'
+    '<circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/>'
+    '<circle cx="8" cy="4.75" r="1" fill="currentColor"/>'
+    '<path d="M8 7.25v4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+    "</svg>"
+)
 
 EMPTY_STATE = '<p class="intro">No entries yet. Be the first to add one.</p>'
 
@@ -48,6 +63,36 @@ def _external(url: str, text: str) -> str:
 
 def _td(content: str, sort: str | int) -> str:
     return f'<td data-sort="{_e(str(sort))}">{content}</td>'
+
+
+def _badge(layer: str) -> str:
+    return f'<span class="badge badge--{layer}">{_e(CATEGORY_LABELS[layer])}</span>'
+
+
+def _layer_td(layer: str) -> str:
+    return _td(_badge(layer), LAYER_VALUES.index(layer))
+
+
+def _notes_td(table: str, row: int, name: str, note: str | None, links: Sequence[Link]) -> str:
+    """Notes cell: inline text on wide screens, an icon button and popover on narrow ones."""
+    if not note and not links:
+        return _td("—", "")
+    parts = ([_e(note)] if note else []) + [_link(link.url, link.title) for link in links]
+    inline = "<br>".join(parts)
+    popover_id = f"notes-{table}-{row}"
+    sort = " ".join(([note] if note else []) + [link.title for link in links]).casefold()
+    return _td(
+        f'<span class="notes-inline">{inline}</span>'
+        f'<button type="button" class="notes-toggle" popovertarget="{popover_id}" '
+        f'aria-label="Notes for {_e(name)}">{INFO_ICON}</button>'
+        f'<div id="{popover_id}" popover class="notes-popover">'
+        f'<h3>{_e(name)}</h3>'
+        f'<p>{inline}</p>'
+        f'<button type="button" class="notes-close" popovertarget="{popover_id}" '
+        'popovertargetaction="hide">Close</button>'
+        "</div>",
+        sort,
+    )
 
 
 def _th(label: str, numeric: bool = False) -> str:
@@ -146,36 +191,35 @@ def render_blockchains(reg: Registry) -> str:
     legend = (
         '<dl class="legend">\n'
         + "\n".join(
-            f'          <div><dt><span class="badge badge--{key}">{_e(CATEGORY_LABELS[key])}</span></dt>'
-            f"<dd>{_e(CATEGORY_DEFINITIONS[key])}</dd></div>"
-            for key in CATEGORIES
+            f"          <div><dt>{_badge(key)}</dt><dd>{_e(CATEGORY_DEFINITIONS[key])}</dd></div>"
+            for key in LAYER_VALUES
         )
-        + "\n        </dl>"
+        + "\n        </dl>\n"
+        '        <p class="muted">Overall is the less ready of the two layers.</p>'
     )
-    chains = sorted(reg.chains, key=lambda c: (CATEGORIES.index(c.category), c.name.casefold()))
+    chains = sorted(
+        reg.chains, key=lambda c: (CATEGORIES.index(overall_category(c)), c.name.casefold())
+    )
     rows = []
-    for c in chains:
+    for index, c in enumerate(chains):
         algs = [reg.algorithms[a] for a in c.algorithms]
         rows.append([
             _td(_e(c.name), c.name.casefold()),
-            _td(
-                f'<span class="badge badge--{c.category}">{_e(CATEGORY_LABELS[c.category])}</span>',
-                CATEGORIES.index(c.category),
-            ),
+            _layer_td(overall_category(c)),
+            _layer_td(c.consensus),
+            _layer_td(c.transactions),
             _td(
                 ", ".join(_link(a.url, a.name) for a in algs) or "—",
                 ", ".join(a.name for a in algs).casefold(),
             ),
             _td(_link(c.website, "Website"), c.website.casefold()),
             _td(_link(c.source, "Source"), c.source.casefold()),
-            _td(
-                "<br>".join(_link(n.url, n.title) for n in c.notes) or "—",
-                " ".join(n.title for n in c.notes).casefold(),
-            ),
+            _notes_td("blockchains", index, c.name, c.note, c.links),
         ])
     table = (
         _table(
-            [_th("Chain"), _th("Category", True), _th("Algorithms"), _th("Website"),
+            [_th("Chain"), _th("Overall", True), _th("Consensus", True),
+             _th("Transactions", True), _th("Algorithms"), _th("Website"),
              _th("Source"), _th("Notes")],
             rows,
         )
@@ -199,7 +243,7 @@ def render_libraries(reg: Registry) -> str:
         key=lambda lib: (SAFETY_RANK[library_safety(lib, reg.algorithms)], lib.name.casefold()),
     )
     rows = []
-    for lib in libs:
+    for index, lib in enumerate(libs):
         safety = library_safety(lib, reg.algorithms)
         chips = " ".join(
             f'<span class="alg safety--{SAFETY_BY_FAMILY[reg.algorithms[a].family].lower()}">'
@@ -221,7 +265,7 @@ def render_libraries(reg: Registry) -> str:
             _td("Yes" if lib.blockchain_friendly else "No", "yes" if lib.blockchain_friendly else "no"),
             _td(_e(format_size(lib.min_signature)), lib.min_signature.bytes if lib.min_signature else ""),
             _td(_e(format_size(lib.min_public_key)), lib.min_public_key.bytes if lib.min_public_key else ""),
-            _td("<br>".join(_e(n) for n in lib.notes) or "—", " ".join(lib.notes).casefold()),
+            _notes_td("libraries", index, lib.name, lib.note, lib.links),
         ])
     table = (
         _table(

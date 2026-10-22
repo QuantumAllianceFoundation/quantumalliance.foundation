@@ -252,12 +252,13 @@ td:first-child { color: var(--white); font-weight: 500; white-space: nowrap; }
 .table-wrap + .registry-actions { margin-top: -16px; }
 
 .legend { display: grid; gap: 8px; margin: 0 0 24px; }
-.legend > div { display: grid; grid-template-columns: 12rem 1fr; gap: 12px; align-items: baseline; }
+.legend > div { display: grid; grid-template-columns: 17rem 1fr; gap: 12px; align-items: baseline; }
 .legend dt, .legend dd { margin: 0; }
 .legend dd { color: var(--content-60); font-size: .875rem; line-height: 1.5; }
 
 .badge { display: inline-block; padding: 2px 10px; border: 1px solid var(--border-med); border-radius: 999px; font-size: .75rem; white-space: nowrap; color: var(--content-70); }
 .badge--post-quantum { border-color: var(--signal); background: #a78bfa26; color: var(--signal); }
+.badge--no-signatures { border-color: var(--signal); background: transparent; color: var(--signal); }
 .badge--post-quantum-ready { border-color: var(--content-40); color: var(--content); }
 .badge--quantum-aware { border-color: var(--border-med); color: var(--content-60); }
 .badge--quantum-vulnerable { border: 1px dashed #f87171; background: #f8717114; color: #f87171; }
@@ -267,6 +268,22 @@ td:first-child { color: var(--white); font-weight: 500; white-space: nowrap; }
 .safety--high { color: var(--signal); }
 .safety--medium { color: var(--content); }
 .safety--low { color: var(--content-60); }
+
+.legend + .muted { margin-bottom: 24px; }
+
+.notes-toggle { display: none; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; background: none; border: 1px solid var(--border-med); border-radius: 50%; color: var(--content-70); cursor: pointer; }
+.notes-toggle:hover { color: var(--white); border-color: var(--content-40); }
+.notes-toggle:focus-visible, .notes-close:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.notes-popover { max-width: 22rem; width: calc(100vw - 48px); padding: 20px; background: var(--surface); border: 1px solid var(--border-med); border-radius: 8px; color: var(--content); }
+.notes-popover::backdrop { background: #00000080; }
+.notes-popover h3 { font-size: 1rem; margin: 0 0 8px; }
+.notes-popover p { color: var(--content-70); line-height: 1.5; margin: 0 0 16px; }
+.notes-close { padding: 6px 14px; background: none; border: 1px solid var(--border-med); border-radius: 6px; color: var(--content); font: inherit; font-size: .875rem; cursor: pointer; }
+.notes-close:hover { border-color: var(--content-40); }
+@media (max-width: 767px) {
+  .notes-inline { display: none; }
+  .notes-toggle { display: inline-flex; }
+}
 
 table[data-sortable] th button { all: unset; cursor: pointer; font: inherit; color: inherit; }
 table[data-sortable] th button:hover, table[data-sortable] th button:focus-visible { color: var(--white); }

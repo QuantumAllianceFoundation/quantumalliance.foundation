@@ -1,3 +1,4 @@
+import re
 import unittest
 from pathlib import Path
 
@@ -30,8 +31,11 @@ ALGS = {
 }
 
 
-def chain(name, category):
-    return Chain(name, category, "https://example.org/", "https://example.org/src", (), ())
+def chain(name, consensus="post-quantum", transactions="post-quantum", note=None, links=()):
+    return Chain(
+        name, consensus, transactions, "https://example.org/", "https://example.org/src",
+        (), note, tuple(links),
+    )
 
 
 def library(name="Lib", **overrides):
@@ -44,7 +48,8 @@ def library(name="Lib", **overrides):
         audits=(),
         min_signature=None,
         min_public_key=None,
-        notes=(),
+        note=None,
+        links=(),
     )
     fields.update(overrides)
     return Library(**fields)
@@ -55,18 +60,99 @@ def registry(chains=(), libraries=(), products=()):
 
 
 class RenderTests(unittest.TestCase):
-    def test_blockchain_rows_sorted_by_category_then_name(self):
+    def test_blockchain_columns_and_overall(self):
+        btc = chain("Bitcoin", "no-signatures", "quantum-vulnerable")
+        out = render_blockchains(registry(chains=[btc]))
+        heads = re.findall(r"<th [^>]*>([^<]*)</th>", out)
+        self.assertEqual(
+            heads,
+            ["Chain", "Overall", "Consensus", "Transactions", "Algorithms", "Website", "Source", "Notes"],
+        )
+        body = out[out.index("<tbody"):]
+        self.assertIn(
+            '<td data-sort="4"><span class="badge badge--quantum-vulnerable">Quantum-Vulnerable</span></td>',
+            body,
+        )
+        self.assertIn(
+            '<td data-sort="1"><span class="badge badge--no-signatures">'
+            "No Signatures / Quantum Resistant</span></td>",
+            body,
+        )
+        self.assertIn(
+            '<td data-sort="4"><span class="badge badge--quantum-vulnerable">Quantum-Vulnerable</span></td>'
+            '<td data-sort="1">',
+            body.replace("\n", ""),
+        )
+
+    def test_rows_sorted_by_overall_then_name(self):
         reg = registry(
             chains=[
-                chain("Zeta", "post-quantum"),
-                chain("Alpha", "quantum-vulnerable"),
-                chain("Beta", "post-quantum"),
+                chain("Zeta", "post-quantum", "post-quantum"),
+                chain("Alpha", "post-quantum", "quantum-vulnerable"),
+                chain("Beta", "no-signatures", "post-quantum"),
+                chain("Gamma", "quantum-aware", "post-quantum"),
             ]
         )
         out = render_blockchains(reg)
         body = out[out.index("<tbody"):]
-        self.assertLess(body.index("Beta"), body.index("Zeta"))
-        self.assertLess(body.index("Zeta"), body.index("Alpha"))
+        order = [body.index(n) for n in ("Beta", "Zeta", "Gamma", "Alpha")]
+        self.assertEqual(order, sorted(order))
+
+    def test_legend_lists_five_values(self):
+        out = render_blockchains(registry(chains=[chain("A")]))
+        legend = out[out.index('<dl class="legend">'):out.index("</dl>")]
+        for label in ("Post-Quantum", "No Signatures / Quantum Resistant", "Post-Quantum Ready",
+                      "Quantum-Aware", "Quantum-Vulnerable"):
+            self.assertIn(f">{label}</span>", legend)
+        self.assertEqual(legend.count("<dt>"), 5)
+        self.assertIn(
+            "The layer does not use digital signatures, for example proof-of-work mining, "
+            "which relies on hashing.",
+            out,
+        )
+        self.assertIn("Overall is the less ready of the two layers.", out)
+
+    def test_notes_popover_ids_unique_and_linked(self):
+        chains = [chain("A", note="Short note"), chain("B", links=[Link("T", "https://example.org/t")])]
+        libs = [library("L", note="Lib note")]
+        for out in (
+            render_blockchains(registry(chains=chains)),
+            render_libraries(registry(libraries=libs)),
+        ):
+            targets = re.findall(r'popovertarget="([^"]+)"', out)
+            ids = re.findall(r'<div id="([^"]+)" popover', out)
+            self.assertTrue(ids)
+            self.assertEqual(len(ids), len(set(ids)))
+            for target in targets:
+                self.assertEqual(ids.count(target), 1)
+            self.assertEqual(set(targets), set(ids))
+        out = render_blockchains(registry(chains=chains))
+        self.assertIn('class="notes-toggle" popovertarget="notes-blockchains-0" aria-label="Notes for A"', out)
+        self.assertIn('popovertargetaction="hide"', out)
+        self.assertIn('class="notes-popover"', out)
+
+    def test_empty_notes_has_no_popover(self):
+        out = render_blockchains(registry(chains=[chain("A")]))
+        self.assertIn('<td data-sort="">—</td>', out)
+        self.assertNotIn("popover", out)
+        self.assertNotIn("notes-toggle", out)
+
+    def test_popover_content_escaped(self):
+        out = render_blockchains(registry(chains=[chain("A", note="<b>bold</b>")]))
+        self.assertIn("&lt;b&gt;bold&lt;/b&gt;", out)
+        self.assertNotIn("<b>", out)
+
+    def test_notes_cell_keeps_sort_value_and_links(self):
+        c = chain("A", note="Short Note", links=[Link("BIP-360", "https://example.org/bip")])
+        out = render_blockchains(registry(chains=[c]))
+        self.assertIn('data-sort="short note bip-360"', out)
+        self.assertEqual(out.count('<a href="https://example.org/bip">BIP-360</a>'), 2)
+
+    def test_library_notes_render_note_then_links(self):
+        lib = library(note="Audit scope limited", links=(Link("Audit", "https://example.org/a"),))
+        out = render_libraries(registry(libraries=[lib]))
+        self.assertIn('popovertarget="notes-libraries-0"', out)
+        self.assertLess(out.index("Audit scope limited"), out.index('<a href="https://example.org/a">Audit</a>'))
 
     def test_blockchain_legend_and_links(self):
         reg = load_registry(VALID)
@@ -74,17 +160,17 @@ class RenderTests(unittest.TestCase):
         self.assertIn("Has deployed a post-quantum solution.", out)
         self.assertIn("BIP-360 is proposed but has no deployment path.", out)
         self.assertIn('<a href="https://csrc.nist.gov/pubs/fips/204/final">ML-DSA</a>', out)
-        self.assertIn('<th scope="col" data-sort-type="number">Category</th>', out)
+        self.assertIn('<th scope="col" data-sort-type="number">Overall</th>', out)
         self.assertIn('<table data-sortable>', out)
 
     def test_escapes_data_text(self):
-        lib = library(notes=("<script>alert(1)</script> (ML-DSA)",))
+        lib = library(note="<script>alert(1)</script>")
         out = render_libraries(registry(libraries=[lib]))
         self.assertIn("&lt;script&gt;", out)
         self.assertNotIn("<script>alert", out)
 
     def test_escapes_attribute_values(self):
-        c = Chain("X", "post-quantum", 'https://e.org/"onmouseover="x', "https://e.org/", (), ())
+        c = Chain("X", "post-quantum", "post-quantum", 'https://e.org/"onmouseover="x', "https://e.org/", (), None, ())
         out = render_blockchains(registry(chains=[c]))
         self.assertNotIn('"onmouseover="x', out)
 
