@@ -25,6 +25,7 @@ CATEGORY_LABELS: dict[str, str] = {
     "quantum-vulnerable": "Quantum-Vulnerable",
 }
 FAMILIES = ("hash-based", "lattice", "other")
+KINDS = ("signature", "kem")
 SAFETY_BY_FAMILY = {"hash-based": "High", "lattice": "Medium", "other": "Low"}
 SAFETY_RANK = {"High": 0, "Medium": 1, "Low": 2}
 SAFETY_LEVELS = ("High", "Medium", "Low")
@@ -33,6 +34,7 @@ MAX_LINKS = 2
 MAX_NOTE_WORDS = 5
 MAX_SUMMARY_WORDS = 80
 MAX_RATIONALE_WORDS = 60
+MAX_REASON_WORDS = 40
 MAX_PAPERS = 3
 MAX_REPOSITORIES = 4
 MAX_LOGO_BYTES = 65536
@@ -51,6 +53,7 @@ class Algorithm:
     id: str
     name: str
     family: str
+    kind: str
     url: str
     summary: str
     rationale: str
@@ -68,6 +71,8 @@ class Chain:
     name: str
     consensus: str
     transactions: str
+    consensus_reason: str
+    transactions_reason: str
     website: str
     source: str
     algorithms: tuple[str, ...]
@@ -182,28 +187,21 @@ def _transactions(value: Any) -> str:
     return _choice(tuple(v for v in LAYER_VALUES if v != "no-signatures"))(value)
 
 
-def _note(value: Any) -> str:
-    text = _text(value)
-    words = len(text.split())
-    if words > MAX_NOTE_WORDS:
-        raise ValueError(f"must be at most {MAX_NOTE_WORDS} words (got {words})")
-    return text
+def _max_words(limit: int) -> Callable[[Any], str]:
+    def check(value: Any) -> str:
+        text = _text(value)
+        words = len(text.split())
+        if words > limit:
+            raise ValueError(f"must be at most {limit} words (got {words})")
+        return text
+
+    return check
 
 
-def _summary(value: Any) -> str:
-    text = _text(value)
-    words = len(text.split())
-    if words > MAX_SUMMARY_WORDS:
-        raise ValueError(f"must be at most {MAX_SUMMARY_WORDS} words (got {words})")
-    return text
-
-
-def _rationale(value: Any) -> str:
-    text = _text(value)
-    words = len(text.split())
-    if words > MAX_RATIONALE_WORDS:
-        raise ValueError(f"must be at most {MAX_RATIONALE_WORDS} words (got {words})")
-    return text
+_note = _max_words(MAX_NOTE_WORDS)
+_summary = _max_words(MAX_SUMMARY_WORDS)
+_rationale = _max_words(MAX_RATIONALE_WORDS)
+_reason = _max_words(MAX_REASON_WORDS)
 
 
 _SCRIPT = re.compile(r"<script", re.IGNORECASE)
@@ -308,6 +306,7 @@ _SPECS: dict[str, tuple[str, type, dict[str, tuple[Callable[[Any], Any], Any]], 
             "id": (_slug, _REQUIRED),
             "name": (_text, _REQUIRED),
             "family": (_choice(FAMILIES), _REQUIRED),
+            "kind": (_choice(KINDS), _REQUIRED),
             "url": (_url, _REQUIRED),
             "summary": (_summary, _REQUIRED),
             "rationale": (_rationale, _REQUIRED),
@@ -322,6 +321,8 @@ _SPECS: dict[str, tuple[str, type, dict[str, tuple[Callable[[Any], Any], Any]], 
             "name": (_text, _REQUIRED),
             "consensus": (_choice(LAYER_VALUES), _REQUIRED),
             "transactions": (_transactions, _REQUIRED),
+            "consensus_reason": (_reason, _REQUIRED),
+            "transactions_reason": (_reason, _REQUIRED),
             "website": (_url, _REQUIRED),
             "source": (_url, _REQUIRED),
             "algorithms": (_list_of(_text), ()),
@@ -400,6 +401,26 @@ def _build_entry(
     return None if problems else cls(**values)
 
 
+def _claim_slug(
+    filename: str, name: str, slug: str, slugs: dict[str, str], errors: list[str]
+) -> bool:
+    """Record the page address of name in slugs; report an error and return False if unusable."""
+    if not slug:
+        errors.append(
+            f"{filename}: {name}: name: needs at least one letter or digit "
+            "for its page address"
+        )
+        return False
+    if slug in slugs:
+        errors.append(
+            f'{filename}: {name}: name: page address "{slug}" '
+            f"is already used by {slugs[slug]}"
+        )
+        return False
+    slugs[slug] = name
+    return True
+
+
 def _load_kind(
     data_dir: Path, logos_dir: Path, auditors_dir: Path, kind: str, errors: list[str]
 ) -> list[Any]:
@@ -441,21 +462,9 @@ def _load_kind(
         if name.casefold() in seen:
             errors.append(f"{filename}: {name}: {name_key}: duplicate (names compare case-insensitively)")
             continue
-        if kind == "libraries":
-            slug = library_slug(name)
-            if not slug:
-                errors.append(
-                    f"{filename}: {name}: name: needs at least one letter or digit "
-                    "for its page address"
-                )
-                continue
-            if slug in slugs:
-                errors.append(
-                    f'{filename}: {name}: name: page address "{slug}" '
-                    f"is already used by {slugs[slug]}"
-                )
-                continue
-            slugs[slug] = name
+        slug_of = _SLUG_FUNCTIONS.get(kind)
+        if slug_of and not _claim_slug(filename, name, slug_of(name), slugs, errors):
+            continue
         seen.add(name.casefold())
         entries.append(entry)
     return entries
@@ -534,3 +543,23 @@ def library_safety_reason(lib: Library, algorithms: Mapping[str, Algorithm]) -> 
 def library_slug(name: str) -> str:
     """Return the anchor slug for a library name."""
     return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+
+
+def chain_slug(name: str) -> str:
+    """Return the page slug for a chain name, using the library rule."""
+    return library_slug(name)
+
+
+def library_capabilities(
+    lib: Library, algorithms: Mapping[str, Algorithm]
+) -> tuple[str, ...]:
+    """Return "Signatures" and/or "Key exchange", in that order, from the library's algorithm kinds."""
+    kinds = {algorithms[a].kind for a in lib.algorithms}
+    labels = (("signature", "Signatures"), ("kem", "Key exchange"))
+    return tuple(label for kind, label in labels if kind in kinds)
+
+
+_SLUG_FUNCTIONS: dict[str, Callable[[str], str]] = {
+    "blockchains": chain_slug,
+    "libraries": library_slug,
+}

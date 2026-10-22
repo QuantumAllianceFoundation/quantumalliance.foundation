@@ -10,6 +10,8 @@ from tools.registry.model import (
     algorithm_safety,
     library_safety,
     library_safety_reason,
+    chain_slug,
+    library_capabilities,
     library_slug,
     load_registry,
 )
@@ -23,6 +25,7 @@ ALGORITHMS = """
 id = "ml-dsa"
 name = "ML-DSA"
 family = "lattice"
+kind = "signature"
 url = "https://csrc.nist.gov/pubs/fips/204/final"
 summary = "A lattice-based signature scheme."
 rationale = "Relies on structured lattice assumptions with mature cryptanalysis."
@@ -34,6 +37,8 @@ CHAIN = """
 name = "Quantus"
 consensus = "post-quantum"
 transactions = "post-quantum"
+consensus_reason = "Judgment call: active work, no deployment path yet."
+transactions_reason = "Transactions are signed with a post-quantum scheme."
 website = "https://quantus.com/"
 source = "https://github.com/Quantus-Network"
 algorithms = ["ml-dsa"]
@@ -237,6 +242,25 @@ url = "https://example.org/wallet"
             ['libraries.toml: C++: name: page address "c" is already used by C'],
         )
 
+    def test_rejects_empty_or_colliding_chain_slugs(self):
+        errors = self.errors_for(blockchains=CHAIN.replace("Quantus", "+++"))
+        self.assertEqual(
+            errors,
+            ["blockchains.toml: +++: name: needs at least one letter or digit for its page address"],
+        )
+        errors = self.errors_for(
+            blockchains=CHAIN.replace("Quantus", "C") + CHAIN.replace("Quantus", "C++")
+        )
+        self.assertEqual(
+            errors,
+            ['blockchains.toml: C++: name: page address "c" is already used by C'],
+        )
+
+    def test_chain_slug_matches_library_slug(self):
+        for name in ("Quantus", "Bitcoin Cash", "C++", "+++"):
+            with self.subTest(name=name):
+                self.assertEqual(chain_slug(name), library_slug(name))
+
     def test_rejects_duplicate_names_case_insensitive(self):
         errors = self.errors_for(
             blockchains=CHAIN + CHAIN.replace("Quantus", "quantus")
@@ -283,6 +307,50 @@ url = "https://example.org/wallet"
         )
         self.assertEqual(len(errors), 3)
         self.assertTrue(all(": " in e for e in errors))
+
+
+class AlgorithmKindTest(RegistryTestCase):
+    def test_rejects_missing_or_unknown_kind(self):
+        cases = {
+            ALGORITHMS.replace('kind = "signature"\n', ""): "algorithms.toml: ml-dsa: kind: required",
+            ALGORITHMS.replace('"signature"', '"cipher"'): "algorithms.toml: ml-dsa: kind: must be one of signature, kem",
+        }
+        for text, expected in cases.items():
+            with self.subTest(expected=expected):
+                errors = self.errors_for(algorithms=text)
+                self.assertIn(expected, [e[: len(expected)] for e in errors])
+
+    def test_loads_kem_kind(self):
+        write_data(self.tmp, algorithms=ALGORITHMS.replace('"signature"', '"kem"'))
+        self.assertEqual(load_registry(self.tmp).algorithms["ml-dsa"].kind, "kem")
+
+
+class ChainReasonTest(RegistryTestCase):
+    def test_rejects_missing_chain_reasons(self):
+        for field in ("consensus_reason", "transactions_reason"):
+            with self.subTest(field=field):
+                text = "\n".join(
+                    line for line in CHAIN.splitlines() if not line.startswith(field)
+                )
+                errors = self.errors_for(blockchains=text)
+                self.assertEqual(errors, [f"blockchains.toml: Quantus: {field}: required"])
+
+    def test_rejects_chain_reason_over_40_words(self):
+        for field in ("consensus_reason", "transactions_reason"):
+            with self.subTest(field=field):
+                text = "\n".join(
+                    f'{field} = "{" ".join(["word"] * 41)}"' if line.startswith(field) else line
+                    for line in CHAIN.splitlines()
+                )
+                (error,) = self.errors_for(blockchains=text)
+                self.assertTrue(error.startswith(f"blockchains.toml: Quantus: {field}:"))
+                self.assertIn("40 words", error)
+
+    def test_accepts_chain_reason_of_40_words(self):
+        forty = " ".join(["word"] * 40)
+        text = CHAIN.replace("Judgment call: active work, no deployment path yet.", forty)
+        write_data(self.tmp, blockchains=text)
+        self.assertEqual(load_registry(self.tmp).chains[0].consensus_reason, forty)
 
 
 class AlgorithmContentTest(RegistryTestCase):
@@ -462,12 +530,50 @@ class LibrarySlugTest(unittest.TestCase):
                 self.assertEqual(library_slug(name), slug)
 
 
+class LibraryCapabilitiesTest(unittest.TestCase):
+    def setUp(self):
+        self.algorithms = {
+            "sig": Algorithm("sig", "Sig", "lattice", "signature", "https://a.org", "S", "R", ()),
+            "sig2": Algorithm("sig2", "Sig2", "lattice", "signature", "https://a.org", "S", "R", ()),
+            "kem": Algorithm("kem", "Kem", "lattice", "kem", "https://b.org", "S", "R", ()),
+        }
+
+    def lib(self, *ids: str) -> Library:
+        return Library(
+            name="L",
+            repositories=(Repository("Rust", "https://x.org"),),
+            algorithms=ids,
+            hybrid=False,
+            maturity="production",
+            blockchain_friendly=False,
+            audits=(),
+            min_signature=None,
+            min_public_key=None,
+            note=None,
+            links=(),
+        )
+
+    def test_library_capabilities_signatures_only(self):
+        self.assertEqual(library_capabilities(self.lib("sig", "sig2"), self.algorithms), ("Signatures",))
+
+    def test_library_capabilities_kem_only(self):
+        self.assertEqual(library_capabilities(self.lib("kem"), self.algorithms), ("Key exchange",))
+
+    def test_library_capabilities_both_in_order(self):
+        for ids in (("kem", "sig"), ("sig", "kem")):
+            with self.subTest(ids=ids):
+                self.assertEqual(
+                    library_capabilities(self.lib(*ids), self.algorithms),
+                    ("Signatures", "Key exchange"),
+                )
+
+
 class LibrarySafetyTest(unittest.TestCase):
     def setUp(self):
         self.algorithms = {
-            "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "https://a.org", "S", "R", ()),
-            "slh-dsa": Algorithm("slh-dsa", "SLH-DSA", "hash-based", "https://b.org", "S", "R", ()),
-            "other-alg": Algorithm("other-alg", "Other", "other", "https://c.org", "S", "R", ()),
+            "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "signature", "https://a.org", "S", "R", ()),
+            "slh-dsa": Algorithm("slh-dsa", "SLH-DSA", "hash-based", "signature", "https://b.org", "S", "R", ()),
+            "other-alg": Algorithm("other-alg", "Other", "other", "signature", "https://c.org", "S", "R", ()),
         }
 
     def lib(self, *ids: str, hybrid: bool = False) -> Library:

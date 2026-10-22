@@ -2,6 +2,8 @@
 name = "Quantus"
 consensus = "post-quantum"
 transactions = "post-quantum"
+consensus_reason = "Judgment call: active work, no deployment path yet."
+transactions_reason = "Transactions are signed with a post-quantum scheme."
 website = "https://quantus.com/"
 source = "https://github.com/Quantus-Network"
 algorithms = ["ml-dsa"]
