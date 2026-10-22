@@ -3,9 +3,10 @@
 # Blockchains and libraries refer to these entries by `id`. To add an
 # algorithm, copy an existing [[algorithm]] block, change the values, and open
 # a pull request. The "Safety" rating shown on the site comes from `family`:
-# hash-based = High, lattice = Medium, other = Low.
+# hash-based = High, lattice = Medium, other = Low. An algorithm with a
+# `broken` entry rates Broken instead, whatever its family.
 #
-# Fields (all required):
+# Fields (required unless marked optional):
 #   id         Unique lowercase slug: letters, digits, and single hyphens.
 #              Example: "ml-dsa"
 #   name       Display name. Example: "ML-DSA"
@@ -29,6 +30,12 @@
 #              paper, then the submission specification, then the RFC or
 #              standard. Use stable links: IACR ePrint, RFC Editor, NIST CSRC,
 #              the authors' site, or the project repository.
+#   broken     Optional. Add it only when a published attack breaks the
+#              scheme at its claimed parameters. An implementation bug or a
+#              side-channel paper alone does not count. Written as
+#              { reason = "...", reference = { title = "...", url = "https://..." } }
+#              The reason is at most 40 words. The site then shows a
+#              "Do not trust" warning on every page that lists the algorithm.
 #
 # Example:
 #   [[algorithm]]
@@ -204,7 +211,7 @@ family = "other"
 kind = "signature"
 url = "https://github.com/QAPP-tech/shipovnik_tc26"
 summary = "Shipovnik is a code-based signature candidate from Russian researchers, proposed to the Russian standards committee TC26. It converts Stern's identification protocol, which proves knowledge of a low-weight vector for a public syndrome, into a signature with the Fiat-Shamir method and the Streebog hash. Reference code exists in C and Python."
-rationale = "Code-based signatures from Stern-type proofs are young and little reviewed. In September 2026 Fireblocks reported a complete forgery against both published verifiers, which never check that a permutation is valid. A verifier with that check is not affected, but no fixed specification has been reviewed."
+rationale = "Stern's identification protocol dates from 1993, but Shipovnik is a recent candidate with little public review. In September 2026 Fireblocks reported a complete forgery against both published verifiers, which never check that a permutation is valid. A verifier with that check is not affected, but no fixed specification has been reviewed."
 papers = [
   { title = "Shipovnik reference implementation for TC26 (QApp)", url = "https://github.com/QAPP-tech/shipovnik_tc26" },
   { title = "Shipovnik designers' Python implementation (Kryptonite)", url = "https://github.com/Kryptonite-RU/shipovnik-py" },
