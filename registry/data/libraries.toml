@@ -103,6 +103,7 @@ notes = [
   "Includes a hierarchical deterministic wallet crate with hardened derivation only (ML-DSA)",
   "Tested against NIST ACVP vectors (ML-DSA)",
   "Used by the Quantus chain (ML-DSA)",
+  "Neodyme audit covered ML-DSA-87 only (ML-DSA)",
 ]
 
 [[library]]

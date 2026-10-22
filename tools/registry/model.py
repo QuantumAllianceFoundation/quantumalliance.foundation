@@ -277,10 +277,15 @@ def _load_kind(data_dir: Path, kind: str, errors: list[str]) -> list[Any]:
     filename = f"{kind}.toml"
     array, _, _, name_key = _SPECS[kind]
     try:
-        text = (data_dir / filename).read_text(encoding="utf-8")
+        text = (data_dir / filename).read_text(encoding="utf-8-sig")
         doc = tomllib.loads(text)
     except OSError as exc:
         errors.append(f"{filename}: file: {exc.strerror or exc}")
+        return []
+    except UnicodeDecodeError as exc:
+        errors.append(
+            f"{filename}: file: not valid UTF-8 (byte {exc.start}); save the file as UTF-8"
+        )
         return []
     except tomllib.TOMLDecodeError as exc:
         errors.append(f"{filename}: toml: {exc}")

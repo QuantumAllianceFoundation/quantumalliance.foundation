@@ -66,6 +66,15 @@ class RegistryTestCase(unittest.TestCase):
 
 
 class LoadRegistryTest(RegistryTestCase):
+    def test_reports_file_that_is_not_utf8(self):
+        write_data(self.tmp)
+        (self.tmp / "libraries.toml").write_bytes(b'# caf\xe9\n')
+        with self.assertRaises(RegistryError) as cm:
+            load_registry(self.tmp)
+        (message,) = cm.exception.errors
+        self.assertTrue(message.startswith("libraries.toml: file: "))
+        self.assertIn("not valid UTF-8", message)
+
     def test_loads_valid_registry(self):
         reg = load_registry(FIXTURES / "valid")
         self.assertEqual(reg.algorithms["ml-dsa"].family, "lattice")
