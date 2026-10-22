@@ -10,15 +10,18 @@ from string import Template
 from .model import (
     CATEGORY_LABELS,
     LAYER_VALUES,
-    SAFETY_BY_FAMILY,
     SAFETY_RANK,
+    Audit,
     Link,
     Registry,
     Size,
     Algorithm,
     Chain,
     Library,
+    Repository,
+    algorithm_safety,
     library_safety,
+    library_safety_reason,
     library_slug,
 )
 
@@ -51,6 +54,7 @@ INFO_ICON = (
 
 SPRITE = "/assets/icons/registry-icons.svg"
 LOGO_DIR = "/assets/registry/logos"
+AUDITOR_LOGO_DIR = "/assets/registry/auditors"
 SOURCE_ICONS = {"github.com": "github", "gitlab.com": "gitlab"}
 
 EMPTY_STATE = '<p class="intro">No entries yet. Be the first to add one.</p>'
@@ -84,8 +88,50 @@ def _algorithm_url(algorithm_id: str) -> str:
     return f"/registry/algorithms/{algorithm_id}/"
 
 
-def _safety(algorithm: Algorithm) -> str:
-    return SAFETY_BY_FAMILY[algorithm.family]
+def _safety_badge(safety: str) -> str:
+    return f'<span class="safety safety--{safety.lower()}">{safety}</span>'
+
+
+def _library_url(lib: Library) -> str:
+    return f"/registry/libraries/{library_slug(lib.name)}/"
+
+
+def _algorithm_chips(reg: Registry, ids: Sequence[str]) -> str:
+    return " ".join(
+        f'<a href="{_algorithm_url(a)}" class="alg">{_e(reg.algorithms[a].name)}</a>' for a in ids
+    )
+
+
+def _repo_icon_link(lib: Library, repo: Repository) -> str:
+    return _icon_link(
+        repo.url, f"{lib.name} {repo.language} source code", _source_symbol(repo.url)
+    )
+
+
+def _bool_icon(value: bool) -> str:
+    word, symbol = ("Yes", "check") if value else ("No", "x")
+    return (
+        f'<span class="bool-icon {word.lower()}">'
+        '<svg class="icon" aria-hidden="true" focusable="false">'
+        f'<use href="{SPRITE}#{symbol}"/></svg>'
+        f'<span class="visually-hidden">{word}</span></span>'
+    )
+
+
+def _audit_link(audit: Audit) -> str:
+    inner = (
+        f'<img src="{AUDITOR_LOGO_DIR}/{_e(audit.logo)}" alt="" width="20" height="20">'
+        if audit.logo
+        else _e(audit.auditor)
+    )
+    return (
+        f'<a href="{_e(audit.url)}" class="audit-link" '
+        f'aria-label="{_e(audit.auditor)} audit report">{inner}</a>'
+    )
+
+
+def _audits_html(audits: Sequence[Audit]) -> str:
+    return "Yes " + " ".join(_audit_link(a) for a in audits) if audits else "No"
 
 
 def _td(content: str, sort: str | int, css_class: str = "") -> str:
@@ -294,11 +340,15 @@ def _chain_name(chain: Chain) -> str:
     )
 
 
+LIBRARY_SAFETY_LEGEND = (
+    "High safety requires a hybrid design, where a classical and a post-quantum "
+    "signature must both verify. Without one, hash-based libraries rate Medium, "
+    "and lattice-based and other libraries rate Low."
+)
+
+
 def render_libraries(reg: Registry) -> str:
-    legend = (
-        '<p class="muted">Safety reflects the hardness assumption of the algorithms: '
-        "High for hash-based, Medium for lattice-based (including FN-DSA), Low for others.</p>"
-    )
+    legend = f'<p class="muted">{_e(LIBRARY_SAFETY_LEGEND)}</p>'
     libs = sorted(
         reg.libraries,
         key=lambda lib: (SAFETY_RANK[library_safety(lib, reg.algorithms)], lib.name.casefold()),
@@ -306,35 +356,35 @@ def render_libraries(reg: Registry) -> str:
     rows = []
     for index, lib in enumerate(libs):
         safety = library_safety(lib, reg.algorithms)
-        chips = " ".join(
-            f'<a href="{_algorithm_url(a)}" class="alg safety--{_safety(reg.algorithms[a]).lower()}">'
-            f"{_e(reg.algorithms[a].name)} <small>{_safety(reg.algorithms[a])}</small></a>"
-            for a in lib.algorithms
-        )
-        audited = (
-            "Yes: " + ", ".join(_link(a.url, a.title) for a in lib.audits)
-            if lib.audits
-            else "No"
-        )
+        languages = ", ".join(r.language for r in lib.repositories)
         notes_cell, notes_extras = _notes_parts("libraries", index, lib.name, lib.note, lib.links)
         rows.append([
-            _td(_link(lib.source, lib.name) + notes_extras, lib.name.casefold(), "name-cell"),
-            _td(chips, " ".join(reg.algorithms[a].name for a in lib.algorithms).casefold()),
-            _td(f'<span class="safety safety--{safety.lower()}">{safety}</span>', SAFETY_RANK[safety]),
-            _td(audited, "yes" if lib.audits else "no"),
+            _td(_link(_library_url(lib), lib.name) + notes_extras, lib.name.casefold(), "name-cell"),
+            _td(
+                _algorithm_chips(reg, lib.algorithms),
+                " ".join(reg.algorithms[a].name for a in lib.algorithms).casefold(),
+            ),
+            _td(_e(languages), languages.casefold()),
+            _td(
+                " ".join(_repo_icon_link(lib, r) for r in lib.repositories),
+                " ".join(r.url for r in lib.repositories).casefold(),
+                "col-icon",
+            ),
+            _td(_safety_badge(safety), SAFETY_RANK[safety]),
+            _td(_audits_html(lib.audits), "yes" if lib.audits else "no"),
             _td(_e(lib.maturity), lib.maturity),
-            _td("Yes" if lib.blockchain_friendly else "No", "yes" if lib.blockchain_friendly else "no"),
+            _td(_bool_icon(lib.blockchain_friendly), int(lib.blockchain_friendly)),
             _td(_e(format_size(lib.min_signature)), lib.min_signature.bytes if lib.min_signature else ""),
             _td(_e(format_size(lib.min_public_key)), lib.min_public_key.bytes if lib.min_public_key else ""),
             notes_cell,
         ])
     table = (
         _table(
-            [_th("Library"), _th("Algorithms"), _th("Safety", True), _th("Audited"),
+            [_th("Library"), _th("Algorithms"), _th("Languages"),
+             _th("Source", css_class="col-icon"), _th("Safety", True), _th("Audited"),
              _th("Maturity"), _th("Blockchain friendly"), _th("Min signature", True),
              _th("Min public key", True), _th("Notes", css_class="col-notes")],
             rows,
-            [f"lib-{library_slug(lib.name)}" for lib in libs],
         )
         if rows
         else None
@@ -343,6 +393,46 @@ def render_libraries(reg: Registry) -> str:
         "Registries", "Libraries",
         "Post-quantum signature libraries, with the smallest sizes each one offers.",
         "libraries.toml", "registry-library.yml", table, legend,
+    )
+
+
+def _detail_row(label: str, content: str) -> str:
+    return f"          <div><dt>{_e(label)}</dt><dd>{content}</dd></div>"
+
+
+def render_library(reg: Registry, slug: str) -> str:
+    lib = next(lib for lib in reg.libraries if library_slug(lib.name) == slug)
+    safety = library_safety(lib, reg.algorithms)
+    repos = "\n".join(
+        f"          <li>{_repo_icon_link(lib, r)} {_e(r.language)}</li>" for r in lib.repositories
+    )
+    notes = " ".join(
+        ([_e(lib.note)] if lib.note else []) + [_link(l.url, l.title) for l in lib.links]
+    )
+    rows = [
+        _detail_row("Repositories", f'<ul class="repo-list">\n{repos}\n        </ul>'),
+        _detail_row("Algorithms", _algorithm_chips(reg, lib.algorithms)),
+        _detail_row(
+            "Safety",
+            f"{_safety_badge(safety)} {_e(library_safety_reason(lib, reg.algorithms))}",
+        ),
+        _detail_row("Hybrid", "Yes" if lib.hybrid else "No"),
+        _detail_row("Audits", _audits_html(lib.audits)),
+        _detail_row("Maturity", _e(lib.maturity)),
+        _detail_row("Blockchain friendly", _bool_icon(lib.blockchain_friendly)),
+        _detail_row("Minimum signature", _e(format_size(lib.min_signature))),
+        _detail_row("Minimum public key", _e(format_size(lib.min_public_key))),
+        _detail_row("Note and links", notes or "—"),
+    ]
+    return (
+        '    <section class="section">\n'
+        '      <div class="wrap">\n'
+        '        <p class="eyebrow">Library</p>\n'
+        f"        <h1>{_e(lib.name)}</h1>\n"
+        '        <dl class="detail-list">\n' + "\n".join(rows) + "\n        </dl>\n"
+        f"        {edit_links('libraries.toml', 'registry-library.yml')}\n"
+        "      </div>\n"
+        "    </section>"
     )
 
 
@@ -382,8 +472,8 @@ def render_algorithms_index(reg: Registry) -> str:
             _td(_link(_algorithm_url(a.id), a.name), a.name.casefold()),
             _td(_e(a.family), a.family),
             _td(
-                f'<span class="safety safety--{_safety(a).lower()}">{_safety(a)}</span>',
-                SAFETY_RANK[_safety(a)],
+                _safety_badge(algorithm_safety(a)),
+                SAFETY_RANK[algorithm_safety(a)],
             ),
             _td(str(count), count),
         ])
@@ -404,13 +494,13 @@ def render_algorithms_index(reg: Registry) -> str:
 
 def render_algorithm(reg: Registry, algorithm_id: str) -> str:
     a = reg.algorithms[algorithm_id]
-    safety = _safety(a)
+    safety = algorithm_safety(a)
     libs = _implementers(reg, algorithm_id)
     papers = "\n".join(f"          <li>{_external(p.url, p.title)}</li>" for p in a.papers)
     implemented = (
         '<ul class="link-list">\n'
         + "\n".join(
-            f'          <li>{_link(f"/registry/libraries/#lib-{library_slug(lib.name)}", lib.name)}</li>'
+            f"          <li>{_link(_library_url(lib), lib.name)}</li>"
             for lib in libs
         )
         + "\n        </ul>"
@@ -423,8 +513,10 @@ def render_algorithm(reg: Registry, algorithm_id: str) -> str:
         '        <p class="eyebrow">Algorithm</p>\n'
         f"        <h1>{_e(a.name)}</h1>\n"
         f'        <p class="muted">Family: {_e(a.family)}. Safety: '
-        f'<span class="safety safety--{safety.lower()}">{safety}</span></p>\n'
+        f"{_safety_badge(safety)}</p>\n"
         f'        <p class="intro">{_e(a.summary)}</p>\n'
+        '        <h2 class="link-list-heading">Why this rating</h2>\n'
+        f"        <p>{_e(a.rationale)}</p>\n"
         '        <h2 class="link-list-heading">Standard</h2>\n'
         f"        <p>{_external(a.url, a.url)}</p>\n"
         '        <h2 class="link-list-heading">Research</h2>\n'

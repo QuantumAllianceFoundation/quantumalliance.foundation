@@ -10,11 +10,11 @@ body:
       description: Name of the library.
     validations:
       required: true
-  - type: input
-    id: source
+  - type: textarea
+    id: repositories
     attributes:
-      label: Source code
-      description: HTTPS link to the source repository.
+      label: Repositories
+      description: 'One to four source repositories, one per line, as a language and an HTTPS link, for example Rust: https://github.com/example/lib.'
     validations:
       required: true
   - type: textarea
@@ -22,6 +22,16 @@ body:
     attributes:
       label: Algorithms
       description: List every post-quantum algorithm the library implements, one per line.
+    validations:
+      required: true
+  - type: dropdown
+    id: hybrid
+    attributes:
+      label: Hybrid
+      description: Choose Yes if the library combines a classical and a post-quantum signature that must both verify.
+      options:
+        - "Yes"
+        - "No"
     validations:
       required: true
   - type: dropdown
@@ -49,7 +59,7 @@ body:
     id: audits
     attributes:
       label: Audits
-      description: Published audit reports, one per line, as a title and an HTTPS link. Leave empty if there are none.
+      description: 'Published audit reports, one per line, as the auditor and an HTTPS link, for example Oak Security: https://example.org/report. Leave empty if there are none.'
   - type: input
     id: min_signature
     attributes:

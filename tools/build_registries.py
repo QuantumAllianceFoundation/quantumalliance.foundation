@@ -10,13 +10,14 @@ from pathlib import Path
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from tools.registry.model import Registry, RegistryError, load_registry
+from tools.registry.model import Registry, RegistryError, library_slug, load_registry
 from tools.registry.render import (
     render_algorithm,
     render_algorithms_index,
     render_blockchains,
     render_hub,
     render_libraries,
+    render_library,
     render_page,
     render_products,
 )
@@ -47,11 +48,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=Path("registry/data"))
     parser.add_argument("--logos", type=Path, default=None)
+    parser.add_argument("--auditors", type=Path, default=None)
     parser.add_argument("--out", type=Path, default=Path("."))
     args = parser.parse_args(argv)
 
     try:
-        reg = load_registry(args.data, args.logos)
+        reg = load_registry(args.data, args.logos, args.auditors)
     except RegistryError as exc:
         for error in exc.errors:
             print(error, file=sys.stderr)
@@ -75,6 +77,18 @@ def main(argv: list[str] | None = None) -> int:
                 description=algorithm.summary,
                 path=url,
                 body=render_algorithm(reg, algorithm.id),
+            ),
+        ))
+    for library in reg.libraries:
+        slug = library_slug(library.name)
+        rendered.append((
+            args.out / f"registry/libraries/{slug}/index.html",
+            render_page(
+                template,
+                title=f"{library.name} | Quantum Alliance",
+                description=f"{library.name}: post-quantum signature library details.",
+                path=f"/registry/libraries/{slug}/",
+                body=render_library(reg, slug),
             ),
         ))
     for file, html in rendered:

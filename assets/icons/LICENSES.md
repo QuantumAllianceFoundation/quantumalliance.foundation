@@ -1,6 +1,6 @@
 # Icon licenses
 
-`registry-icons.svg` combines four icons into one sprite. Each icon comes unchanged from its official repository. The sprite only wraps each shape in a `<symbol>` element and sets its color to `currentColor`.
+`registry-icons.svg` combines six icons into one sprite. Each icon comes unchanged from its official repository. The sprite only wraps each shape in a `<symbol>` element and sets its color to `currentColor`.
 
 ## GitHub, GitLab, and Git marks
 
@@ -8,10 +8,10 @@
 - License: CC0-1.0 (public domain dedication), https://creativecommons.org/publicdomain/zero/1.0/
 - The marks themselves remain trademarks of their owners (GitHub, Inc., GitLab B.V., and the Software Freedom Conservancy). The site uses them only to point to those services.
 
-## Globe icon
+## Globe, check, and x icons
 
-- Source: https://github.com/lucide-icons/lucide (`icons/globe.svg`)
-- License: ISC, copied from https://github.com/lucide-icons/lucide/blob/main/LICENSE (the Feather-derived icon list in that file does not include `globe`)
+- Source: https://github.com/lucide-icons/lucide (`icons/globe.svg`, `icons/check.svg`, `icons/x.svg`)
+- License: ISC, copied from https://github.com/lucide-icons/lucide/blob/main/LICENSE (the Feather-derived icon list in that file does not include `globe`, `check`, or `x`)
 
 ```text
 ISC License

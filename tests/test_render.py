@@ -4,11 +4,13 @@ from pathlib import Path
 
 from tools.registry.model import (
     Algorithm,
+    Audit,
     Chain,
     Library,
     Link,
     Product,
     Registry,
+    Repository,
     Size,
     library_slug,
     load_registry,
@@ -22,6 +24,7 @@ from tools.registry.render import (
     render_blockchains,
     render_hub,
     render_libraries,
+    render_library,
     render_page,
     render_products,
 )
@@ -29,9 +32,9 @@ from tools.registry.render import (
 VALID = Path(__file__).parent / "fixtures" / "valid"
 
 ALGS = {
-    "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "https://example.org/ml", "S", ()),
+    "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "https://example.org/ml", "S", "Because lattices.", ()),
     "slh-dsa": Algorithm(
-        "slh-dsa", "SLH-DSA", "hash-based", "https://example.org/slh", "S", ()
+        "slh-dsa", "SLH-DSA", "hash-based", "https://example.org/slh", "S", "Hash only.", ()
     ),
 }
 
@@ -59,6 +62,8 @@ def library(
     maturity="production",
     blockchain_friendly=False,
     audits=(),
+    hybrid=False,
+    repositories=(Repository("Rust", "https://example.org/lib"),),
     min_signature: Size | None = None,
     min_public_key: Size | None = None,
     note: str | None = None,
@@ -66,8 +71,9 @@ def library(
 ):
     return Library(
         name=name,
-        source="https://example.org/lib",
-        algorithms=algorithms,
+        repositories=tuple(repositories),
+        algorithms=tuple(algorithms),
+        hybrid=hybrid,
         maturity=maturity,
         blockchain_friendly=blockchain_friendly,
         audits=audits,
@@ -163,35 +169,224 @@ class RenderTests(unittest.TestCase):
         self.assertLess(with_row.index(logo), with_row.index("With</"))
         self.assertNotIn("<img", without_row)
 
-    def test_algorithm_links_point_to_algorithm_pages(self):
-        reg = registry(
-            chains=[chain("C", algorithms=("ml-dsa",))],
-            libraries=[library("L", algorithms=("ml-dsa", "slh-dsa"))],
-        )
-        chain_out = render_blockchains(reg)
-        self.assertIn('<a href="/registry/algorithms/ml-dsa/">ML-DSA</a>', chain_out)
-        lib_out = render_libraries(reg)
-        self.assertIn('<a href="/registry/algorithms/ml-dsa/" class="alg safety--medium">', lib_out)
-        self.assertIn('<a href="/registry/algorithms/slh-dsa/" class="alg safety--high">', lib_out)
+    def test_chain_algorithm_links_point_to_algorithm_pages(self):
+        reg = registry(chains=[chain("C", algorithms=("ml-dsa",))])
+        self.assertIn('<a href="/registry/algorithms/ml-dsa/">ML-DSA</a>', render_blockchains(reg))
 
-    def test_library_rows_have_slug_ids(self):
+    def test_library_name_links_to_detail_page(self):
         out = render_libraries(registry(libraries=[library("Open C++ Lib (v2)")]))
         self.assertEqual(library_slug("Open C++ Lib (v2)"), "open-c-lib-v2")
-        self.assertIn('<tr id="lib-open-c-lib-v2">', out)
+        self.assertIn('<a href="/registry/libraries/open-c-lib-v2/">Open C++ Lib (v2)</a>', out)
+        self.assertNotIn('id="lib-', out)
+        self.assertNotIn("https://example.org/lib\"", out.split("<tbody")[1].split("Rust")[0])
 
-    def test_algorithm_page_lists_implementing_libraries(self):
+    def test_library_table_columns(self):
+        out = render_libraries(registry(libraries=[library()]))
+        heads = re.findall(r"<th [^>]*>([^<]*)</th>", out)
+        self.assertEqual(
+            heads,
+            ["Library", "Algorithms", "Languages", "Source", "Safety", "Audited", "Maturity",
+             "Blockchain friendly", "Min signature", "Min public key", "Notes"],
+        )
+
+    def test_algorithm_chips_have_no_safety_suffix(self):
+        reg = registry(libraries=[library("L", algorithms=("ml-dsa", "slh-dsa"))])
+        out = render_libraries(reg)
+        self.assertIn('<a href="/registry/algorithms/ml-dsa/" class="alg">ML-DSA</a>', out)
+        self.assertIn('<a href="/registry/algorithms/slh-dsa/" class="alg">SLH-DSA</a>', out)
+        self.assertNotIn("<small>", out)
+        self.assertNotIn("alg safety--", out)
+
+    def test_languages_column(self):
+        lib = library(repositories=(
+            Repository("Rust", "https://github.com/a/b"),
+            Repository("Solidity", "https://github.com/a/c"),
+        ))
+        out = render_libraries(registry(libraries=[lib]))
+        self.assertIn('<td data-sort="rust, solidity">Rust, Solidity</td>', out)
+
+    def test_one_source_icon_per_repository_with_labels(self):
+        lib = library("Hashsigs", repositories=(
+            Repository("Rust", "https://github.com/a/b"),
+            Repository("Go", "https://gitlab.com/a/c"),
+            Repository("C", "https://git.example.org/a/d"),
+        ))
+        out = render_libraries(registry(libraries=[lib]))
+        row = re.findall(r"<tr>(.*?)</tr>", out[out.index("<tbody"):], re.S)[0]
+        for url, label, symbol in (
+            ("https://github.com/a/b", "Hashsigs Rust source code", "github"),
+            ("https://gitlab.com/a/c", "Hashsigs Go source code", "gitlab"),
+            ("https://git.example.org/a/d", "Hashsigs C source code", "git"),
+        ):
+            self.assertIn(
+                f'<a href="{url}" class="icon-link" aria-label="{label}">'
+                '<svg class="icon" aria-hidden="true" focusable="false">'
+                f'<use href="/assets/icons/registry-icons.svg#{symbol}"/></svg></a>',
+                row,
+            )
+        self.assertEqual(row.count('class="icon-link"'), 3)
+
+    def test_blockchain_friendly_icons_with_hidden_text(self):
+        out = render_libraries(registry(libraries=[
+            library("Yes", blockchain_friendly=True), library("No", blockchain_friendly=False),
+        ]))
+        sprite = "/assets/icons/registry-icons.svg"
+        self.assertIn(
+            '<td data-sort="1"><span class="bool-icon yes"><svg class="icon" aria-hidden="true" '
+            f'focusable="false"><use href="{sprite}#check"/></svg>'
+            '<span class="visually-hidden">Yes</span></span></td>',
+            out,
+        )
+        self.assertIn(
+            '<td data-sort="0"><span class="bool-icon no"><svg class="icon" aria-hidden="true" '
+            f'focusable="false"><use href="{sprite}#x"/></svg>'
+            '<span class="visually-hidden">No</span></span></td>',
+            out,
+        )
+
+    def test_audited_yes_with_auditor_logo_links(self):
+        audits = (
+            Audit("Oak <Security>", "https://example.org/oak", "oak.svg"),
+            Audit("Plain Co", "https://example.org/plain", None),
+        )
+        out = render_libraries(registry(libraries=[library(audits=audits)]))
+        self.assertIn('data-sort="yes">Yes ', out)
+        self.assertIn(
+            '<a href="https://example.org/oak" class="audit-link" '
+            'aria-label="Oak &lt;Security&gt; audit report">'
+            '<img src="/assets/registry/auditors/oak.svg" alt="" width="20" height="20"></a>',
+            out,
+        )
+        self.assertIn(
+            '<a href="https://example.org/plain" class="audit-link" '
+            'aria-label="Plain Co audit report">Plain Co</a>',
+            out,
+        )
+
+    def test_audited_no(self):
+        out = render_libraries(registry(libraries=[library()]))
+        self.assertIn('<td data-sort="no">No</td>', out)
+
+    def test_safety_legend_text(self):
+        out = render_libraries(registry(libraries=[library()]))
+        self.assertIn(
+            "High safety requires a hybrid design, where a classical and a post-quantum "
+            "signature must both verify. Without one, hash-based libraries rate Medium, "
+            "and lattice-based and other libraries rate Low.",
+            out,
+        )
+        self.assertNotIn("hardness assumption", out)
+
+    def test_library_safety_uses_hybrid_rule(self):
+        out = render_libraries(registry(libraries=[
+            library("Hyb", algorithms=("ml-dsa",), hybrid=True),
+            library("Hash", algorithms=("slh-dsa",)),
+            library("Lat", algorithms=("ml-dsa",)),
+        ]))
+        self.assertIn('<td data-sort="0"><span class="safety safety--high">High</span></td>', out)
+        self.assertIn('<td data-sort="1"><span class="safety safety--medium">Medium</span></td>', out)
+        self.assertIn('<td data-sort="2"><span class="safety safety--low">Low</span></td>', out)
+
+    def test_library_detail_page_contents(self):
+        lib = library(
+            "Hash<sigs>",
+            algorithms=("slh-dsa", "ml-dsa"),
+            hybrid=True,
+            audits=(Audit("Oak", "https://example.org/oak", "oak.svg"),),
+            repositories=(
+                Repository("Rust", "https://github.com/a/b"),
+                Repository("Solidity", "https://gitlab.com/a/c"),
+            ),
+            blockchain_friendly=True,
+            min_signature=Size(666, "Falcon-512"),
+            min_public_key=Size(897, "Falcon-512"),
+            note="Short <note>",
+            links=(Link("Docs", "https://example.org/docs"),),
+        )
+        out = render_library(registry(libraries=[lib]), "hash-sigs")
+        positions = [
+            out.index(needle)
+            for needle in (
+                '<p class="eyebrow">Library</p>',
+                "<h1>Hash&lt;sigs&gt;</h1>",
+                ">Repositories<",
+                ">Algorithms<",
+                ">Safety<",
+                ">Hybrid<",
+                ">Audits<",
+                ">Maturity<",
+                ">Blockchain friendly<",
+                ">Minimum signature<",
+                ">Minimum public key<",
+                ">Note and links<",
+                "registry/data/libraries.toml",
+            )
+        ]
+        self.assertEqual(positions, sorted(positions))
+        self.assertIn('aria-label="Hash&lt;sigs&gt; Rust source code"', out)
+        self.assertIn("Rust", out)
+        self.assertIn("Solidity", out)
+        self.assertIn('#github"', out)
+        self.assertIn('#gitlab"', out)
+        self.assertIn('<a href="/registry/algorithms/slh-dsa/" class="alg">SLH-DSA</a>', out)
+        self.assertIn('<a href="/registry/algorithms/ml-dsa/" class="alg">ML-DSA</a>', out)
+        self.assertIn('<span class="safety safety--high">High</span>', out)
+        self.assertIn(
+            "Hybrid design: a classical and a post-quantum signature must both verify.", out
+        )
+        self.assertIn("Yes", out)
+        self.assertIn('aria-label="Oak audit report"', out)
+        self.assertIn("production", out)
+        self.assertIn('<span class="visually-hidden">Yes</span>', out)
+        self.assertIn("666 B (Falcon-512)", out)
+        self.assertIn("897 B (Falcon-512)", out)
+        self.assertIn("Short &lt;note&gt;", out)
+        self.assertIn('<a href="https://example.org/docs">Docs</a>', out)
+        self.assertIn(f"{REPO_URL}/issues/new?template=registry-library.yml", out)
+        self.assertNotIn("<sigs>", out)
+        self.assertNotIn("<note>", out)
+
+    def test_library_detail_page_empty_values(self):
+        out = render_library(registry(libraries=[library("Plain")]), "plain")
+        self.assertIn(
+            "Best algorithm family is lattice-based; "
+            "without a hybrid design the rating drops one level.",
+            out,
+        )
+        self.assertIn(">No<", out)
+        self.assertIn("—", out)
+
+    def test_algorithm_page_links_library_pages(self):
         reg = registry(libraries=[library("Zed Lib"), library("Alpha", algorithms=("slh-dsa",))])
         out = render_algorithm(reg, "ml-dsa")
-        self.assertIn('<a href="/registry/libraries/#lib-zed-lib">Zed Lib</a>', out)
+        self.assertIn('<a href="/registry/libraries/zed-lib/">Zed Lib</a>', out)
+        self.assertNotIn("#lib-", out)
         self.assertNotIn("Alpha", out)
         self.assertIn("Implemented by", out)
         empty = render_algorithm(registry(), "ml-dsa")
         self.assertIn("No libraries listed yet.", empty)
 
+    def test_algorithm_page_shows_rationale(self):
+        algs = {
+            "x": Algorithm(
+                "x", "Xsig", "hash-based", "https://example.org/std", "Summary.",
+                "Only hashes matter & <b>nothing</b> else.",
+                (Link("Paper A", "https://example.org/a"),),
+            )
+        }
+        out = render_algorithm(Registry(algs, (), (), ()), "x")
+        self.assertIn("Why this rating", out)
+        self.assertIn("Only hashes matter &amp; &lt;b&gt;nothing&lt;/b&gt; else.", out)
+        self.assertNotIn("<b>", out)
+        self.assertLess(out.index('<span class="safety'), out.index("Why this rating"))
+        self.assertLess(out.index("Why this rating"), out.index("Only hashes"))
+        self.assertNotIn("Why this rating", render_algorithms_index(Registry(algs, (), (), ())))
+
     def test_algorithm_page_content(self):
         algs = {
             "x": Algorithm(
                 "x", "Xsig", "hash-based", "https://example.org/std", "Plain summary.",
+                "Only hashes matter & <b>nothing</b> else.",
                 (Link("Paper A", "https://example.org/a"), Link("Paper B", "https://example.org/b")),
             )
         }
@@ -211,7 +406,7 @@ class RenderTests(unittest.TestCase):
     def test_algorithm_page_escapes_summary(self):
         algs = {
             "x": Algorithm(
-                "x", "<i>X</i>", "other", "https://example.org/s", "<script>alert(1)</script>",
+                "x", "<i>X</i>", "other", "https://example.org/s", "<script>alert(1)</script>", "<i>why</i>",
                 (Link("<b>P</b>", "https://example.org/p"),),
             )
         }
@@ -308,7 +503,7 @@ class RenderTests(unittest.TestCase):
         self.assertLess(out.index("Audit scope limited"), out.index('<a href="https://example.org/a">Audit</a>'))
 
     def test_blockchain_legend_and_links(self):
-        reg = load_registry(VALID)
+        reg = load_registry(VALID, auditors_dir=VALID / "auditors")
         out = render_blockchains(reg)
         self.assertIn("Has deployed a post-quantum solution.", out)
         self.assertIn("BIP-360 is proposed but has no deployment path.", out)
@@ -348,7 +543,7 @@ class RenderTests(unittest.TestCase):
     def test_library_safety_column(self):
         lib = library(algorithms=("ml-dsa", "slh-dsa"))
         out = render_libraries(registry(libraries=[lib]))
-        self.assertIn('<td data-sort="0"><span class="safety safety--high">High</span></td>', out)
+        self.assertIn('<td data-sort="1"><span class="safety safety--medium">Medium</span></td>', out)
 
     def test_library_rows_sorted_by_safety_then_name(self):
         reg = registry(
@@ -362,22 +557,6 @@ class RenderTests(unittest.TestCase):
         body = out[out.index("<tbody"):]
         self.assertLess(body.index("Zulu"), body.index("Alpha"))
         self.assertLess(body.index("Alpha"), body.index("Bravo"))
-
-    def test_algorithm_chip_shows_name_and_safety(self):
-        out = render_libraries(registry(libraries=[library()]))
-        self.assertIn('class="alg safety--medium"', out)
-        self.assertNotIn('class="tag', out)
-
-    def test_audited_shows_links_or_no(self):
-        audited = library("A", audits=(Link("Audit by X", "https://example.org/audit"),))
-        plain = library("B")
-        out = render_libraries(registry(libraries=[audited, plain]))
-        self.assertIn('<a href="https://example.org/audit">Audit by X</a>', out)
-        self.assertIn(">No</td>", out)
-
-    def test_blockchain_friendly_yes_no(self):
-        out = render_libraries(registry(libraries=[library(blockchain_friendly=True)]))
-        self.assertIn('<td data-sort="yes">Yes</td>', out)
 
     def test_products_sorted_by_member_then_name(self):
         products = [
@@ -396,7 +575,7 @@ class RenderTests(unittest.TestCase):
         self.assertIn("Spotted an error or a missing entry?", html)
 
     def test_edit_links_around_table(self):
-        out = render_blockchains(load_registry(VALID))
+        out = render_blockchains(load_registry(VALID, auditors_dir=VALID / "auditors"))
         self.assertEqual(out.count("registry/data/blockchains.toml"), 2)
         self.assertLess(out.index("registry/data/"), out.index("<table"))
 
@@ -407,7 +586,7 @@ class RenderTests(unittest.TestCase):
         self.assertIn("registry/data/products.toml", out)
 
     def test_hub_lists_counts(self):
-        out = render_hub(load_registry(VALID))
+        out = render_hub(load_registry(VALID, auditors_dir=VALID / "auditors"))
         self.assertIn("Quantum readiness registries", out)
         self.assertIn('href="/registry/blockchains/"', out)
         self.assertIn('href="/registry/libraries/"', out)

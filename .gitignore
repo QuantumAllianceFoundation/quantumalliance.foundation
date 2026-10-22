@@ -8,4 +8,5 @@ CLAUDE.md
 /registry/index.html
 /registry/*/index.html
 /registry/algorithms/*/index.html
+/registry/libraries/*/index.html
 __pycache__/

@@ -310,3 +310,20 @@ a.alg { text-decoration: none; }
 a.alg:hover { border-color: var(--content-40); }
 .link-list { margin: 0 0 24px; padding-left: 20px; color: var(--content-60); line-height: 1.75; }
 .link-list-heading { margin-top: 24px; }
+
+/* Library table and pages */
+.visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.bool-icon { display: inline-flex; align-items: center; }
+.bool-icon .icon { width: 16px; height: 16px; }
+.bool-icon.yes { color: var(--signal); }
+.bool-icon.no { color: var(--content-60); }
+.audit-link { display: inline-flex; align-items: center; margin-left: 6px; vertical-align: middle; }
+.audit-link img { width: 20px; height: 20px; object-fit: contain; }
+.repo-list { list-style: none; margin: 0 0 24px; padding: 0; line-height: 1.75; color: var(--content-60); }
+.detail-list .repo-list { margin: 0; }
+.repo-list li { display: flex; align-items: center; gap: 8px; }
+.detail-list { margin: 0 0 24px; }
+.detail-list > div { display: grid; grid-template-columns: 200px 1fr; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--border-med); }
+.detail-list dt { color: var(--content-60); }
+.detail-list dd { margin: 0; }
+@media (max-width: 960px) { .detail-list > div { grid-template-columns: 1fr; gap: 4px; } }
