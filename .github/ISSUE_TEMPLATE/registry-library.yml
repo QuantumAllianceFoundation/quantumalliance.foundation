@@ -60,11 +60,16 @@ body:
     attributes:
       label: Smallest public key size
       description: Size in bytes and the parameter set, for example "897 B (Falcon-512)". Leave empty if not documented.
-  - type: textarea
-    id: notes
+  - type: input
+    id: note
     attributes:
-      label: Notes
-      description: Short notes, one per line. Name the algorithm in parentheses when a note applies to one algorithm.
+      label: Note (up to 5 words)
+      description: A short note that clarifies one thing. Leave empty if none.
+  - type: textarea
+    id: links
+    attributes:
+      label: Links (up to 2)
+      description: The most useful public sources, one per line, as a title and an HTTPS link. Leave empty if none.
   - type: textarea
     id: evidence
     attributes:

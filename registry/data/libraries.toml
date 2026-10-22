@@ -30,9 +30,9 @@
 #                        { bytes = 666, parameter_set = "Falcon-512" }.
 #   min_public_key       Optional. Smallest public key size in bytes, in the
 #                        same form as min_signature.
-#   notes                Optional, default []. Short facts. Name the algorithm
-#                        in parentheses when a note applies to one algorithm,
-#                        for example "Constant-time AVX2 code paths (ML-DSA)".
+#   note                 Optional. At most 5 words that clarify one thing.
+#   links                Optional, default []. At most 2 links to the best
+#                        sources, as { title = "...", url = "https://..." }.
 #
 # Example (a copy of the qp-rusty-crystals entry below, shortened):
 #   [[library]]
@@ -44,7 +44,7 @@
 #   audits = [{ title = "Neodyme audit of Dilithium and HDWallet (2025)", url = "https://github.com/Quantus-Network/qp-rusty-crystals/blob/master/audits/Neodyme-Audit.pdf" }]
 #   min_signature = { bytes = 2420, parameter_set = "ML-DSA-44" }
 #   min_public_key = { bytes = 1312, parameter_set = "ML-DSA-44" }
-#   notes = ["Pure Rust with no unsafe code (ML-DSA)"]
+#   note = "Audit covered ML-DSA-87 only"
 
 [[library]]
 name = "liboqs"
@@ -54,11 +54,7 @@ maturity = "pre-production"
 blockchain_friendly = false
 min_signature = { bytes = 666, parameter_set = "Falcon-padded-512" }
 min_public_key = { bytes = 32, parameter_set = "SLH-DSA-SHA2-128s" }
-notes = [
-  "The project does not recommend production use and says the library is for research and prototyping",
-  "The default build includes experimental algorithms",
-  "Falcon names can change before the final standard (FN-DSA)",
-]
+note = "Not recommended for production"
 
 [[library]]
 name = "PQClean"
@@ -68,10 +64,7 @@ maturity = "experimental"
 blockchain_friendly = false
 min_signature = { bytes = 666, parameter_set = "Falcon-padded-512" }
 min_public_key = { bytes = 32, parameter_set = "SPHINCS+-sha2-128s-simple" }
-notes = [
-  "Retired and archived as read-only by its maintainers",
-  "Signature sets use SPHINCS+ names, not the SLH-DSA standard (SPHINCS+)",
-]
+note = "Retired; archived read-only"
 
 [[library]]
 name = "algorand/falcon"
@@ -81,11 +74,7 @@ maturity = "production"
 blockchain_friendly = true
 min_signature = { bytes = 713, parameter_set = "Falcon-DET512 (compressed, maximum)" }
 min_public_key = { bytes = 897, parameter_set = "Falcon-DET512" }
-notes = [
-  "Deterministic signing mode (FN-DSA)",
-  "The README warns that deterministic signing needs floating-point emulation for safe results across devices (FN-DSA)",
-  "Used by the go-algorand node (FN-DSA)",
-]
+note = "Deterministic signing mode"
 
 [[library]]
 name = "qp-rusty-crystals"
@@ -98,13 +87,7 @@ audits = [
 ]
 min_signature = { bytes = 2420, parameter_set = "ML-DSA-44" }
 min_public_key = { bytes = 1312, parameter_set = "ML-DSA-44" }
-notes = [
-  "Pure Rust with no unsafe code (ML-DSA)",
-  "Includes a hierarchical deterministic wallet crate with hardened derivation only (ML-DSA)",
-  "Tested against NIST ACVP vectors (ML-DSA)",
-  "Used by the Quantus chain (ML-DSA)",
-  "Neodyme audit covered ML-DSA-87 only (ML-DSA)",
-]
+note = "Audit covered ML-DSA-87 only"
 
 [[library]]
 name = "aws-lc-rs"
@@ -112,10 +95,7 @@ source = "https://github.com/aws/aws-lc-rs"
 algorithms = ["ml-dsa"]
 maturity = "production"
 blockchain_friendly = false
-notes = [
-  "Rust bindings over AWS-LC; the ML-DSA signature API is marked unstable (ML-DSA)",
-  "Used by the NEAR node for ML-DSA-65 (ML-DSA)",
-]
+note = "ML-DSA API marked unstable"
 
 [[library]]
 name = "hashsigs-rs"
@@ -125,13 +105,7 @@ maturity = "pre-production"
 blockchain_friendly = true
 min_signature = { bytes = 1092, parameter_set = "SHRINCS 128s-q18 (stateful, first leaf)" }
 min_public_key = { bytes = 64, parameter_set = "SPHINCS+C (stateless public key)" }
-notes = [
-  "Ships a verify-only Solana program and a WebAssembly build",
-  "Generates the test vectors for the Solidity verifiers",
-  "WOTS+ is legacy and the README says to use SHRINCS for new work (WOTS+)",
-  "Stateful signatures grow by 32 bytes per used leaf and the signer must never reuse a leaf (SHRINCS)",
-  "The 128s-q20 profile needs more security analysis before production use (SHRINCS)",
-]
+note = "Includes verify-only Solana program"
 
 [[library]]
 name = "hashsigs-solidity"
@@ -142,11 +116,7 @@ blockchain_friendly = true
 audits = [
   { title = "Oak Security audit of Quip contracts (2026)", url = "https://github.com/QuipNetwork/hashsigs-solidity/blob/chore/audit-report/audit/audit-quip-network-oak-security-2026-09-24.pdf" },
 ]
-notes = [
-  "On-chain verifiers only; signing code is for tests (SHRINCS)",
-  "The default branch holds the WOTS+ contract; the SHRINCS and SPHINCS+C verifiers are on the audit branch (SHRINCS)",
-  "The 128s profiles are marked experimental in the project documentation (SHRINCS)",
-]
+note = "Verifiers on audit branch"
 
 [[library]]
 name = "pqhybridsign"
@@ -156,12 +126,7 @@ maturity = "pre-production"
 blockchain_friendly = true
 min_signature = { bytes = 731, parameter_set = "Falcon-512 hybrid with ed25519 or sr25519" }
 min_public_key = { bytes = 196, parameter_set = "SHRINCS hybrid (verification input)" }
-notes = [
-  "Each suite signs with one classical key and one post-quantum key, and a message passes only when both checks succeed",
-  "Includes a deterministic signing mode for finality votes",
-  "The Falcon-512 suites follow the pre-standard code and may not match the final standard (FN-DSA)",
-  "No test vectors from another implementation exist yet",
-]
+note = "No cross-implementation test vectors"
 
 [[library]]
 name = "pqringct"
@@ -169,7 +134,7 @@ source = "https://github.com/pqabelian/pqringct"
 algorithms = ["pqringct"]
 maturity = "production"
 blockchain_friendly = true
-notes = ["Go implementation used by the Abelian node (PQRingCT)"]
+note = "Used by Abelian node"
 
 [[library]]
 name = "pqringctx"
@@ -177,4 +142,4 @@ source = "https://github.com/pqabelian/pqringctx"
 algorithms = ["pqringct"]
 maturity = "production"
 blockchain_friendly = true
-notes = ["Go implementation derived from pqringct and used by the Abelian node (PQRingCT)"]
+note = "Derived from pqringct"

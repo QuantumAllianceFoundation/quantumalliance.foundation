@@ -11,10 +11,23 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: category
+    id: consensus
     attributes:
-      label: Category
-      description: If you are not sure which category fits, pick the less ready one.
+      label: Consensus
+      description: Status of the consensus layer, such as validator or finality signatures. If you are not sure which value fits, pick the less ready one. Proof-of-work consensus has no signatures.
+      options:
+        - Post-Quantum
+        - No Signatures / Quantum Resistant
+        - Post-Quantum Ready
+        - Quantum-Aware
+        - Quantum-Vulnerable
+    validations:
+      required: true
+  - type: dropdown
+    id: transactions
+    attributes:
+      label: Transactions
+      description: Status of the transaction layer, such as account signatures. If you are not sure which value fits, pick the less ready one.
       options:
         - Post-Quantum
         - Post-Quantum Ready
@@ -41,11 +54,16 @@ body:
     attributes:
       label: Post-quantum algorithms
       description: List the post-quantum algorithms the chain has deployed or implemented, one per line. Leave empty if there are none.
-  - type: textarea
-    id: notes
+  - type: input
+    id: note
     attributes:
-      label: Notes
-      description: Links to proposals, whitepapers, or other documents, one per line, as a title and an HTTPS link.
+      label: Note (up to 5 words)
+      description: A short note that clarifies one thing. Leave empty if none.
+  - type: textarea
+    id: links
+    attributes:
+      label: Links (up to 2)
+      description: The most useful public sources, one per line, as a title and an HTTPS link.
   - type: textarea
     id: evidence
     attributes:
