@@ -18,6 +18,7 @@ PAGES = {
     "registry/algorithms/slh-dsa/index.html": "/registry/algorithms/slh-dsa/",
     "registry/algorithms/other-alg/index.html": "/registry/algorithms/other-alg/",
     "registry/libraries/testlib/index.html": "/registry/libraries/testlib/",
+    "registry/blockchains/quantus/index.html": "/registry/blockchains/quantus/",
 }
 
 
@@ -36,6 +37,18 @@ class BuildTests(unittest.TestCase):
                 )
                 self.assertIn('<a href="/registry/">Registries</a>', html)
                 self.assertIn("/assets/table-sort.js", html)
+
+    def test_build_writes_chain_pages(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            rc = main(["--data", str(VALID), *ASSETS, "--out", tmp])
+            self.assertEqual(rc, 0)
+            html = (Path(tmp) / "registry/blockchains/quantus/index.html").read_text(encoding="utf-8")
+            self.assertIn("<h1>", html)
+            self.assertIn("Quantus", html)
+            self.assertIn("Judgment call: active work, no deployment path yet.", html)
+            self.assertIn("<title>Quantus | Quantum Alliance</title>", html)
+            libs = (Path(tmp) / "registry/libraries/index.html").read_text(encoding="utf-8")
+            self.assertIn("<title>Post-Quantum Cryptography Libraries | Quantum Alliance</title>", libs)
 
     def test_build_writes_library_pages(self):
         with tempfile.TemporaryDirectory() as tmp:

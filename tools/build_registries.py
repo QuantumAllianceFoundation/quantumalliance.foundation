@@ -10,11 +10,12 @@ from pathlib import Path
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from tools.registry.model import Registry, RegistryError, library_slug, load_registry
+from tools.registry.model import Registry, RegistryError, chain_slug, library_slug, load_registry
 from tools.registry.render import (
     render_algorithm,
     render_algorithms_index,
     render_blockchains,
+    render_chain,
     render_hub,
     render_libraries,
     render_library,
@@ -36,8 +37,8 @@ PAGES: tuple[tuple[str, str, str, str, Callable[[Registry], str]], ...] = (
      "Post-quantum algorithms, with safety and implementing libraries.",
      render_algorithms_index),
     ("registry/libraries/index.html", "/registry/libraries/",
-     "Library registry | Quantum Alliance",
-     "Post-quantum signature libraries, with safety, maturity, and sizes.", render_libraries),
+     "Post-Quantum Cryptography Libraries | Quantum Alliance",
+     "Post-quantum cryptography libraries, with safety, maturity, and sizes.", render_libraries),
     ("registry/products/index.html", "/registry/products/",
      "Product registry | Quantum Alliance",
      "Products built by Quantum Alliance members.", render_products),
@@ -86,9 +87,21 @@ def main(argv: list[str] | None = None) -> int:
             render_page(
                 template,
                 title=f"{library.name} | Quantum Alliance",
-                description=f"{library.name}: post-quantum signature library details.",
+                description=f"{library.name}: post-quantum cryptography library details.",
                 path=f"/registry/libraries/{slug}/",
                 body=render_library(reg, slug),
+            ),
+        ))
+    for chain in reg.chains:
+        slug = chain_slug(chain.name)
+        rendered.append((
+            args.out / f"registry/blockchains/{slug}/index.html",
+            render_page(
+                template,
+                title=f"{chain.name} | Quantum Alliance",
+                description=f"{chain.name}: post-quantum readiness of the blockchain.",
+                path=f"/registry/blockchains/{slug}/",
+                body=render_chain(reg, slug),
             ),
         ))
     for file, html in rendered:

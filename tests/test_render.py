@@ -22,6 +22,7 @@ from tools.registry.render import (
     render_algorithm,
     render_algorithms_index,
     render_blockchains,
+    render_chain,
     render_hub,
     render_libraries,
     render_library,
@@ -32,9 +33,9 @@ from tools.registry.render import (
 VALID = Path(__file__).parent / "fixtures" / "valid"
 
 ALGS = {
-    "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "https://example.org/ml", "S", "Because lattices.", ()),
+    "ml-dsa": Algorithm("ml-dsa", "ML-DSA", "lattice", "signature", "https://example.org/ml", "S", "Because lattices.", ()),
     "slh-dsa": Algorithm(
-        "slh-dsa", "SLH-DSA", "hash-based", "https://example.org/slh", "S", "Hash only.", ()
+        "slh-dsa", "SLH-DSA", "hash-based", "signature", "https://example.org/slh", "S", "Hash only.", ()
     ),
 }
 
@@ -49,9 +50,11 @@ def chain(
     source="https://example.org/src",
     algorithms=(),
     logo=None,
+    consensus_reason="Consensus reason.",
+    transactions_reason="Transactions reason.",
 ):
     return Chain(
-        name, consensus, transactions, website, source,
+        name, consensus, transactions, consensus_reason, transactions_reason, website, source,
         tuple(algorithms), note, tuple(links), logo,
     )
 
@@ -381,7 +384,7 @@ class RenderTests(unittest.TestCase):
     def test_algorithm_page_shows_rationale(self):
         algs = {
             "x": Algorithm(
-                "x", "Xsig", "hash-based", "https://example.org/std", "Summary.",
+                "x", "Xsig", "hash-based", "signature", "https://example.org/std", "Summary.",
                 "Only hashes matter & <b>nothing</b> else.",
                 (Link("Paper A", "https://example.org/a"),),
             )
@@ -399,7 +402,7 @@ class RenderTests(unittest.TestCase):
     def test_algorithm_page_content(self):
         algs = {
             "x": Algorithm(
-                "x", "Xsig", "hash-based", "https://example.org/std", "Plain summary.",
+                "x", "Xsig", "hash-based", "signature", "https://example.org/std", "Plain summary.",
                 "Only hashes matter & <b>nothing</b> else.",
                 (Link("Paper A", "https://example.org/a"), Link("Paper B", "https://example.org/b")),
             )
@@ -420,7 +423,7 @@ class RenderTests(unittest.TestCase):
     def test_algorithm_page_escapes_summary(self):
         algs = {
             "x": Algorithm(
-                "x", "<i>X</i>", "other", "https://example.org/s", "<script>alert(1)</script>", "<i>why</i>",
+                "x", "<i>X</i>", "other", "kem", "https://example.org/s", "<script>alert(1)</script>", "<i>why</i>",
                 (Link("<b>P</b>", "https://example.org/p"),),
             )
         }
@@ -445,6 +448,108 @@ class RenderTests(unittest.TestCase):
         self.assertIn('<td data-sort="1">1</td>', out)
         self.assertIn("registry/data/algorithms.toml", out)
         self.assertIn("template=registry-algorithm.yml", out)
+
+    def test_chain_name_links_to_card(self):
+        out = render_blockchains(registry(chains=[chain("Open C++ Chain", logo="x.svg")]))
+        row = re.findall(r"<tr>(.*?)</tr>", out[out.index("<tbody"):], re.S)[0]
+        self.assertIn('<a href="/registry/blockchains/open-c-chain/">', row)
+        link = row[row.index('<a href="/registry/blockchains/'):]
+        link = link[: link.index("</a>")]
+        self.assertIn("chain-logo", link)
+        self.assertIn("Open C++ Chain", link)
+
+    def test_chain_name_link_keeps_notes_button(self):
+        out = render_blockchains(registry(chains=[chain("C", note="A note")]))
+        cell = out[out.index("<tbody"):].split("</td>")[0]
+        self.assertLess(cell.index("</a>"), cell.index("notes-toggle"))
+
+    def test_chain_card_shows_both_reasons_escaped(self):
+        c = chain(
+            "Ch<ain>",
+            consensus_reason="Judgment call: <b>x</b> & more.",
+            transactions_reason="Tx <i>why</i>.",
+            algorithms=("ml-dsa",),
+            note="Short <note>",
+            links=(Link("Docs", "https://example.org/docs"),),
+            logo="c.svg",
+        )
+        out = render_chain(registry(chains=[c]), "ch-ain")
+        self.assertEqual(out.count("Why this rating"), 2)
+        self.assertIn("Judgment call: &lt;b&gt;x&lt;/b&gt; &amp; more.", out)
+        self.assertIn("Tx &lt;i&gt;why&lt;/i&gt;.", out)
+        self.assertNotIn("<b>", out)
+        self.assertNotIn("<i>", out)
+        positions = [
+            out.index(needle)
+            for needle in (
+                '<p class="eyebrow">Blockchain</p>',
+                "<h1>",
+                'width="32" height="32"',
+                ">Consensus<",
+                'badge--post-quantum',
+                "Why this rating",
+                "Judgment call",
+                ">Transactions<",
+                "Tx &lt;i&gt;",
+                ">Algorithms<",
+                '<a href="/registry/algorithms/ml-dsa/" class="alg">ML-DSA</a>',
+                'aria-label="Ch&lt;ain&gt; website"',
+                'aria-label="Ch&lt;ain&gt; source code"',
+                "Short &lt;note&gt;",
+                '<a href="https://example.org/docs">Docs</a>',
+                "registry/data/blockchains.toml",
+            )
+        ]
+        self.assertEqual(positions, sorted(positions))
+
+    def test_chain_card_without_algorithms_or_logo(self):
+        out = render_chain(registry(chains=[chain("Plain")]), "plain")
+        self.assertIn("None deployed", out)
+        self.assertNotIn("<img", out)
+
+    def test_chain_card_has_edit_links(self):
+        out = render_chain(registry(chains=[chain("Plain")]), "plain")
+        self.assertIn(f"{REPO_URL}/edit/main/registry/data/blockchains.toml", out)
+        self.assertIn(f"{REPO_URL}/issues/new?template=registry-blockchain.yml", out)
+
+    def test_render_chain_unknown_slug_raises_value_error(self):
+        with self.assertRaisesRegex(ValueError, "unknown chain slug: nope"):
+            render_chain(registry(chains=[chain("Plain")]), "nope")
+
+    def test_libraries_page_title_is_pqc_libraries(self):
+        reg = registry(libraries=[library()])
+        out = render_libraries(reg)
+        self.assertIn("<h1>Post-Quantum Cryptography Libraries</h1>", out)
+        self.assertNotIn("signature libraries", out)
+        hub = render_hub(reg)
+        self.assertIn(
+            '<h3><a href="/registry/libraries/">Post-Quantum Cryptography Libraries</a></h3>', hub
+        )
+
+    def test_capability_tags_in_table_and_card(self):
+        reg = registry(
+            libraries=[
+                library("Sig", algorithms=("ml-dsa",)),
+                library("Both", algorithms=("ml-dsa", "kem-alg")),
+            ]
+        )
+        reg.algorithms["kem-alg"] = Algorithm(
+            "kem-alg", "KEM", "lattice", "kem", "https://example.org/k", "S", "R.", ()
+        )
+        table = render_libraries(reg)
+        rows = re.findall(r"<tr>(.*?)</tr>", table[table.index("<tbody"):], re.S)
+        both = next(r for r in rows if ">Both<" in r)
+        sig = next(r for r in rows if ">Sig<" in r)
+        name_cell = both.split("</td>")[0]
+        self.assertLess(
+            name_cell.index('<span class="cap-tag">Signatures</span>'),
+            name_cell.index('<span class="cap-tag">Key exchange</span>'),
+        )
+        self.assertNotIn("Key exchange", sig)
+        card = render_library(reg, "both")
+        self.assertLess(card.index("<h1>"), card.index('<span class="cap-tag">Signatures</span>'))
+        self.assertIn('<span class="cap-tag">Key exchange</span>', card)
+        self.assertNotIn("Key exchange", render_library(reg, "sig"))
 
     def test_legend_lists_five_values(self):
         out = render_blockchains(registry(chains=[chain("A")]))

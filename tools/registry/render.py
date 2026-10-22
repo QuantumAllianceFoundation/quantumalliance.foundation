@@ -19,6 +19,8 @@ from .model import (
     Library,
     Repository,
     algorithm_safety,
+    chain_slug,
+    library_capabilities,
     library_safety,
     library_safety_reason,
     library_slug,
@@ -67,6 +69,10 @@ def _link(url: str, text: str) -> str:
     return f'<a href="{_e(url)}">{_e(text)}</a>'
 
 
+def _link_html(url: str, inner_html: str) -> str:
+    return f'<a href="{_e(url)}">{inner_html}</a>'
+
+
 def _external(url: str, text: str) -> str:
     return f'<a href="{_e(url)}" target="_blank" rel="noopener noreferrer">{_e(text)}</a>'
 
@@ -93,6 +99,16 @@ def _safety_badge(safety: str) -> str:
 
 def _library_url(lib: Library) -> str:
     return f"/registry/libraries/{library_slug(lib.name)}/"
+
+
+def _chain_url(chain: Chain) -> str:
+    return f"/registry/blockchains/{chain_slug(chain.name)}/"
+
+
+def _capability_tags(reg: Registry, lib: Library) -> str:
+    return " ".join(
+        f'<span class="cap-tag">{_e(label)}</span>' for label in library_capabilities(lib, reg.algorithms)
+    )
 
 
 def _algorithm_chips(reg: Registry, ids: Sequence[str]) -> str:
@@ -243,7 +259,7 @@ def render_hub(reg: Registry) -> str:
          "Post-quantum readiness of blockchain networks."),
         ("Algorithms", "/registry/algorithms/", len(reg.algorithms),
          "Post-quantum algorithms, with safety and research papers."),
-        ("Libraries", "/registry/libraries/", len(reg.libraries),
+        (LIBRARIES_TITLE, "/registry/libraries/", len(reg.libraries),
          "Post-quantum cryptography libraries and their maturity."),
         ("Products", "/registry/products/", len(reg.products),
          "Products built by Quantum Alliance members."),
@@ -296,7 +312,7 @@ def render_blockchains(reg: Registry) -> str:
         algs = [reg.algorithms[a] for a in c.algorithms]
         notes_cell, notes_extras = _notes_parts("blockchains", index, c.name, c.note, c.links)
         rows.append([
-            _td(_chain_name(c) + notes_extras, c.name.casefold(), "name-cell"),
+            _td(_link_html(_chain_url(c), _chain_name(c)) + notes_extras, c.name.casefold(), "name-cell"),
             _layer_td(c.consensus),
             _layer_td(c.transactions),
             _td(
@@ -328,11 +344,11 @@ def render_blockchains(reg: Registry) -> str:
     )
 
 
-def _chain_name(chain: Chain) -> str:
+def _chain_name(chain: Chain, size: int = 20) -> str:
     if chain.logo is None:
         return _e(chain.name)
     return (
-        f'<img src="{LOGO_DIR}/{_e(chain.logo)}" alt="" width="20" height="20" '
+        f'<img src="{LOGO_DIR}/{_e(chain.logo)}" alt="" width="{size}" height="{size}" '
         f'class="chain-logo">{_e(chain.name)}'
     )
 
@@ -342,6 +358,9 @@ LIBRARY_SAFETY_LEGEND = (
     "signature must both verify. Without one, hash-based libraries rate Medium, "
     "and lattice-based and other libraries rate Low."
 )
+
+
+LIBRARIES_TITLE = "Post-Quantum Cryptography Libraries"
 
 
 def render_libraries(reg: Registry) -> str:
@@ -356,7 +375,13 @@ def render_libraries(reg: Registry) -> str:
         languages = ", ".join(r.language for r in lib.repositories)
         notes_cell, notes_extras = _notes_parts("libraries", index, lib.name, lib.note, lib.links)
         rows.append([
-            _td(_link(_library_url(lib), lib.name) + notes_extras, lib.name.casefold(), "name-cell"),
+            _td(
+                _link(_library_url(lib), lib.name)
+                + f'<span class="cap-tags">{_capability_tags(reg, lib)}</span>'
+                + notes_extras,
+                lib.name.casefold(),
+                "name-cell",
+            ),
             _td(
                 _algorithm_chips(reg, lib.algorithms),
                 " ".join(reg.algorithms[a].name for a in lib.algorithms).casefold(),
@@ -389,8 +414,8 @@ def render_libraries(reg: Registry) -> str:
         else None
     )
     return _registry_section(
-        "Registries", "Libraries",
-        "Post-quantum signature libraries, with the smallest sizes each one offers.",
+        "Registries", LIBRARIES_TITLE,
+        "Post-quantum cryptography libraries, with the smallest sizes each one offers.",
         "libraries.toml", "registry-library.yml", table, legend,
     )
 
@@ -430,10 +455,57 @@ def render_library(reg: Registry, slug: str) -> str:
         '      <div class="wrap">\n'
         '        <p class="eyebrow">Library</p>\n'
         f"        <h1>{_e(lib.name)}</h1>\n"
+        f'        <p class="cap-tags">{_capability_tags(reg, lib)}</p>\n'
         '        <dl class="detail-list">\n' + "\n".join(rows) + "\n        </dl>\n"
         f"        {edit_links('libraries.toml', 'registry-library.yml')}\n"
         "      </div>\n"
         "    </section>"
+    )
+
+
+def render_chain(reg: Registry, slug: str) -> str:
+    chain = next((c for c in reg.chains if chain_slug(c.name) == slug), None)
+    if chain is None:
+        raise ValueError(f"unknown chain slug: {slug}")
+    algorithms = (
+        _algorithm_chips(reg, chain.algorithms) if chain.algorithms else "None deployed"
+    )
+    notes = " ".join(
+        ([_e(chain.note)] if chain.note else [])
+        + [_link(link.url, link.title) for link in chain.links]
+    )
+    rows = [
+        _detail_row("Consensus", _rating(chain.consensus, chain.consensus_reason)),
+        _detail_row("Transactions", _rating(chain.transactions, chain.transactions_reason)),
+        _detail_row("Algorithms", algorithms),
+        _detail_row(
+            "Website",
+            _icon_link(chain.website, f"{chain.name} website", "globe") + " Website",
+        ),
+        _detail_row(
+            "Source",
+            _icon_link(chain.source, f"{chain.name} source code", _source_symbol(chain.source))
+            + " Source",
+        ),
+        _detail_row("Note and links", notes or "—"),
+    ]
+    return (
+        '    <section class="section">\n'
+        '      <div class="wrap">\n'
+        '        <p class="eyebrow">Blockchain</p>\n'
+        f"        <h1>{_chain_name(chain, 32)}</h1>\n"
+        '        <dl class="detail-list">\n' + "\n".join(rows) + "\n        </dl>\n"
+        f"        {edit_links('blockchains.toml', 'registry-blockchain.yml')}\n"
+        "      </div>\n"
+        "    </section>"
+    )
+
+
+def _rating(layer: str, reason: str) -> str:
+    return (
+        f"{_badge(layer)}\n"
+        '            <p class="rating-reason"><strong>Why this rating.</strong> '
+        f"{_e(reason)}</p>"
     )
 
 

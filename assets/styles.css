@@ -308,6 +308,12 @@ td.col-icon { white-space: nowrap; }
 td.col-source { white-space: nowrap; }
 .repo-line { display: flex; align-items: center; gap: 6px; }
 .chain-logo { display: inline-block; width: 20px; height: 20px; margin-right: 8px; vertical-align: middle; object-fit: contain; }
+h1 .chain-logo { width: 32px; height: 32px; margin-right: 12px; }
+.cap-tags { display: block; margin: 0; line-height: 1.6; }
+.name-cell .cap-tags { margin-top: 4px; }
+.cap-tag { display: inline-block; margin: 0 4px 0 0; padding: 0 8px; border: 1px solid var(--border-med); border-radius: 999px; font-size: .6875rem; white-space: nowrap; color: var(--content-70); }
+h1 + .detail-list { margin-top: 24px; }
+.rating-reason { margin: 8px 0 0; color: var(--content-60); }
 a.alg { text-decoration: none; }
 a.alg:hover { border-color: var(--content-40); }
 .link-list { margin: 0 0 24px; padding-left: 20px; color: var(--content-60); line-height: 1.75; }

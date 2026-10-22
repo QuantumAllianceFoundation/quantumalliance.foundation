@@ -35,6 +35,20 @@ body:
         - Quantum-Vulnerable
     validations:
       required: true
+  - type: textarea
+    id: consensus_reason
+    attributes:
+      label: Why this consensus rating (at most 40 words)
+      description: In your own words. If the rating is a judgment call, say so plainly.
+    validations:
+      required: true
+  - type: textarea
+    id: transactions_reason
+    attributes:
+      label: Why this transactions rating (at most 40 words)
+      description: In your own words. If the rating is a judgment call, say so plainly.
+    validations:
+      required: true
   - type: input
     id: website
     attributes:
