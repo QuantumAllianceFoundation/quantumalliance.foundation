@@ -104,7 +104,7 @@ transactions_reason = "Judgment call: native Falcon-1024 (FN-DSA) accounts are l
 website = "https://algorand.co/"
 source = "https://github.com/algorand/go-algorand"
 algorithms = ["fn-dsa"]
-note = "Consensus votes still use Ed25519"
+note = "Falcon accounts are opt-in"
 links = [
   { title = "Post-quantum roadmap (2026)", url = "https://algorand.co/blog/algorand-post-quantum-cryptography-roadmap" },
   { title = "Post-quantum ledger (2026)", url = "https://algorand.co/blog/algorand-post-quantum-ledger" },
@@ -1088,14 +1088,14 @@ logo = "plasma.svg"
 
 [[chain]]
 name = "Bitcoin SV"
-consensus = "no-signatures"
+consensus = "quantum-vulnerable"
 transactions = "quantum-vulnerable"
-consensus_reason = "Judgment call: SHA-256 proof-of-work mining needs no signature to produce a block. Teranode's alert service lets signed alerts invalidate blocks, but production and acceptance do not depend on it."
+consensus_reason = "Judgment call: SHA-256 proof of work produces blocks. Teranode alerts can invalidate blocks and freeze coins with signatures from at least three distinct classical keys. Those signatures leave consensus vulnerable to quantum forgery."
 transactions_reason = "Spending uses ECDSA on secp256k1. No post-quantum proposal, code, or roadmap was found in the node or Teranode repositories, or on the BSV Association site."
 website = "https://bsvblockchain.org/"
 source = "https://github.com/bsv-blockchain/teranode"
 algorithms = []
-note = "PoW; no quantum work found"
+note = "Classical alert keys override"
 links = [
   { title = "Teranode alert service", url = "https://github.com/bsv-blockchain/teranode/blob/main/docs/topics/services/alert.md" },
 ]
@@ -2111,13 +2111,13 @@ logo = "hegemon.svg"
 [[chain]]
 name = "Parano1d"
 consensus = "no-signatures"
-transactions = "post-quantum"
+transactions = "post-quantum-ready"
 consensus_reason = "Proof of work orders blocks and proofs establish validity, so no digital signature produces or finalizes a block. The libp2p Ed25519 key only identifies a peer."
-transactions_reason = "Judgment call: mainnet live since 2026-08-21. Ownership is a randomized hash-preimage proof with no public-key signature, and the project claims end-to-end post-quantum soundness. The scheme is novel and not independently reviewed."
+transactions_reason = "Judgment call: the project reports a mainnet since 2026-08-21, but only reachable seed nodes could be confirmed, with no explorer or block height. Ownership is a hash-preimage proof with no public-key signature."
 website = "https://parano1d.org"
 source = "https://github.com/proof-native/parano1d"
 algorithms = []
-note = "Signatureless; hash-proof ownership"
+note = "Mainnet not fully confirmed"
 links = [{ title = "Parano1d README", url = "https://github.com/proof-native/parano1d/blob/main/README.md" }]
 logo = "parano1d.png"
 
@@ -2186,14 +2186,14 @@ links = [{ title = "QCC white paper", url = "https://www.quantumchain.it/QCC_whi
 [[chain]]
 name = "Base"
 consensus = "quantum-vulnerable"
-transactions = "quantum-vulnerable"
+transactions = "quantum-aware"
 consensus_reason = "Judgment call: Coinbase says it is assessing Base beyond what Ethereum provides and will write a concrete plan later. No sequencer or proposer post-quantum work is published. A layer 2 inherits no readiness."
-transactions_reason = "Judgment call: Coinbase states only that a concrete Base plan will follow. Base accounts use classical signatures and no post-quantum account scheme is published. A layer 2 inherits no readiness from Ethereum."
+transactions_reason = "Judgment call: Base accounts use classical signatures. EIP-8130 provides a framework for custom signature verifiers and future post-quantum accounts. The published reference contracts implement classical schemes, and native EIP-8130 accounts are not live."
 website = "https://base.org"
 source = "https://github.com/base/base"
 algorithms = []
-note = "Layer 2; plan promised"
-links = [{ title = "Coinbase post-quantum post", url = "https://www.coinbase.com/blog/what-coinbase-is-doing-to-prepare-for-post-quantum-cryptography" }]
+note = "Layer 2; EIP-8130 PQ work"
+links = [{ title = "Coinbase post-quantum post", url = "https://www.coinbase.com/blog/what-coinbase-is-doing-to-prepare-for-post-quantum-cryptography" }, { title = "EIP-8130 contracts (base/eip-8130)", url = "https://github.com/base/eip-8130" }]
 logo = "base.png"
 
 [[chain]]
@@ -2278,7 +2278,7 @@ name = "SorachanCoin (IUEC)"
 consensus = "quantum-vulnerable"
 transactions = "quantum-vulnerable"
 consensus_reason = "Judgment call: hybrid scrypt proof-of-work and proof-of-stake chain; stake blocks carry classical signatures and no post-quantum block signing is published. The roadmap lists a review in 2026 and rollout to 2028."
-transactions_reason = "Judgment call: opt-in QAI addresses add a hash-based signature, but the published verifier does not give real post-quantum protection, so no post-quantum credit is given. Classical signatures remain the default."
+transactions_reason = "Judgment call: opt-in QAI addresses add a hash-based signature, but the verifier compares only 128 bytes, about 4 bits of the message hash, so it gives no real post-quantum protection."
 website = "https://www.junkhdd.com/"
 source = "https://github.com/FromHDDtoSSD/SorachanCoin-qt"
 algorithms = []
@@ -2352,12 +2352,12 @@ note = "Testnet only, alpha"
 name = "Post-Quantum Qoin"
 consensus = "quantum-vulnerable"
 transactions = "quantum-vulnerable"
-consensus_reason = "Judgment call: blocks need multivariate proof of work and valid Drand beacon entries, whose classical BLS signatures every node verifies. Published block validation does not enforce a post-quantum block signature."
-transactions_reason = "Judgment call: the post-quantum signature path in the published code could not be confirmed to protect accounts, so no post-quantum credit is given. secp256k1 remains the working signature path."
+consensus_reason = "Judgment call: default block validation requires multivariate proof of work and Drand beacons authenticated with classical BLS signatures. The Dilithium or Falcon block-signature check is commented out in core/consensus/qoincns/qcoin.go."
+transactions_reason = "Judgment call: MultiPqcVerify in lib/sigs/sigs.go verifies signatures against keys supplied with them, without binding those keys to the sender. An empty key list also succeeds. The secp256k1 path checks the sender address."
 website = "https://postquantumqoin.org/"
 source = "https://github.com/post-quantumqoin/qoin-shor"
 algorithms = []
-note = "PQ path unconfirmed in review"
+note = "PQ checks unbound to sender"
 
 [[chain]]
 name = "ChainGO"
@@ -2387,11 +2387,34 @@ logo = "qtc.svg"
 name = "QDay"
 consensus = "quantum-aware"
 transactions = "quantum-aware"
-consensus_reason = "Testnet only. The Aevum rollup is a Polygon CDK fork; its sequencer signs classically. The project plans ML-DSA-65 hybrid and native signing for 2027. Its published node code holds no post-quantum signing yet."
-transactions_reason = "Testnet only. Accounts use ECDSA today. Native ML-DSA accounts are in development, and the project publishes a separate ML-DSA signing library, but no node repository integrates it yet."
+consensus_reason = "The live QDay Origin mainnet has a classical sequencer and validators. Rollup batches settle to Abelian, which uses lattice-based keys. The project roadmap plans post-quantum validators and sequencer from 2028."
+transactions_reason = "QDay Origin accounts use ECDSA today. The project publishes an ML-DSA-65 signing library but no node integrates it. Native post-quantum accounts are planned, and an upgraded mainnet is scheduled for Q1 2027."
 website = "https://qday.io/"
-source = "https://github.com/qday-io/qday-cdk-erigon"
+source = "https://github.com/qday-io/qday-da-node"
+algorithms = ["ml-dsa"]
+note = "Settles to Abelian; ECDSA accounts"
+links = [{ title = "QDay Community Wiki (FAQ)", url = "https://github.com/qday-io/qday-wiki" }, { title = "QDay PQC SDK (ML-DSA via liboqs)", url = "https://github.com/qday-io/qday-pqc-sdk" }]
+logo = "qday.svg"
+
+[[chain]]
+name = "Quranium"
+consensus = "quantum-aware"
+transactions = "quantum-aware"
+consensus_reason = "Judgment call: the website and whitepaper describe SLH-DSA consensus signatures. Public Quranium node source is unavailable, and the linked explorer identifies itself as testnet, so mainnet enforcement remains unverified."
+transactions_reason = "Judgment call: the site and whitepaper describe SLH-DSA transaction signatures. No public Quranium node implementation is available to verify how transactions enforce those signatures."
+website = "https://www.quranium.org/"
+algorithms = ["slh-dsa"]
+note = "No public source code"
+logo = "quranium.svg"
+
+[[chain]]
+name = "Dytallix"
+consensus = "post-quantum-ready"
+transactions = "post-quantum-ready"
+consensus_reason = "Testnet only. The repository's experimental CometBFT engine requires ML-DSA-65 validator keys and peer identities. The standard upstream command retains classical transport. The README reports no mainnet launch and public testnet retirement on 2026-10-04."
+transactions_reason = "Testnet only. The SDK signs transactions with FIPS 204 ML-DSA-65, and the node verifies them. The public testnet retired on 2026-10-04. Mainnet has not launched."
+website = "https://dytallix.com/"
+source = "https://github.com/DytallixHQ/dytallix"
 algorithms = ["ml-dsa"]
 note = "Testnet only"
-links = [{ title = "QDay Community Wiki (FAQ, section 7)", url = "https://github.com/qday-io/qday-wiki" }, { title = "QDay PQC SDK (ML-DSA via liboqs)", url = "https://github.com/qday-io/qday-pqc-sdk" }]
-logo = "qday.svg"
+logo = "dytallix.webp"
