@@ -2,4 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://quantumalliance.foundation/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://quantumalliance.foundation/news/launch/</loc><lastmod>2026-10-15</lastmod></url>
+  <url><loc>https://quantumalliance.foundation/registry/</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://quantumalliance.foundation/registry/algorithms/</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://quantumalliance.foundation/registry/blockchains/</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://quantumalliance.foundation/registry/libraries/</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://quantumalliance.foundation/registry/products/</loc><lastmod>2026-10-22</lastmod></url>
 </urlset>

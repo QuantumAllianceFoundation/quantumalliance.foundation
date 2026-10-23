@@ -1,0 +1,43 @@
+# Product registry
+#
+# One [[product]] block per product built by an Alliance member. To add or
+# change an entry, edit this file and open a pull request. Take the
+# description and the supported chains from the member's own website or
+# documentation.
+#
+# Fields (all required):
+#   name         Product name. Unique, compared without regard to case.
+#   member       Name of the Alliance member organization.
+#   description  What the product is, in one sentence.
+#   chains       Not empty. List of supported chain names, as plain text. The
+#                names do not need to match the blockchain registry.
+#   url          HTTPS link to the product page.
+#
+# Example (a copy of the Quantus Wallet entry below):
+#   [[product]]
+#   name = "Quantus Wallet"
+#   member = "Quantus"
+#   description = "Mobile wallet for the Quantus chain, where every signature uses ML-DSA-87."
+#   chains = ["Quantus"]
+#   url = "https://quantus.com/wallet"
+
+[[product]]
+name = "Quip account"
+member = "Postquant Labs / Quip Network"
+description = "Smart-contract account that wraps an existing wallet and requires a hash-based post-quantum co-signature on every transaction."
+chains = ["Ethereum", "Base"]
+url = "https://account.quip.network"
+
+[[product]]
+name = "ZKPoSP"
+member = "American Fortress"
+description = "Signature scheme for hierarchical deterministic wallets that proves knowledge of the wallet seed with a zero-knowledge proof, so addresses stay the same."
+chains = ["Chains with secp256k1 or Ed25519 keys and BIP32, BIP44, or SLIP-10 wallets"]
+url = "https://americanfortress.io/whitepaper"
+
+[[product]]
+name = "Quantus Wallet"
+member = "Quantus"
+description = "Mobile wallet for the Quantus chain, where every signature uses ML-DSA-87."
+chains = ["Quantus"]
+url = "https://quantus.com/wallet"

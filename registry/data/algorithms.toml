@@ -1,0 +1,231 @@
+# Algorithm catalog
+#
+# Blockchains and libraries refer to these entries by `id`. To add an
+# algorithm, copy an existing [[algorithm]] block, change the values, and open
+# a pull request. The "Safety" rating shown on the site comes from `family`:
+# hash-based = High, lattice = Medium, other = Low. An algorithm with a
+# `broken` entry rates Broken instead, whatever its family.
+#
+# Fields (required unless marked optional):
+#   id         Unique lowercase slug: letters, digits, and single hyphens.
+#              Example: "ml-dsa"
+#   name       Display name. Example: "ML-DSA"
+#   family     One of: "hash-based", "lattice", "other"
+#   kind       One of: "signature", "kem". A "signature" scheme signs and
+#              verifies messages. A "kem" (key encapsulation mechanism)
+#              establishes a shared secret for encryption.
+#   url        HTTPS link to the standard or the specification. Use the
+#              publication page of the standards body, the RFC page, or the
+#              paper that defines the scheme. The link must start with the
+#              secure scheme and must open without a login.
+#   summary    Plain-language explanation of what the algorithm does and what
+#              it is used for, in your own words, at most 80 words. Do not
+#              copy sentences from a specification, paper, or web page.
+#   rationale  Why the algorithm has its safety rating, in your own words, at
+#              most 60 words. Say what its security rests on and name known
+#              caveats, such as one-time-key state or implementation pitfalls.
+#              Do not claim that the algorithm is proven secure.
+#   papers     1 to 3 research papers or specifications, each written as
+#              { title = "...", url = "https://..." }. Prefer the original
+#              paper, then the submission specification, then the RFC or
+#              standard. Use stable links: IACR ePrint, RFC Editor, NIST CSRC,
+#              the authors' site, or the project repository.
+#   broken     Optional. Add it only when a published attack breaks the
+#              scheme at its claimed parameters. An implementation bug or a
+#              side-channel paper alone does not count. Written as
+#              { reason = "...", reference = { title = "...", url = "https://..." } }
+#              The reason is at most 40 words. The site then shows a
+#              "Do not trust" warning on every page that lists the algorithm.
+#
+# Example:
+#   [[algorithm]]
+#   id = "ml-dsa"
+#   name = "ML-DSA"
+#   family = "lattice"
+#   kind = "signature"
+#   url = "https://csrc.nist.gov/pubs/fips/204/final"
+#   summary = "..."
+#   rationale = "..."
+#   papers = [{ title = "CRYSTALS-Dilithium (2017)", url = "https://eprint.iacr.org/2017/633" }]
+
+[[algorithm]]
+id = "ml-dsa"
+name = "ML-DSA"
+family = "lattice"
+kind = "signature"
+url = "https://csrc.nist.gov/pubs/fips/204/final"
+summary = "ML-DSA is the digital signature standard that NIST derived from the CRYSTALS-Dilithium design. A signer proves control of a private key without revealing it, and anyone can check the signature with the public key. It is fast, with keys and signatures of a few kilobytes, and it keeps no state between signatures. Many protocols and libraries adopt it as the general-purpose post-quantum signature."
+rationale = "Security rests on the hardness of Module-LWE and Module-SIS, which are structured-lattice problems. These have been studied for years without a practical attack on the standardized parameters, but their cryptanalysis is younger than that of hash functions. Side-channel leakage in implementations is an additional risk."
+papers = [
+  { title = "CRYSTALS-Dilithium (2017)", url = "https://eprint.iacr.org/2017/633" },
+  { title = "FIPS 204: Module-Lattice-Based Digital Signature Standard", url = "https://csrc.nist.gov/pubs/fips/204/final" },
+]
+
+[[algorithm]]
+id = "fn-dsa"
+name = "FN-DSA (Falcon)"
+family = "lattice"
+kind = "signature"
+url = "https://falcon-sign.info/"
+summary = "FN-DSA is the signature scheme based on Falcon, which NIST selected for standardization. Its main benefit is size: public keys and signatures are smaller than those of ML-DSA, which matters where each byte costs money, such as on a blockchain. The cost is harder signing code, because it samples from a Gaussian distribution using floating-point arithmetic. Verification is simple and fast."
+rationale = "Security rests on the hardness of problems over NTRU lattices, a structured-lattice family studied since the 1990s. Cryptanalysis is less mature than for hash functions. Signing needs careful floating-point Gaussian sampling, which is hard to implement in constant time, so side-channel and portability mistakes are a real risk."
+papers = [
+  { title = "Falcon: Fast-Fourier Lattice-based Compact Signatures over NTRU (specification)", url = "https://falcon-sign.info/falcon.pdf" },
+]
+
+[[algorithm]]
+id = "slh-dsa"
+name = "SLH-DSA"
+family = "hash-based"
+kind = "signature"
+url = "https://csrc.nist.gov/pubs/fips/205/final"
+summary = "SLH-DSA is the NIST standard form of the SPHINCS+ signature scheme. It builds signatures from a tree of hash computations, so it needs no lattice or number-theory assumptions. It is stateless: the signer does not track which keys it has used. The trade-off is size, since signatures run from about eight to fifty kilobytes and signing is slower than for lattice schemes."
+rationale = "Security rests only on the properties of the hash function, the most conservative assumption available. The scheme is stateless, so there is no one-time-key reuse risk. Signatures are large and signing is slow, which is a cost in size and speed rather than in safety."
+papers = [
+  { title = "The SPHINCS+ Signature Framework (2019)", url = "https://eprint.iacr.org/2019/1086" },
+  { title = "FIPS 205: Stateless Hash-Based Digital Signature Standard", url = "https://csrc.nist.gov/pubs/fips/205/final" },
+]
+
+[[algorithm]]
+id = "xmss"
+name = "XMSS"
+family = "hash-based"
+kind = "signature"
+url = "https://www.rfc-editor.org/info/rfc8391"
+summary = "XMSS signs messages with one-time keys that are organized under a single Merkle tree root, so one short public key covers many signatures. Each one-time key may be used once only, so the signer must record how many it has used. Signatures are small for a hash-based scheme. RFC 8391 specifies it, and NIST approves it for stateful use."
+rationale = "Security rests only on the properties of the hash function. The scheme is stateful: signing twice with the same one-time key reveals enough of that key's secrets for an attacker to forge signatures. A restored backup, a cloned device, or a crash before state is saved can cause this, so safe use needs strict state management."
+papers = [
+  { title = "XMSS: A Practical Forward Secure Signature Scheme Based on Minimal Security Assumptions (2011)", url = "https://eprint.iacr.org/2011/484" },
+  { title = "RFC 8391: XMSS: eXtended Merkle Signature Scheme", url = "https://www.rfc-editor.org/info/rfc8391" },
+  { title = "NIST SP 800-208: Recommendation for Stateful Hash-Based Signature Schemes", url = "https://csrc.nist.gov/pubs/sp/800/208/final" },
+]
+
+[[algorithm]]
+id = "lms"
+name = "LMS"
+family = "hash-based"
+kind = "signature"
+url = "https://www.rfc-editor.org/info/rfc8554"
+summary = "LMS, with its multi-level form HSS, is a signature scheme built from hash functions and a Merkle tree of one-time keys. A single public key covers a limit on the signature count that is set when the key is generated. The signer must remember which one-time keys it has already used. RFC 8554 defines it, and NIST approves it for uses such as signing firmware."
+rationale = "Security rests only on the properties of the hash function. The scheme is stateful: using one one-time key for two messages can reveal enough secret material to forge signatures. Backup restores, cloned devices, and failed state writes are the main dangers, so key storage must be handled with great care."
+papers = [
+  { title = "RFC 8554: Leighton-Micali Hash-Based Signatures", url = "https://www.rfc-editor.org/info/rfc8554" },
+  { title = "NIST SP 800-208: Recommendation for Stateful Hash-Based Signature Schemes", url = "https://csrc.nist.gov/pubs/sp/800/208/final" },
+]
+
+[[algorithm]]
+id = "ml-kem"
+name = "ML-KEM"
+family = "lattice"
+kind = "kem"
+url = "https://csrc.nist.gov/pubs/fips/203/final"
+summary = "ML-KEM is the NIST standard for key encapsulation, derived from CRYSTALS-Kyber. One side publishes a public key. The other side uses it to wrap a fresh random secret that only the key owner can unwrap, and both then encrypt their traffic with that secret. It protects against attackers who record traffic now and decrypt it later with a quantum computer. It does not sign messages. Keys and ciphertexts are about one kilobyte."
+rationale = "Security rests on the hardness of Module-LWE, a structured-lattice problem. Years of public analysis have found no practical attack on the standardized parameters, but lattice cryptanalysis is less mature than that of hash functions. Implementations must resist timing and other side-channel leaks."
+papers = [
+  { title = "CRYSTALS-Kyber (2017)", url = "https://eprint.iacr.org/2017/634" },
+  { title = "FIPS 203: Module-Lattice-Based Key-Encapsulation Mechanism Standard", url = "https://csrc.nist.gov/pubs/fips/203/final" },
+]
+
+[[algorithm]]
+id = "sphincs-plus"
+name = "SPHINCS+"
+family = "hash-based"
+kind = "signature"
+url = "https://sphincs.org/"
+summary = "SPHINCS+ is a signature scheme that uses only hash functions, submitted to the NIST post-quantum competition. A hypertree of many small signature trees lets it sign without keeping any state. Because the signer need not track used keys, it is easier to deploy safely than XMSS or LMS. Signatures are large, and NIST later standardized a close variant as SLH-DSA."
+rationale = "Security rests only on the properties of the hash function. The scheme is stateless, so there is no one-time-key reuse risk. Signatures are large and signing is slow. The submitted version differs slightly from the final SLH-DSA standard, so deployments should check which one they use."
+papers = [
+  { title = "The SPHINCS+ Signature Framework (2019)", url = "https://eprint.iacr.org/2019/1086" },
+  { title = "SPHINCS+ Submission Specification, Round 3.1", url = "https://sphincs.org/data/sphincs+-r3.1-specification.pdf" },
+]
+
+[[algorithm]]
+id = "sphincs-plus-c"
+name = "SPHINCS+C"
+family = "hash-based"
+kind = "signature"
+url = "https://eprint.iacr.org/2022/778"
+summary = "SPHINCS+C is a variant of SPHINCS+ that makes signatures smaller. The signer tries different random values until the hash of the message has a required form. For such hashes, part of the signature is not needed, so the signer omits it and the verifier never uses it. The search adds a small amount of signing work, and verification gets faster. The scheme stays stateless and uses hash functions only."
+rationale = "Security rests only on the properties of the hash function, and the scheme is stateless. It is newer and less widely reviewed than SPHINCS+ and SLH-DSA, and it is not a NIST standard. The signer's extra search adds signing time, and implementations need review."
+papers = [
+  { title = "SPHINCS+C: Compressing SPHINCS+ With (Almost) No Cost (2022)", url = "https://eprint.iacr.org/2022/778" },
+]
+
+[[algorithm]]
+id = "wots-plus"
+name = "WOTS+"
+family = "hash-based"
+kind = "signature"
+url = "https://eprint.iacr.org/2017/965"
+summary = "WOTS+ is a one-time signature scheme: a key pair can safely sign a single message. It works by revealing selected points along chains of hash computations. It is a building block inside XMSS and SPHINCS+, not a full system for many signatures. LMS uses a related Winternitz scheme, LM-OTS. Some blockchain designs use it directly, with a fresh key for every transaction."
+rationale = "Security rests only on the properties of the hash function. A key is strictly one-time: signing two different messages with it can reveal enough of the secret to forge signatures. Used alone, the user or wallet must never reuse a key, so state tracking is essential."
+papers = [
+  { title = "WOTS+: Shorter Signatures for Hash-Based Signature Schemes (2013)", url = "https://eprint.iacr.org/2017/965" },
+  { title = "RFC 8391: XMSS: eXtended Merkle Signature Scheme", url = "https://www.rfc-editor.org/info/rfc8391" },
+]
+
+[[algorithm]]
+id = "shrincs"
+name = "SHRINCS"
+family = "hash-based"
+kind = "signature"
+url = "https://github.com/SHRINCS/shrincs-bip/blob/main/SHRINCS.md"
+summary = "SHRINCS is a hash-based signature scheme designed for Bitcoin. It joins two parts under one public key. A compact stateful part is used while the signer's state is intact. A larger stateless part acts as a fallback after the state is lost, for example after a restore from a seed backup. A signature from one part is enough to verify."
+rationale = "Security rests only on the properties of the hash function, which is SHA-256 in the draft. The stateful path has one-time-key reuse risk if state is mishandled, which the stateless fallback is meant to reduce. The design is a new draft: the specification says a security proof is still to be written."
+papers = [
+  { title = "Hash-based Signature Schemes for Bitcoin (2025, Appendix B.3 describes the construction)", url = "https://eprint.iacr.org/2025/2203" },
+  { title = "SHRINCS: 324-byte stateful post-quantum signatures with static backups (Delving Bitcoin)", url = "https://delvingbitcoin.org/t/shrincs-324-byte-stateful-post-quantum-signatures-with-static-backups/2158" },
+  { title = "SHRINCS: A Compact Hash-Based Signature Scheme (draft specification)", url = "https://github.com/SHRINCS/shrincs-bip/blob/main/SHRINCS.md" },
+]
+
+[[algorithm]]
+id = "pqringct"
+name = "PQRingCT"
+family = "lattice"
+kind = "signature"
+url = "https://download.abelian.info/release/docs/whitepaper.pdf"
+summary = "PQRingCT is a ring confidential transaction scheme built on lattice cryptography, used by the Abelian blockchain. It hides who sent a payment among a group of possible senders, hides the amounts, and still lets the network check that no coins were created or spent twice. It combines linkable ring signatures, commitments, and range proofs."
+rationale = "Security rests on structured-lattice problems such as Module-SIS and Module-LWE. This is a complex, specialized protocol that combines several lattice components and was analyzed by far fewer researchers than NIST standards. Implementation and parameter errors are likely risks, and the privacy features add further attack surface."
+papers = [
+  { title = "Abelian (ABEL) whitepaper, version 1.0 (2022)", url = "https://download.abelian.info/release/docs/whitepaper.pdf" },
+  { title = "pqringct reference implementation (Go)", url = "https://github.com/pqabelian/pqringct" },
+]
+
+[[algorithm]]
+id = "crystals-dilithium"
+name = "CRYSTALS-Dilithium (pre-standard)"
+family = "lattice"
+kind = "signature"
+url = "https://pq-crystals.org/dilithium/"
+summary = "Dilithium is a lattice signature scheme based on module lattices. It was the design submitted to the NIST process, and NIST later standardized a revised form as ML-DSA. Early submission-era versions use different parameters and details from the final standard, so code that follows them is not FIPS 204 compatible and does not interoperate with ML-DSA."
+rationale = "Security rests on module lattice problems, which have had less study than hash functions. The pre-standard parameters were superseded by the revised standard, so deployments should move to ML-DSA. No practical break of the submission-era design is known."
+papers = [
+  { title = "CRYSTALS-Dilithium: A Lattice-Based Digital Signature Scheme (2018)", url = "https://eprint.iacr.org/2017/633" },
+  { title = "CRYSTALS-Dilithium project page and specification", url = "https://pq-crystals.org/dilithium/" },
+]
+
+[[algorithm]]
+id = "shipovnik"
+name = "Shipovnik"
+family = "other"
+kind = "signature"
+url = "https://github.com/QAPP-tech/shipovnik_tc26"
+summary = "Shipovnik is a code-based signature candidate from Russian researchers, proposed to the Russian standards committee TC26. It converts Stern's identification protocol, which proves knowledge of a low-weight vector for a public syndrome, into a signature with the Fiat-Shamir method and the Streebog hash. Reference code exists in C and Python."
+rationale = "Stern's identification protocol dates from 1993, but Shipovnik is a recent candidate with little public review. In September 2026 Fireblocks reported a complete forgery against both published verifiers, which never check that a permutation is valid. A verifier with that check is not affected, but no fixed specification has been reviewed."
+papers = [
+  { title = "Shipovnik reference implementation for TC26 (QApp)", url = "https://github.com/QAPP-tech/shipovnik_tc26" },
+  { title = "Shipovnik designers' Python implementation (Kryptonite)", url = "https://github.com/Kryptonite-RU/shipovnik-py" },
+]
+
+[[algorithm]]
+id = "winternitz-ots"
+name = "Winternitz OTS (WOTS)"
+family = "hash-based"
+kind = "signature"
+url = "https://link.springer.com/chapter/10.1007/0-387-34805-0_21"
+summary = "The Winternitz one-time signature scheme signs a message by revealing points along hash chains. One key pair signs exactly one message. It is the original form of the idea that WOTS+ later improved. Merkle trees of such keys let a single root public key authorize many signatures, as Minima does."
+rationale = "Security rests only on the hash function, which is the most conservative assumption. Each key must never sign twice, so wallets must track key use. The original form has weaker security arguments than WOTS+, but no practical attack is known."
+papers = [
+  { title = "A Certified Digital Signature (Merkle, 1989)", url = "https://link.springer.com/chapter/10.1007/0-387-34805-0_21" },
+  { title = "Minima whitepaper: Quantum Secure", url = "https://github.com/minima-global/docs/blob/main/content/docs/core/minimawhitepaper/quantumsecure.mdx" },
+]

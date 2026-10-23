@@ -1,0 +1,47 @@
+name: Product registry entry
+description: Add a product built by an Alliance member or change an existing entry.
+title: "[Registry] "
+labels: ["registry"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      description: Product name.
+    validations:
+      required: true
+  - type: input
+    id: member
+    attributes:
+      label: Member
+      description: Name of the Alliance member organization.
+    validations:
+      required: true
+  - type: input
+    id: description
+    attributes:
+      label: Description
+      description: What the product is, in one sentence.
+    validations:
+      required: true
+  - type: textarea
+    id: chains
+    attributes:
+      label: Supported chains
+      description: Names of the supported chains, one per line.
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Product link
+      description: HTTPS link to the product page.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Source for this information
+      description: Public links that support the entry. A reader must be able to open each link.
+    validations:
+      required: true

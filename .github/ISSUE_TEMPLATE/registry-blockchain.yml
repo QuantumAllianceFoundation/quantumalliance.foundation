@@ -1,0 +1,85 @@
+name: Blockchain registry entry
+description: Add a blockchain to the registry or change an existing entry.
+title: "[Registry] "
+labels: ["registry"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      description: Name of the blockchain.
+    validations:
+      required: true
+  - type: dropdown
+    id: consensus
+    attributes:
+      label: Consensus
+      description: Status of the consensus layer, such as validator or finality signatures. If you are not sure which value fits, pick the less ready one. Proof-of-work consensus has no signatures.
+      options:
+        - Post-Quantum
+        - No Signatures / Quantum Resistant
+        - Post-Quantum Ready
+        - Quantum-Aware
+        - Quantum-Vulnerable
+    validations:
+      required: true
+  - type: dropdown
+    id: transactions
+    attributes:
+      label: Transactions
+      description: Status of the transaction layer, such as account signatures. If you are not sure which value fits, pick the less ready one.
+      options:
+        - Post-Quantum
+        - Post-Quantum Ready
+        - Quantum-Aware
+        - Quantum-Vulnerable
+    validations:
+      required: true
+  - type: textarea
+    id: consensus_reason
+    attributes:
+      label: Why this consensus rating (at most 40 words)
+      description: In your own words. If the rating is a judgment call, say so plainly.
+    validations:
+      required: true
+  - type: textarea
+    id: transactions_reason
+    attributes:
+      label: Why this transactions rating (at most 40 words)
+      description: In your own words. If the rating is a judgment call, say so plainly.
+    validations:
+      required: true
+  - type: input
+    id: website
+    attributes:
+      label: Website
+      description: HTTPS link to the project website.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source code
+      description: HTTPS link to the GitHub organization or the main node or protocol repository. Leave empty if the project has published no node or protocol code. Do not link a docs page or a configuration-only repository.
+  - type: textarea
+    id: algorithms
+    attributes:
+      label: Post-quantum algorithms
+      description: List the post-quantum algorithms the chain has deployed or implemented, one per line. Leave empty if there are none.
+  - type: input
+    id: note
+    attributes:
+      label: Note (up to 5 words)
+      description: A short note that clarifies one thing. Leave empty if none.
+  - type: textarea
+    id: links
+    attributes:
+      label: Links (up to 2)
+      description: The most useful public sources, one per line, as a title and an HTTPS link.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Source for this information
+      description: Public links that support the entry. A reader must be able to open each link.
+    validations:
+      required: true
