@@ -2382,3 +2382,16 @@ source = "https://github.com/qtcchain/qtc"
 algorithms = ["ml-dsa", "slh-dsa"]
 links = [{ title = "Post-quantum script profile", url = "https://github.com/qtcchain/qtc/blob/main/doc/qtc-pqc-spec.md" }, { title = "Block explorer", url = "https://qtc.events" }]
 logo = "qtc.svg"
+
+[[chain]]
+name = "QDay"
+consensus = "quantum-aware"
+transactions = "quantum-aware"
+consensus_reason = "Testnet only. The Aevum rollup is a Polygon CDK fork; its sequencer signs classically. The project plans ML-DSA-65 hybrid and native signing for 2027. Its published node code holds no post-quantum signing yet."
+transactions_reason = "Testnet only. Accounts use ECDSA today. Native ML-DSA accounts are in development, and the project publishes a separate ML-DSA signing library, but no node repository integrates it yet."
+website = "https://qday.io/"
+source = "https://github.com/qday-io/qday-cdk-erigon"
+algorithms = ["ml-dsa"]
+note = "Testnet only"
+links = [{ title = "QDay Community Wiki (FAQ, section 7)", url = "https://github.com/qday-io/qday-wiki" }, { title = "QDay PQC SDK (ML-DSA via liboqs)", url = "https://github.com/qday-io/qday-pqc-sdk" }]
+logo = "qday.svg"
