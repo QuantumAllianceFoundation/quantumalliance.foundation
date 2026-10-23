@@ -520,6 +520,7 @@ class RenderTests(unittest.TestCase):
         self.assertNotIn("source code", row)
         icon_cells = re.findall(r'<td[^>]*class="col-icon"[^>]*>(.*?)</td>', row, re.S)
         self.assertEqual(icon_cells[1], "—")
+        self.assertIn('class="col-icon" data-sort="">—</td>', row)
 
     def test_chain_card_without_source_says_none_published(self):
         out = render_chain(registry(chains=[chain("Ns", source=None)]), "ns")

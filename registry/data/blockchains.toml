@@ -773,7 +773,6 @@ transactions = "quantum-vulnerable"
 consensus_reason = "Judgment call: consensus follows the Stellar Consensus Protocol, whose messages use Ed25519. Press reports suggest quantum plans, but no official Pi document, code, or schedule was found."
 transactions_reason = "Judgment call: accounts are Stellar-style Ed25519. Pi has not published post-quantum code or a roadmap; the node source is not public. Press coverage of Pi quantum plans is unsourced."
 website = "https://minepi.com/"
-source = "https://github.com/PiNetwork/PiRC"
 algorithms = []
 note = "Node source not public"
 logo = "pi-network.png"
@@ -800,7 +799,6 @@ transactions = "quantum-vulnerable"
 consensus_reason = "Tendermint-based proof-of-stake chain with a committee of consensus accounts signing blocks with classical keys. Documentation and node repository show no post-quantum work."
 transactions_reason = "Accounts use classical signatures; its vault accounts add revocable, delayed transactions rather than post-quantum signatures. No post-quantum work found in the documentation or repositories."
 website = "https://gatechain.io/"
-source = "https://github.com/gatechain/node-binary"
 algorithms = []
 note = "Node repository holds binaries only"
 logo = "gatechain.png"
@@ -1739,7 +1737,6 @@ website = "https://synxcrypto.com/"
 algorithms = []
 note = "No public source code"
 links = [{ title = "SynergyX whitepaper", url = "https://synxcrypto.com/whitepaper.html" }]
-logo = "synergyx.webp"
 
 [[chain]]
 name = "Quantova"
@@ -1971,7 +1968,6 @@ source = "https://github.com/ciphernom/midstate"
 algorithms = ["winternitz-ots"]
 note = "Hash-based signatures only"
 links = [{ title = "Design document", url = "https://github.com/ciphernom/midstate/blob/main/DESIGN.md" }]
-logo = "midstate.svg"
 
 [[chain]]
 name = "BTX"
@@ -2085,7 +2081,6 @@ source = "https://github.com/AIQnetLab/QNet-Blockchain"
 algorithms = ["ml-dsa", "ml-kem"]
 note = "Testnet only; single developer"
 links = [{ title = "QNet README", url = "https://github.com/AIQnetLab/QNet-Blockchain/blob/main/README.md" }]
-logo = "qnet.png"
 
 [[chain]]
 name = "Quanta"
@@ -2283,7 +2278,7 @@ name = "SorachanCoin (IUEC)"
 consensus = "quantum-vulnerable"
 transactions = "quantum-vulnerable"
 consensus_reason = "Judgment call: hybrid scrypt proof-of-work and proof-of-stake chain; stake blocks carry classical signatures and no post-quantum block signing is published. The roadmap lists a review in 2026 and rollout to 2028."
-transactions_reason = "Judgment call: opt-in QAI addresses add a hash-based signature, but the verifier compares only 128 bytes, about 4 bits of the message hash, so it gives no real post-quantum protection."
+transactions_reason = "Judgment call: opt-in QAI addresses add a hash-based signature, but the published verifier does not give real post-quantum protection, so no post-quantum credit is given. Classical signatures remain the default."
 website = "https://www.junkhdd.com/"
 source = "https://github.com/FromHDDtoSSD/SorachanCoin-qt"
 algorithms = []
@@ -2357,11 +2352,11 @@ note = "Testnet only, alpha"
 name = "Post-Quantum Qoin"
 consensus = "quantum-vulnerable"
 transactions = "quantum-vulnerable"
-consensus_reason = "Judgment call: blocks need multivariate proof of work and valid Drand beacon entries, whose classical BLS signatures every node verifies. The Dilithium or Falcon block-signature check is commented out of block validation in core/consensus/qoincns/qcoin.go."
-transactions_reason = "Judgment call: our review of the published code could not confirm that post-quantum signatures are bound to the sending account, so no post-quantum credit is given. secp256k1 remains the working signature path."
+consensus_reason = "Judgment call: blocks need multivariate proof of work and valid Drand beacon entries, whose classical BLS signatures every node verifies. Published block validation does not enforce a post-quantum block signature."
+transactions_reason = "Judgment call: the post-quantum signature path in the published code could not be confirmed to protect accounts, so no post-quantum credit is given. secp256k1 remains the working signature path."
 website = "https://postquantumqoin.org/"
 source = "https://github.com/post-quantumqoin/qoin-shor"
-algorithms = ["crystals-dilithium", "fn-dsa"]
+algorithms = []
 note = "PQ path unconfirmed in review"
 
 [[chain]]
@@ -2369,7 +2364,7 @@ name = "ChainGO"
 consensus = "post-quantum-ready"
 transactions = "post-quantum-ready"
 consensus_reason = "Testnet only: proof-of-stake with precommit votes signed by ML-DSA-65. The public testnet has one validator, and the roadmap marks multi-validator BFT finality as partly done."
-transactions_reason = "Testnet only: every transaction signature is ML-DSA-65 with SHA3-256 addresses; no elliptic curve is used. Shielded notes use ML-KEM-768 view keys and STARK proofs. Testnet only; no mainnet yet."
+transactions_reason = "Testnet only: every transaction signature is ML-DSA-65 with SHA3-256 addresses; no elliptic curve is used. Shielded notes use ML-KEM-768 view keys and STARK proofs."
 website = "https://chaingo.org/"
 source = "https://github.com/ghisdot/chaingo"
 algorithms = ["ml-dsa", "ml-kem"]

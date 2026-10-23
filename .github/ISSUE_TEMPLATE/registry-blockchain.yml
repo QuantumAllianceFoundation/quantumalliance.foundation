@@ -60,7 +60,7 @@ body:
     id: source
     attributes:
       label: Source code
-      description: HTTPS link to the GitHub organization or the source code. Leave empty if the project has published no source code.
+      description: HTTPS link to the GitHub organization or the main node or protocol repository. Leave empty if the project has published no node or protocol code. Do not link a docs page or a configuration-only repository.
   - type: textarea
     id: algorithms
     attributes:
