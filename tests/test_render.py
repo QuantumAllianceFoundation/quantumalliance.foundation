@@ -48,7 +48,7 @@ def chain(
     note=None,
     links=(),
     website="https://example.org/",
-    source="https://example.org/src",
+    source: str | None = "https://example.org/src",
     algorithms=(),
     logo=None,
     consensus_reason="Consensus reason.",
@@ -513,6 +513,18 @@ class RenderTests(unittest.TestCase):
                 out, rf'<a href="{re.escape(url)}" class="icon-link"><svg[^>]*>.*?</svg> {text}</a>'
             )
         self.assertNotIn("aria-label", out.split("Algorithms")[1].split("Note and links")[0])
+
+    def test_chain_without_source_shows_a_dash_in_the_table(self):
+        out = render_blockchains(registry(chains=[chain("Ns", source=None)]))
+        row = re.findall(r"<tr>(.*?)</tr>", out[out.index("<tbody"):], re.S)[0]
+        self.assertNotIn("source code", row)
+        icon_cells = re.findall(r'<td[^>]*class="col-icon"[^>]*>(.*?)</td>', row, re.S)
+        self.assertEqual(icon_cells[1], "—")
+
+    def test_chain_card_without_source_says_none_published(self):
+        out = render_chain(registry(chains=[chain("Ns", source=None)]), "ns")
+        self.assertIn("None published", out)
+        self.assertNotIn("source code", out)
 
     def test_chain_card_note_and_links_are_separate_elements(self):
         c = chain(

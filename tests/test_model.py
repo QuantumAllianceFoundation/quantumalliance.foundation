@@ -201,6 +201,13 @@ url = "https://example.org/wallet"
         self.assertEqual(reg.chains[0].note, "one two three four five")
         self.assertEqual(reg.libraries[0].note, "one two three four five")
 
+    def test_chain_source_is_optional(self):
+        write_data(
+            self.tmp,
+            blockchains=CHAIN.replace('source = "https://github.com/Quantus-Network"\n', ""),
+        )
+        self.assertIsNone(load_registry(self.tmp).chains[0].source)
+
     def test_note_and_links_optional(self):
         reg = load_registry(FIXTURES / "valid", auditors_dir=AUDITORS)
         self.assertIsNone(reg.chains[0].note)

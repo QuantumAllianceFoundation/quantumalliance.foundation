@@ -60,9 +60,7 @@ body:
     id: source
     attributes:
       label: Source code
-      description: HTTPS link to the GitHub organization or the source code.
-    validations:
-      required: true
+      description: HTTPS link to the GitHub organization or the source code. Leave empty if the project has published no source code.
   - type: textarea
     id: algorithms
     attributes:

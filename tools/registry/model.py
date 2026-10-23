@@ -81,7 +81,7 @@ class Chain:
     consensus_reason: str
     transactions_reason: str
     website: str
-    source: str
+    source: str | None
     algorithms: tuple[str, ...]
     note: str | None
     links: tuple[Link, ...]
@@ -333,7 +333,7 @@ _SPECS: dict[str, tuple[str, type, dict[str, tuple[Callable[[Any], Any], Any]], 
             "consensus_reason": (_reason, _REQUIRED),
             "transactions_reason": (_reason, _REQUIRED),
             "website": (_url, _REQUIRED),
-            "source": (_url, _REQUIRED),
+            "source": (_url, None),
             "algorithms": (_list_of(_text), ()),
             "note": (_note, None),
             "links": (_list_of(_link, max_items=MAX_LINKS), ()),

@@ -366,8 +366,10 @@ def render_blockchains(reg: Registry) -> str:
             ),
             _td(_icon_link(c.website, f"{c.name} website", "globe"), c.website.casefold(), "col-icon"),
             _td(
-                _icon_link(c.source, f"{c.name} source code", _source_symbol(c.source)),
-                c.source.casefold(),
+                _icon_link(c.source, f"{c.name} source code", _source_symbol(c.source))
+                if c.source
+                else "—",
+                (c.source or "").casefold(),
                 "col-icon",
             ),
             notes_cell,
@@ -526,7 +528,9 @@ def render_chain(reg: Registry, slug: str) -> str:
             "Source",
             _icon_link(
                 chain.source, f"{chain.name} source code", _source_symbol(chain.source), "Source"
-            ),
+            )
+            if chain.source
+            else "None published",
         ),
         _detail_row("Note and links", _note_and_links(chain.note, chain.links)),
     ]
