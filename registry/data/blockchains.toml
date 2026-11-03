@@ -165,9 +165,9 @@ logo = "solana.svg"
 [[chain]]
 name = "NEAR"
 consensus = "quantum-vulnerable"
-transactions = "post-quantum"
+transactions = "post-quantum-ready"
 consensus_reason = "Judgment call: the post-quantum signature work puts validator and block-signing keys out of scope; they remain Ed25519. Consensus research is mentioned without a plan or timeline."
-transactions_reason = "Judgment call: nearcore enables opt-in ML-DSA-65 access keys and transactions from protocol version 85. Ed25519 remains the default. Classical Ed25519 and secp256k1 keys stay valid after adding PQ keys unless the owner deletes them."
+transactions_reason = "ML-DSA-65 is live and opt-in. NEAR Mobile, the first-listed wallet, and the other default channels do not prompt users to upgrade; only Meteor does. Classical keys stay valid until deleted."
 website = "https://near.org/"
 source = "https://github.com/near/nearcore"
 algorithms = ["ml-dsa"]
