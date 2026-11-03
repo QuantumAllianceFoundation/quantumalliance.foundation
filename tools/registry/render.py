@@ -32,12 +32,19 @@ from .model import (
 REPO_URL = "https://github.com/QuantumAllianceFoundation/quantumalliance.foundation"
 
 CATEGORY_DEFINITIONS = {
-    "post-quantum": "Has deployed a post-quantum solution.",
+    "post-quantum": (
+        "Has deployed a post-quantum solution. If the solution is opt-in, the default "
+        "wallet also prompts users to upgrade."
+    ),
     "no-signatures": (
         "The layer does not use digital signatures, for example proof-of-work mining, "
         "which relies on hashing."
     ),
-    "post-quantum-ready": "Has published source code for a post-quantum solution that is not yet deployed.",
+    "post-quantum-ready": (
+        "Has published source code for a post-quantum solution that is not yet deployed, "
+        "or has deployed an opt-in solution that the default wallet does not prompt "
+        "users to adopt."
+    ),
     "quantum-aware": (
         "Not yet post-quantum, but working on solutions that we believe will mitigate "
         "most of the risk, with a team that is on top of the transition."
