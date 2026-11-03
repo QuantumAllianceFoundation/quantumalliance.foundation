@@ -676,7 +676,16 @@ class RenderTests(unittest.TestCase):
     def test_blockchain_legend_and_links(self):
         reg = load_registry(VALID, auditors_dir=VALID / "auditors")
         out = render_blockchains(reg)
-        self.assertIn("Has deployed a post-quantum solution.", out)
+        self.assertIn(
+            "Has deployed a post-quantum solution. If the solution is opt-in, the default "
+            "wallet also prompts users to upgrade.",
+            out,
+        )
+        self.assertIn(
+            "or has deployed an opt-in solution that the default wallet does not prompt "
+            "users to adopt.",
+            out,
+        )
         self.assertIn("BIP-360 is proposed but has no deployment path.", out)
         self.assertIn('<a href="/registry/algorithms/ml-dsa/">ML-DSA</a>', out)
         self.assertIn('<table data-sortable>', out)

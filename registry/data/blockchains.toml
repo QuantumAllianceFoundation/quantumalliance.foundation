@@ -6,12 +6,17 @@
 #
 # Each chain gets a value for two layers, `consensus` and `transactions`. The
 # page lists chains by transactions, then consensus, then name. Values:
-#   post-quantum         The layer has deployed a post-quantum solution.
+#   post-quantum         The layer has deployed a post-quantum solution. If
+#                        the solution is opt-in (classical keys stay valid),
+#                        the default wallet also alerts users and prompts
+#                        them to upgrade.
 #   no-signatures        Consensus only. The layer does not use digital
 #                        signatures, for example proof-of-work mining, which
 #                        relies on hashing.
 #   post-quantum-ready   The layer has published source code for a
-#                        post-quantum solution that is not yet deployed.
+#                        post-quantum solution that is not yet deployed, or
+#                        has deployed an opt-in solution that the default
+#                        wallet does not prompt users to adopt.
 #   quantum-aware        The layer is not yet post-quantum, but it is working
 #                        on solutions expected to mitigate most of the risk,
 #                        and a team is on top of the transition.
