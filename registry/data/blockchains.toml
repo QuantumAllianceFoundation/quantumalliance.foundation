@@ -103,13 +103,13 @@ logo = "abelian.png"
 [[chain]]
 name = "Algorand"
 consensus = "quantum-aware"
-transactions = "post-quantum"
+transactions = "post-quantum-ready"
 consensus_reason = "Consensus votes still use Ed25519. Research on post-quantum voting messages and a replacement VRF is active, but no code is published."
-transactions_reason = "Judgment call: native Falcon-1024 (FN-DSA) accounts are live on Mainnet (v5.0.0, August 2026), but only as an opt-in account type; other accounts stay classical. Earlier LogicSig Falcon verification also exists."
+transactions_reason = "Native Falcon-1024 signing is live and opt-in. Pera Wallet does not prompt users to upgrade in the reviewed screens. Users must find the rekey option, and classical accounts remain valid."
 website = "https://algorand.co/"
 source = "https://github.com/algorand/go-algorand"
 algorithms = ["fn-dsa"]
-note = "Falcon accounts are opt-in"
+note = "Falcon opt-in; no upgrade prompt"
 links = [
   { title = "Post-quantum roadmap (2026)", url = "https://algorand.co/blog/algorand-post-quantum-cryptography-roadmap" },
   { title = "Post-quantum ledger (2026)", url = "https://algorand.co/blog/algorand-post-quantum-ledger" },
@@ -165,9 +165,9 @@ logo = "solana.svg"
 [[chain]]
 name = "NEAR"
 consensus = "quantum-vulnerable"
-transactions = "post-quantum"
+transactions = "post-quantum-ready"
 consensus_reason = "Judgment call: the post-quantum signature work puts validator and block-signing keys out of scope; they remain Ed25519. Consensus research is mentioned without a plan or timeline."
-transactions_reason = "Judgment call: nearcore enables opt-in ML-DSA-65 access keys and transactions from protocol version 85. Ed25519 remains the default. Classical Ed25519 and secp256k1 keys stay valid after adding PQ keys unless the owner deletes them."
+transactions_reason = "ML-DSA-65 is live and opt-in. NEAR Mobile, the first-listed wallet, and the other default channels do not prompt users to upgrade; only Meteor does. Classical keys stay valid until deleted."
 website = "https://near.org/"
 source = "https://github.com/near/nearcore"
 algorithms = ["ml-dsa"]
@@ -785,13 +785,13 @@ logo = "pi-network.png"
 [[chain]]
 name = "Pearl"
 consensus = "no-signatures"
-transactions = "post-quantum"
+transactions = "post-quantum-ready"
 consensus_reason = "Proof-of-useful-work mining: blocks are found by matrix-multiplication work, so consensus needs no digital signatures."
-transactions_reason = "Judgment call: Pearl accepts opt-in XMSS scripts alongside Schnorr Taproot spends. The Oyster wallet defaults to Schnorr. Adding an XMSS Taproot leaf keeps the classical key path, and existing classical outputs stay spendable."
+transactions_reason = "XMSS verification is live and opt-in. Oyster and Pearl Desktop Wallet do not prompt users to upgrade. New accounts use Schnorr, and classical outputs remain spendable."
 website = "https://pearlresearch.ai/"
 source = "https://github.com/pearl-research-labs/pearl"
 algorithms = ["xmss"]
-note = "XMSS opt-in, default Schnorr"
+note = "XMSS opt-in; Schnorr default"
 links = [
   { title = "Pearl XMSS library and OP_CHECKXMSSSIG", url = "https://github.com/pearl-research-labs/pearl/tree/master/xmss" },
 ]
@@ -849,13 +849,13 @@ logo = "qanplatform.png"
 [[chain]]
 name = "Nervos Network"
 consensus = "no-signatures"
-transactions = "post-quantum"
+transactions = "post-quantum-ready"
 consensus_reason = "CKB uses proof-of-work mining, so block production relies on hashing and no digital signatures."
-transactions_reason = "Judgment call: Nervos documents opt-in SPHINCS+ locks on mainnet. The default secp256k1 lock and existing classical outputs remain spendable until owners transfer funds to PQ-locked cells. The project publishes the lock script."
+transactions_reason = "SPHINCS+ locks are live and opt-in. Neuron Wallet does not prompt users to upgrade or move funds to post-quantum locks. It creates secp256k1 accounts, and classical cells remain spendable."
 website = "https://www.nervos.org"
 source = "https://github.com/nervosnetwork/ckb"
 algorithms = ["slh-dsa"]
-note = "SPHINCS+ lock opt-in"
+note = "SPHINCS+ opt-in; no prompt"
 links = [{ title = "Native Quantum Resistance (docs)", url = "https://docs.nervos.org/docs/ckb-features/native-quantum-resistance" }, { title = "SPHINCS+ lock script repository", url = "https://github.com/cryptape/quantum-resistant-lock-script" }]
 logo = "nervos-network.png"
 
@@ -912,13 +912,13 @@ logo = "starknet.png"
 [[chain]]
 name = "TensorCash"
 consensus = "no-signatures"
-transactions = "post-quantum"
+transactions = "post-quantum-ready"
 consensus_reason = "Bitcoin Core fork with proof-of-work where the work is verified AI inference. It has no validators, stakers or votes, so block production needs no signatures."
-transactions_reason = "Judgment call: the node code in the project bcore repository defines witness v2 (tc1z) outputs that disable the Schnorr key path and verify ML-DSA in the script path, live since genesis. Use is opt-in; ECDSA and Schnorr remain."
+transactions_reason = "ML-DSA spending is live and opt-in. TensorCash Core does not prompt users to upgrade. Users must select a post-quantum receiving address, while classical addresses remain valid."
 website = "https://tensorcash.org/"
 source = "https://git.tensorcash.org/tensorcash/bcore"
 algorithms = ["ml-dsa"]
-note = "ML-DSA opt-in since genesis"
+note = "ML-DSA opt-in; no prompt"
 links = [{ title = "Post-quantum is on TensorCash", url = "https://tensorcash.org/blog/post-quantum-is-on-tensorcash/" }, { title = "Post-Quantum Spending whitepaper", url = "https://tensorcash.org/whitepapers/PostQuantum_Whitepaper-modern.pdf" }]
 logo = "tensorcash.svg"
 
@@ -1826,13 +1826,13 @@ logo = "optimism.png"
 [[chain]]
 name = "Nexus"
 consensus = "quantum-vulnerable"
-transactions = "post-quantum"
+transactions = "post-quantum-ready"
 consensus_reason = "Judgment call: the node accepts opt-in Falcon and default Brainpool ECDSA producer signatures. Classical producer keys remain valid, so proof-of-work mining does not require post-quantum signing."
-transactions_reason = "Judgment call: the node accepts opt-in Falcon or default Brainpool ECDSA signatures. Classical accounts remain valid. Falcon rotation replaces the classical spend key, but an existing classical recovery key remains valid until separately changed."
+transactions_reason = "Falcon signing is live and opt-in. Nexus Wallet does not prompt users to upgrade. It creates Brainpool accounts by default, and classical signing and recovery keys remain valid."
 website = "https://nexus.io"
 source = "https://github.com/Nexusoft/LLL-TAO"
 algorithms = ["fn-dsa"]
-note = "Falcon opt-in; default Brainpool"
+note = "Falcon opt-in; Brainpool default"
 links = [{ title = "LLL-TAO signature scheme enum (Falcon, Brainpool)", url = "https://github.com/Nexusoft/LLL-TAO/blob/master/src/TAO/Ledger/include/enum.h" }]
 logo = "nexus.png"
 
@@ -1920,13 +1920,13 @@ logo = "sora-nexus.svg"
 [[chain]]
 name = "Snowblossom"
 consensus = "no-signatures"
-transactions = "post-quantum"
+transactions = "post-quantum-ready"
 consensus_reason = "Proof-of-work coin; blocks are produced by mining and no signature is needed to create or finalize a block."
-transactions_reason = "Judgment call: SIP-6 enables opt-in Dilithium, Falcon and SPHINCS+ wallets from block 358700. ECDSA remains the default, and classical outputs stay spendable. PQC1 requires ECDSA, DSTU4145, Dilithium and SPHINCS+ signatures."
+transactions_reason = "Dilithium, Falcon, and SPHINCS+ signing is live and opt-in. Snowblossom IceLeaf does not prompt users to upgrade. New wallets use secp256k1, and classical outputs remain spendable."
 website = "https://wiki.snowblossom.org/"
 source = "https://github.com/snowblossomcoin/snowblossom"
 algorithms = ["crystals-dilithium", "fn-dsa", "sphincs-plus"]
-note = "Post-quantum wallets are opt-in"
+note = "PQ opt-in; secp256k1 default"
 links = [{ title = "SIP-6: post-quantum signatures", url = "https://wiki.snowblossom.org/index.php/SIP6-PQC" }]
 logo = "snowblossom.svg"
 
