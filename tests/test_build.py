@@ -139,6 +139,14 @@ class BuildTests(unittest.TestCase):
         self.assertNotIn("/thanks/", sitemap)
         self.assertNotIn("404", sitemap)
 
+    def test_llms_txt_lists_every_registry_page(self):
+        llms = self.read("llms.txt")
+        self.assertTrue(llms.startswith("# Quantum Alliance\n\n> "))
+        self.assertIn("- [Quantus](https://quantumalliance.foundation/registry/blockchains/quantus/): ", llms)
+        self.assertIn("(https://quantumalliance.foundation/registry/libraries/testlib/)", llms)
+        self.assertIn("(https://quantumalliance.foundation/registry/algorithms/ml-dsa/)", llms)
+        self.assertIn("\n## Optional\n", llms)
+
     def test_static_files_are_copied(self):
         for name in ("assets/styles.css", "favicon.svg", "robots.txt"):
             self.assertTrue((self.out / name).is_file(), name)
