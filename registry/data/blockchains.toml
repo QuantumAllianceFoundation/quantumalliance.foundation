@@ -98,7 +98,7 @@ links = [
   { title = "Abelian whitepaper (2022)", url = "https://download.abelian.info/release/docs/whitepaper.pdf" },
   { title = "Abelian milestones", url = "https://www.pqabelian.io/milestones" },
 ]
-logo = "abelian.png"
+logo = "abelian.webp"
 
 [[chain]]
 name = "Algorand"
@@ -176,7 +176,7 @@ links = [
   { title = "Post-quantum signatures (ML-DSA-65), enabled at protocol version 85", url = "https://github.com/near/nearcore/blob/master/docs/architecture/how/post_quantum_signatures.md" },
   { title = "Preparing NEAR for the Quantum Computing Era (2026)", url = "https://www.near.org/blog/making-near-protocol-post-quantum-safe" },
 ]
-logo = "near.png"
+logo = "near.webp"
 
 [[chain]]
 name = "XRP Ledger"
@@ -232,7 +232,7 @@ source = "https://github.com/Hadamard/op-geth"
 algorithms = []
 note = "Batcher and proposer use ECDSA"
 links = [{ title = "BB84 developer docs and security model", url = "https://bb84.com/docs" }]
-logo = "hadamard.png"
+logo = "hadamard.webp"
 
 [[chain]]
 name = "QRL"
@@ -271,7 +271,7 @@ source = "https://github.com/midnightntwrk/midnight-node"
 algorithms = []
 note = "Roadmap targets post-quantum proofs"
 links = [{ title = "Midnight roadmap, Nightstream", url = "https://midnight.network/roadmap" }]
-logo = "midnight.png"
+logo = "midnight.webp"
 
 [[chain]]
 name = "INTMAX"
@@ -426,7 +426,7 @@ links = [
   { title = "Quantum Preparedness Plan (2026)", url = "https://stellar.org/blog/foundation-news/introducing-the-quantum-preparedness-plan" },
   { title = "Bell, Protocol 30, with CAP-87 ML-DSA verification", url = "https://stellar.org/blog/developers/introducing-bell-protocol-30-on-stellar" },
 ]
-logo = "stellar.png"
+logo = "stellar.webp"
 
 [[chain]]
 name = "Avalanche"
@@ -487,7 +487,7 @@ links = [
   { title = "Hyperliquid docs: HyperBFT consensus overview", url = "https://hyperliquid.gitbook.io/hyperliquid-docs/hypercore/overview" },
   { title = "Hyperliquid docs: API signing", url = "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/signing" },
 ]
-logo = "hyperliquid.png"
+logo = "hyperliquid.webp"
 
 [[chain]]
 name = "Canton Network"
@@ -503,7 +503,7 @@ links = [
   { title = "Digital Asset position on post-quantum cryptography", url = "https://forum.canton.network/t/da-position-on-post-quantum-cryptography/7877" },
   { title = "Splice release notes: experimental ML-DSA support", url = "https://github.com/canton-network/splice/blob/main/canton/UNRELEASED.md" },
 ]
-logo = "canton.png"
+logo = "canton.webp"
 
 [[chain]]
 name = "Bittensor"
@@ -515,7 +515,7 @@ website = "https://bittensor.com/"
 source = "https://github.com/opentensor/subtensor"
 algorithms = []
 note = "Substrate chain; no quantum plan"
-logo = "bittensor.png"
+logo = "bittensor.webp"
 
 [[chain]]
 name = "Cronos"
@@ -542,7 +542,7 @@ note = "OP Stack L2; OKB gas"
 links = [
   { title = "X Layer developer documentation", url = "https://web3.okx.com/xlayer/docs/developer/build-on-xlayer/about-xlayer" },
 ]
-logo = "x-layer.png"
+logo = "x-layer.webp"
 
 [[chain]]
 name = "MemeCore"
@@ -570,7 +570,7 @@ source = "https://github.com/super-quantum/qubitcoin"
 algorithms = []
 note = "PoW consensus has no signatures"
 links = [{ title = "Project repository README", url = "https://github.com/super-quantum/qubitcoin" }]
-logo = "qubitcoin.png"
+logo = "qubitcoin.webp"
 
 [[chain]]
 name = "Whitechain"
@@ -649,7 +649,7 @@ links = [
   { title = "Cosmos SDK post-quantum keys", url = "https://docs.cosmos.network/sdk/latest/keys/post-quantum-keys" },
   { title = "CometBFT ML-DSA-65 key type (PR 5875)", url = "https://github.com/cometbft/cometbft/pull/5875" },
 ]
-logo = "cosmos-hub.png"
+logo = "cosmos-hub.webp"
 
 [[chain]]
 name = "Filecoin"
@@ -675,7 +675,7 @@ note = "PoW plus BLS ChainLocks"
 links = [
   { title = "Dash Core 0.14.0 release notes (ChainLocks)", url = "https://github.com/dashpay/dash/blob/master/doc/release-notes/dash/release-notes-0.14.0.md" },
 ]
-logo = "dash.png"
+logo = "dash.webp"
 
 [[chain]]
 name = "Stacks"
@@ -690,7 +690,7 @@ note = "Signers use secp256k1"
 links = [
   { title = "SIP-021 Nakamoto", url = "https://github.com/stacksgov/sips/blob/main/sips/sip-021/sip-021-nakamoto.md" },
 ]
-logo = "stacks.png"
+logo = "stacks.webp"
 
 [[chain]]
 name = "VeChain"
@@ -701,7 +701,7 @@ transactions_reason = "Transactions use secp256k1 signatures with a low-s check,
 website = "https://www.vechain.org/"
 source = "https://github.com/vechain/thor"
 algorithms = []
-logo = "vechain.png"
+logo = "vechain.webp"
 
 [[chain]]
 name = "Mantle"
@@ -713,7 +713,7 @@ website = "https://www.mantle.xyz/"
 source = "https://github.com/mantlenetworkio/mantle-v2"
 algorithms = []
 note = "Ethereum rollup; no quantum work"
-logo = "mantle.png"
+logo = "mantle.webp"
 
 [[chain]]
 name = "Polygon PoS"
@@ -737,7 +737,7 @@ website = "https://injective.com/"
 source = "https://github.com/InjectiveLabs/injective-chain-releases"
 algorithms = []
 note = "Announced work; no details yet"
-logo = "injective.png"
+logo = "injective.webp"
 
 [[chain]]
 name = "XDC Network"
@@ -780,7 +780,7 @@ transactions_reason = "Judgment call: accounts are Stellar-style Ed25519. Pi has
 website = "https://minepi.com/"
 algorithms = []
 note = "Node source not public"
-logo = "pi-network.png"
+logo = "pi-network.webp"
 
 [[chain]]
 name = "Pearl"
@@ -806,7 +806,7 @@ transactions_reason = "Accounts use classical signatures; its vault accounts add
 website = "https://gatechain.io/"
 algorithms = []
 note = "Node repository holds binaries only"
-logo = "gatechain.png"
+logo = "gatechain.webp"
 
 [[chain]]
 name = "KuCoin Community Chain"
@@ -818,7 +818,7 @@ website = "https://www.kcc.io/"
 source = "https://github.com/kcc-community/kcc"
 algorithms = []
 note = "Low activity; last release 2025"
-logo = "kcc.png"
+logo = "kcc.webp"
 
 [[chain]]
 name = "Cellframe"
@@ -831,7 +831,7 @@ source = "https://github.com/demlabs-cellframe/cellframe-sdk"
 algorithms = ["crystals-dilithium", "fn-dsa", "sphincs-plus", "shipovnik"]
 note = "Shipovnik verifier forgery bug"
 links = [{ title = "Cellframe SDK (node and wallet code)", url = "https://github.com/demlabs-cellframe/cellframe-sdk" }, { title = "Fireblocks: Shipovnik forgery report", url = "https://www.fireblocks.com/blog/shipovnik-signature-forgery-discovered" }]
-logo = "cellframe.png"
+logo = "cellframe.webp"
 
 [[chain]]
 name = "QANplatform"
@@ -844,7 +844,7 @@ source = "https://github.com/QANplatform"
 algorithms = []
 note = "Testnet only; mainnet pending"
 links = [{ title = "QANplatform quantum-resistant security", url = "https://learn.qanplatform.com/technology/technology-features/quantum-resistant-security" }, { title = "QANplatform roadmap", url = "https://learn.qanplatform.com/about-us/roadmap" }]
-logo = "qanplatform.png"
+logo = "qanplatform.webp"
 
 [[chain]]
 name = "Nervos Network"
@@ -857,7 +857,7 @@ source = "https://github.com/nervosnetwork/ckb"
 algorithms = ["slh-dsa"]
 note = "SPHINCS+ lock opt-in"
 links = [{ title = "Native Quantum Resistance (docs)", url = "https://docs.nervos.org/docs/ckb-features/native-quantum-resistance" }, { title = "SPHINCS+ lock script repository", url = "https://github.com/cryptape/quantum-resistant-lock-script" }]
-logo = "nervos-network.png"
+logo = "nervos-network.webp"
 
 [[chain]]
 name = "Qubic"
@@ -868,7 +868,7 @@ transactions_reason = "The core node source verifies transactions with SchnorrQ 
 website = "https://qubic.org"
 source = "https://github.com/qubic/core"
 algorithms = []
-logo = "qubic.png"
+logo = "qubic.webp"
 
 [[chain]]
 name = "Minima"
@@ -881,7 +881,7 @@ source = "https://github.com/minima-global/Minima"
 algorithms = ["winternitz-ots"]
 note = "Hash-based Winternitz signatures"
 links = [{ title = "Minima whitepaper: Quantum Secure", url = "https://github.com/minima-global/docs/blob/main/content/docs/core/minimawhitepaper/quantumsecure.mdx" }, { title = "Winternitz signing code", url = "https://github.com/minima-global/Minima/blob/master/src/org/minima/objects/keys/Winternitz.java" }]
-logo = "minima.png"
+logo = "minima.webp"
 
 [[chain]]
 name = "Tidecoin"
@@ -894,7 +894,7 @@ source = "https://github.com/tidecoin/tidecoin"
 algorithms = ["fn-dsa"]
 note = "Falcon-512 since genesis"
 links = [{ title = "Tidecoin repository README", url = "https://github.com/tidecoin/tidecoin" }]
-logo = "tidecoin.png"
+logo = "tidecoin.webp"
 
 [[chain]]
 name = "Starknet"
@@ -907,7 +907,7 @@ source = "https://github.com/starkware-libs/sequencer"
 algorithms = []
 note = "Roadmap published June 2026"
 links = [{ title = "StarkWare: Starknet quantum-readiness roadmap", url = "https://starkware.co/blog/the-architecture-advantage-starknets-quantum-readiness-roadmap/" }]
-logo = "starknet.png"
+logo = "starknet.webp"
 
 [[chain]]
 name = "TensorCash"
@@ -933,7 +933,7 @@ source = "https://github.com/quantumcoinproject/quantum-coin-go"
 algorithms = ["ml-dsa", "slh-dsa", "ml-kem"]
 note = "Hybrid PQ plus Ed25519 signatures"
 links = [{ title = "Quantum resistance overview", url = "https://quantumcoin.org/quantum-resistance.html" }, { title = "Node repository README", url = "https://github.com/quantumcoinproject/quantum-coin-go" }]
-logo = "quantumcoin.png"
+logo = "quantumcoin.webp"
 
 [[chain]]
 name = "Neptune Cash"
@@ -972,7 +972,7 @@ source = "https://github.com/AME-AMEChain/amechain_quantum"
 algorithms = []
 note = "Quantum random numbers, not PQC"
 links = [{ title = "Quantum mainnet page", url = "https://amechain.io/quantum-mainnet/" }]
-logo = "amechain.png"
+logo = "amechain.webp"
 
 [[chain]]
 name = "Beldex"
@@ -987,7 +987,7 @@ note = "Roadmap item only; no code"
 links = [
   { title = "Beldex roadmap", url = "https://beldex.io/roadmap" },
 ]
-logo = "beldex.png"
+logo = "beldex.webp"
 
 [[chain]]
 name = "Flare"
@@ -1017,7 +1017,7 @@ note = "ML-DSA pull request closed"
 links = [
   { title = "celestia-core pull request 3340 (closed)", url = "https://github.com/celestiaorg/celestia-core/pull/3340" },
 ]
-logo = "celestia.png"
+logo = "celestia.webp"
 
 [[chain]]
 name = "Stable"
@@ -1032,7 +1032,7 @@ links = [
   { title = "Stable technical roadmap", url = "https://docs.stable.xyz/en/explanation/technical-roadmap" },
   { title = "STABLE tokenomics", url = "https://docs.stable.xyz/en/reference/tokenomics" },
 ]
-logo = "stable.png"
+logo = "stable.webp"
 
 [[chain]]
 name = "Provenance Blockchain"
@@ -1075,7 +1075,7 @@ note = "BTT is the gas coin"
 links = [
   { title = "BTTC documentation: BTT token", url = "https://github.com/bttcprotocol/bttc-doc/blob/master/docs/README.md" },
 ]
-logo = "bittorrent.png"
+logo = "bittorrent.webp"
 
 [[chain]]
 name = "Plasma"
@@ -1143,7 +1143,7 @@ source = "https://github.com/Conflux-Chain/conflux-rust"
 algorithms = []
 note = "Standalone Dilithium2 library only"
 links = [{ title = "rust-dilithium2 library", url = "https://github.com/Conflux-Chain/rust-dilithium2" }]
-logo = "conflux.png"
+logo = "conflux.webp"
 
 [[chain]]
 name = "Decred"
@@ -1156,7 +1156,7 @@ source = "https://github.com/decred/dcrd"
 algorithms = []
 note = "PQ only in mixing"
 links = [{ title = "Decred v1.7 release news", url = "https://decred.org/news/2022-01-24-decred-releases-1.7/" }]
-logo = "decred.png"
+logo = "decred.webp"
 
 [[chain]]
 name = "Monad"
@@ -1169,7 +1169,7 @@ source = "https://github.com/category-labs/monad-bft"
 algorithms = []
 note = "Draft in-place key upgrade design"
 links = [{ title = "Flexible and Upgradeable Account Authentication (draft)", url = "https://forum.monad.xyz/t/flexible-and-upgradeable-account-authentication/526/1" }]
-logo = "monad.png"
+logo = "monad.webp"
 
 [[chain]]
 name = "Terra Luna Classic"
@@ -1182,7 +1182,7 @@ source = "https://github.com/classic-terra/core"
 algorithms = []
 note = "Only a community forum post"
 links = [{ title = "Community proposal: LUNC quantum resistance", url = "https://discourse.luncgoblins.com/t/proposal-to-the-terra-classic-community-lunc-must-become-quantum-resistant/515" }]
-logo = "terra-luna-classic.png"
+logo = "terra-luna-classic.webp"
 
 [[chain]]
 name = "Kaia"
@@ -1194,7 +1194,7 @@ website = "https://www.kaia.io/"
 source = "https://github.com/kaiachain/kaia"
 algorithms = []
 note = "No protocol-level quantum work"
-logo = "kaia.png"
+logo = "kaia.webp"
 
 [[chain]]
 name = "Arweave"
@@ -1219,7 +1219,7 @@ source = "https://github.com/gnosischain/specs"
 algorithms = []
 note = "No public quantum plan found"
 links = [{ title = "GNO token and staking (Gnosis docs)", url = "https://docs.gnosischain.com/about/tokens/gno" }]
-logo = "gnosis-chain.png"
+logo = "gnosis-chain.webp"
 
 [[chain]]
 name = "IOTA"
@@ -1235,7 +1235,7 @@ links = [
   { title = "IOTA Identity post-quantum guide", url = "https://docs.iota.org/developer/iota-identity/how-tos/post-quantum" },
   { title = "Public key authenticator guide (custom schemes)", url = "https://github.com/iotaledger/iota/blob/develop/docs/content/developer/move/how-tos/account-abstraction/authenticator/create-public-key-authentication.mdx" },
 ]
-logo = "iota.png"
+logo = "iota.webp"
 
 [[chain]]
 name = "THORChain"
@@ -1251,7 +1251,7 @@ links = [
   { title = "thornode go.mod (SDK 0.53.0, CometBFT 0.38.21)", url = "https://gitlab.com/thorchain/thornode/-/blob/develop/go.mod" },
   { title = "Cosmos SDK post-quantum keys", url = "https://docs.cosmos.network/sdk/latest/keys/post-quantum-keys" },
 ]
-logo = "thorchain.png"
+logo = "thorchain.webp"
 
 [[chain]]
 name = "Akash Network"
@@ -1267,7 +1267,7 @@ links = [
   { title = "Akash node go.mod", url = "https://github.com/akash-network/node/blob/main/go.mod" },
   { title = "Cosmos SDK post-quantum keys", url = "https://docs.cosmos.network/sdk/latest/keys/post-quantum-keys" },
 ]
-logo = "akash-network.png"
+logo = "akash-network.webp"
 
 [[chain]]
 name = "Sonic"
@@ -1297,7 +1297,7 @@ note = "No public quantum plan found"
 links = [
   { title = "Theta ledger repository README", url = "https://github.com/thetatoken/theta-protocol-ledger" },
 ]
-logo = "theta-network.png"
+logo = "theta-network.webp"
 
 [[chain]]
 name = "Onyx"
@@ -1328,7 +1328,7 @@ links = [
   { title = "Beam L1 connection details", url = "https://github.com/BuildOnBeam/beam-subnet" },
   { title = "Beam documentation", url = "https://docs.onbeam.com/" },
 ]
-logo = "beam.png"
+logo = "beam.webp"
 
 [[chain]]
 name = "Neo"
@@ -1344,7 +1344,7 @@ links = [
   { title = "N4 Post-Quantum Cryptography (issue 4239)", url = "https://github.com/neo-project/neo/issues/4239" },
   { title = "SHA3 and Blake2b hash support (PR 4291)", url = "https://github.com/neo-project/neo/pull/4291" },
 ]
-logo = "neo.png"
+logo = "neo.webp"
 
 [[chain]]
 name = "Vaulta"
@@ -1359,7 +1359,7 @@ note = "Formerly EOS; Antelope Spring"
 links = [
   { title = "Spring public key types (libfc)", url = "https://github.com/AntelopeIO/spring/blob/main/libraries/libfc/include/fc/crypto/public_key.hpp" },
 ]
-logo = "vaulta.png"
+logo = "vaulta.webp"
 
 [[chain]]
 name = "Chiliz Chain"
@@ -1371,7 +1371,7 @@ website = "https://www.chiliz.com"
 source = "https://github.com/chiliz-chain/v2"
 algorithms = []
 note = "CHZ is gas token"
-logo = "chiliz.png"
+logo = "chiliz.webp"
 
 [[chain]]
 name = "0G"
@@ -1396,7 +1396,7 @@ website = "https://www.immutable.com"
 source = "https://github.com/immutable/immutable-geth"
 algorithms = []
 note = "Formerly Immutable zkEVM"
-logo = "immutable.png"
+logo = "immutable.webp"
 
 [[chain]]
 name = "eCash"
@@ -1432,7 +1432,7 @@ website = "https://ozonechain.io"
 algorithms = []
 note = "Claims quantum-resistant network layer"
 links = [{ title = "Ozone Chain post-quantum cryptography page", url = "https://ozonechain.io/post-quantum-cryptography/" }, { title = "ORC-1001 research track", url = "https://github.com/Ozone-chain/orc/blob/main/standards/ROADMAP.md" }]
-logo = "ozone-chain.png"
+logo = "ozone-chain.webp"
 
 [[chain]]
 name = "Plume"
@@ -1444,7 +1444,7 @@ website = "https://plume.org"
 source = "https://github.com/plumenetwork/plume-go-ethereum"
 algorithms = []
 note = "Orbit layer 2, PLUME gas"
-logo = "plume.png"
+logo = "plume.webp"
 
 [[chain]]
 name = "MultiversX"
@@ -1456,7 +1456,7 @@ website = "https://multiversx.com"
 source = "https://github.com/multiversx/mx-chain-go"
 algorithms = []
 note = "Formerly Elrond"
-logo = "multiversx.png"
+logo = "multiversx.webp"
 
 [[chain]]
 name = "dYdX Chain"
@@ -1480,7 +1480,7 @@ website = "https://minaprotocol.com/"
 source = "https://github.com/MinaProtocol/mina"
 algorithms = []
 links = [{ title = "Mina Schnorr signature specification", url = "https://github.com/MinaProtocol/mina/blob/compatible/docs/specs/signatures/description.md" }]
-logo = "mina-protocol.png"
+logo = "mina-protocol.webp"
 
 [[chain]]
 name = "Qtum"
@@ -1492,7 +1492,7 @@ website = "https://qtum.org/"
 source = "https://github.com/qtumproject/qtum"
 algorithms = []
 links = [{ title = "Qtum proof-of-stake block signature check", url = "https://github.com/qtumproject/qtum/blob/master/src/pos.cpp" }]
-logo = "qtum.png"
+logo = "qtum.webp"
 
 [[chain]]
 name = "peaq"
@@ -1503,7 +1503,7 @@ transactions_reason = "Judgment call: accounts are Substrate or EVM accounts wit
 website = "https://www.peaq.xyz/"
 source = "https://github.com/peaqnetwork/peaq-network-node"
 algorithms = []
-logo = "peaq.png"
+logo = "peaq.webp"
 
 [[chain]]
 name = "Prom"
@@ -1515,7 +1515,7 @@ website = "https://prom.io/"
 algorithms = []
 note = "Layer 2, PROM gas token"
 links = [{ title = "Prom token and gas documentation", url = "https://prom.gitbook.io/prom/quickstart/prom-token" }]
-logo = "prom.png"
+logo = "prom.webp"
 
 [[chain]]
 name = "Pharos"
@@ -1538,7 +1538,7 @@ website = "https://wemix.com/"
 source = "https://github.com/wemixarchive/go-wemix"
 algorithms = []
 note = "No quantum work found"
-logo = "wemix.png"
+logo = "wemix.webp"
 
 [[chain]]
 name = "Irys"
@@ -1550,7 +1550,7 @@ website = "https://irys.xyz/"
 source = "https://github.com/Irys-xyz/irys"
 algorithms = []
 note = "No quantum work found"
-logo = "irys.png"
+logo = "irys.webp"
 
 [[chain]]
 name = "Kusama"
@@ -1565,7 +1565,7 @@ note = "Research roadmap only"
 links = [
   { title = "Post-quantum cryptography roadmap for Polkadot and JAM (2025)", url = "https://forum.polkadot.network/t/post-quantum-cryptography-roadmap-for-polkadot-and-jam/13232" },
 ]
-logo = "kusama.png"
+logo = "kusama.webp"
 
 [[chain]]
 name = "Kava"
@@ -1577,7 +1577,7 @@ website = "https://www.kava.io/"
 source = "https://github.com/Kava-Labs/kava"
 algorithms = []
 note = "No quantum work found"
-logo = "kava.png"
+logo = "kava.webp"
 
 [[chain]]
 name = "ADI Chain"
@@ -1601,7 +1601,7 @@ website = "https://rootstock.io/"
 source = "https://github.com/rsksmart/rskj"
 algorithms = []
 note = "Gas coin is RBTC"
-logo = "rootstock.png"
+logo = "rootstock.webp"
 
 [[chain]]
 name = "Dusk"
@@ -1613,7 +1613,7 @@ website = "https://dusk.network/"
 source = "https://github.com/dusk-network/rusk"
 algorithms = []
 note = "No post-quantum signing"
-logo = "dusk.png"
+logo = "dusk.webp"
 
 [[chain]]
 name = "ZetaChain"
@@ -1625,7 +1625,7 @@ website = "https://www.zetachain.com/"
 source = "https://github.com/zeta-chain/node"
 algorithms = []
 note = "No quantum work found"
-logo = "zetachain.png"
+logo = "zetachain.webp"
 
 [[chain]]
 name = "ZIGChain"
@@ -1636,7 +1636,7 @@ transactions_reason = "Judgment call: accounts use secp256k1 keys per the accoun
 website = "https://zigchain.com/"
 algorithms = []
 note = "No PQ work found"
-logo = "zigchain.png"
+logo = "zigchain.webp"
 
 [[chain]]
 name = "Babylon"
@@ -1647,7 +1647,7 @@ transactions_reason = "Accounts use Cosmos SDK 0.53.8 secp256k1 keys. The reposi
 website = "https://babylonlabs.io/"
 source = "https://github.com/babylonlabs-io/babylon"
 algorithms = []
-logo = "babylon.png"
+logo = "babylon.webp"
 
 [[chain]]
 name = "DigiByte"
@@ -1660,7 +1660,7 @@ source = "https://github.com/DigiByte-Core/digibyte"
 algorithms = []
 note = "Draft PQC plan, no code"
 links = [{ title = "DigiByte post-quantum plan (draft)", url = "https://github.com/DigiByte-Core/digibyte/blob/develop/doc/DGB_PQC_PLAN.md" }]
-logo = "digibyte.png"
+logo = "digibyte.webp"
 
 [[chain]]
 name = "Zano"
@@ -1672,7 +1672,7 @@ website = "https://zano.org/"
 source = "https://github.com/hyle-team/zano"
 algorithms = []
 note = "Hybrid PoW/PoS"
-logo = "zano.png"
+logo = "zano.webp"
 
 [[chain]]
 name = "Naoris Protocol"
@@ -1754,7 +1754,7 @@ source = "https://github.com/Quantova/Quantova-Chain"
 algorithms = ["ml-dsa", "ml-kem", "slh-dsa"]
 note = "Testnet only"
 links = [{ title = "Quantova roadmap: testnet ahead of mainnet", url = "https://github.com/Quantova/QIP/blob/main/ROADMAP.md" }]
-logo = "quantova.png"
+logo = "quantova.webp"
 
 [[chain]]
 name = "Autheo"
@@ -1766,7 +1766,7 @@ website = "https://autheo.com/"
 algorithms = []
 note = "No code is public"
 links = [{ title = "Autheo FAQ: post-quantum status", url = "https://autheo.com/" }]
-logo = "autheo.png"
+logo = "autheo.webp"
 
 [[chain]]
 name = "BTQ Bitcoin Quantum"
@@ -1795,7 +1795,7 @@ links = [
   { title = "Arc mainnet launch, September 2026", url = "https://www.arc.io/blog/arc-economic-os-internet" },
   { title = "Arc mainnet signature verifier activation", url = "https://github.com/circlefin/arc-node/blob/6e764023ee6515fe70573e123ed2db912a7207b4/crates/execution-config/src/hardforks.rs#L295" },
 ]
-logo = "circle-arc.png"
+logo = "circle-arc.webp"
 
 [[chain]]
 name = "Liquid Network"
@@ -1808,7 +1808,7 @@ source = "https://github.com/ElementsProject/elements"
 algorithms = ["shrincs"]
 note = "SHRINCS spends opt-in via contract"
 links = [{ title = "Blockstream: post-quantum signing on Liquid with Simplicity", url = "https://blog.blockstream.com/blockstream-research-demonstrates-quantum-resistant-transaction-signing-on-liquid-using-simplicity-smart-contracts" }]
-logo = "liquid-network.png"
+logo = "liquid-network.webp"
 
 [[chain]]
 name = "OP Mainnet"
@@ -1821,7 +1821,7 @@ source = "https://github.com/ethereum-optimism/optimism"
 algorithms = []
 note = "Roadmap, no code"
 links = [{ title = "A Post-Quantum Roadmap for the Superchain", url = "https://optimism.io/blog/a-post-quantum-roadmap-for-the-superchain" }]
-logo = "optimism.png"
+logo = "optimism.webp"
 
 [[chain]]
 name = "Nexus"
@@ -1834,7 +1834,7 @@ source = "https://github.com/Nexusoft/LLL-TAO"
 algorithms = ["fn-dsa"]
 note = "Falcon opt-in; default Brainpool"
 links = [{ title = "LLL-TAO signature scheme enum (Falcon, Brainpool)", url = "https://github.com/Nexusoft/LLL-TAO/blob/master/src/TAO/Ledger/include/enum.h" }]
-logo = "nexus.png"
+logo = "nexus.webp"
 
 [[chain]]
 name = "Quip Network"
@@ -1847,7 +1847,7 @@ source = "https://github.com/QuipNetwork/quip-validator"
 algorithms = ["fn-dsa"]
 note = "Testnet only; hybrid signatures"
 links = [{ title = "Testnet announcement", url = "https://quip.network/blog/testnet-is-live" }]
-logo = "quip-network.png"
+logo = "quip-network.webp"
 
 [[chain]]
 name = "Nockchain"
@@ -1860,7 +1860,7 @@ source = "https://github.com/nockchain/nockchain"
 algorithms = []
 note = "Roadmap item only"
 links = [{ title = "Nockchain roadmap", url = "https://www.nockchain.org/roadmap" }]
-logo = "nockchain.png"
+logo = "nockchain.webp"
 
 [[chain]]
 name = "Quai Network"
@@ -1886,7 +1886,7 @@ source = "https://gitlab.com/partisiablockchain/core/blockchain"
 algorithms = []
 note = "Readiness review only"
 links = [{ title = "Post-quantum readiness blog post (2024)", url = "https://www.partisia.com/blog/towards-a-post-quantum-succinct-publicly-verifiable-mpc-platform" }]
-logo = "partisia-blockchain.png"
+logo = "partisia-blockchain.webp"
 
 [[chain]]
 name = "Lux Network"
@@ -1902,7 +1902,7 @@ links = [
   { title = "Quasar acceptance and export policies", url = "https://docs.lux.network/consensus" },
   { title = "Post-quantum verification precompiles", url = "https://docs.lux.network/precompile/pq-crypto" },
 ]
-logo = "lux-network.png"
+logo = "lux-network.webp"
 
 [[chain]]
 name = "SORA Nexus (Iroha 3)"
@@ -1941,7 +1941,7 @@ source = "https://github.com/AvianNetwork/Avian"
 algorithms = ["ml-dsa"]
 note = "ML-DSA opt-in, mainnet inactive"
 links = [{ title = "RIP-25: ML-DSA-44 outputs", url = "https://github.com/AvianNetwork/Avian/blob/main/doc/rip-25.md" }]
-logo = "avian-network.png"
+logo = "avian-network.webp"
 
 [[chain]]
 name = "Marscoin"
@@ -1954,7 +1954,7 @@ source = "https://github.com/marscoin/marscoin"
 algorithms = ["slh-dsa"]
 note = "SPHINCS+ scaffold only"
 links = [{ title = "SPHINCS+ scaffold design", url = "https://github.com/marscoin/marscoin/blob/28.x/doc/quantum-signatures-sphincs-v1.md" }]
-logo = "marscoin.png"
+logo = "marscoin.webp"
 
 [[chain]]
 name = "Bismuth"
@@ -2016,7 +2016,7 @@ source = "https://github.com/qrdx-org/qrdx-chain"
 algorithms = ["ml-dsa"]
 note = "Testnet only, EVM PQ opt-in"
 links = [{ title = "QRDX website", url = "https://qrdx.org" }]
-logo = "qrdx.png"
+logo = "qrdx.webp"
 
 [[chain]]
 name = "Shell Chain"
@@ -2044,7 +2044,7 @@ links = [
   { title = "PQC transaction verifier and exceptions", url = "https://github.com/network-lumen/blockchain/blob/23fba58507dabd7bf889431de3a85b66cd32eae9/app/ante_pqc_dualsign.go#L104" },
   { title = "Mainnet PQC parameters", url = "https://api.lumen.chaintools.tech/lumen/pqc/v1/params" },
 ]
-logo = "lumen.png"
+logo = "lumen.webp"
 
 [[chain]]
 name = "Qbit"
@@ -2134,7 +2134,7 @@ source = "https://github.com/proof-native/parano1d"
 algorithms = []
 note = "Mainnet not fully confirmed"
 links = [{ title = "Parano1d README", url = "https://github.com/proof-native/parano1d/blob/main/README.md" }]
-logo = "parano1d.png"
+logo = "parano1d.webp"
 
 [[chain]]
 name = "Jetsam"
@@ -2173,7 +2173,7 @@ source = "https://github.com/ixian-platform/Ixian-DLT"
 algorithms = ["ml-kem"]
 note = "ML-KEM for messaging only"
 links = [{ title = "Ixian Core README", url = "https://github.com/ixian-platform/Ixian-Core/blob/master/README.md" }]
-logo = "ixian.png"
+logo = "ixian.webp"
 
 [[chain]]
 name = "MOVA"
@@ -2185,7 +2185,7 @@ website = "https://movachain.com"
 algorithms = []
 note = "Marketing claim; no code public"
 links = [{ title = "MOVA documentation", url = "https://docs.movachain.com/" }]
-logo = "mova.png"
+logo = "mova.webp"
 
 [[chain]]
 name = "QCC"
@@ -2209,7 +2209,7 @@ source = "https://github.com/base/base"
 algorithms = []
 note = "Layer 2; EIP-8130 PQ work"
 links = [{ title = "Coinbase post-quantum post", url = "https://www.coinbase.com/blog/what-coinbase-is-doing-to-prepare-for-post-quantum-cryptography" }, { title = "EIP-8130 contracts (base/eip-8130)", url = "https://github.com/base/eip-8130" }]
-logo = "base.png"
+logo = "base.webp"
 
 [[chain]]
 name = "Helix"
@@ -2225,7 +2225,7 @@ links = [
   { title = "Helix signature schemes and verifier", url = "https://github.com/silvra-net/helix/blob/f18ad4ef47462bafdd007caa8cb6ba921fa538fd/crates/helix-crypto/src/keys.rs#L351" },
   { title = "Helix mainnet README", url = "https://github.com/silvra-net/helix/blob/f18ad4ef47462bafdd007caa8cb6ba921fa538fd/README.md" },
 ]
-logo = "helix.png"
+logo = "helix.webp"
 
 [[chain]]
 name = "BIOCHAIN"
@@ -2250,7 +2250,7 @@ source = "https://github.com/smartholdem/sth-core-pq"
 algorithms = ["ml-dsa"]
 note = "PQ opt-in code not active"
 links = [{ title = "sth-core-pq README", url = "https://github.com/smartholdem/sth-core-pq/blob/main/README.md" }]
-logo = "smartholdem.png"
+logo = "smartholdem.webp"
 
 [[chain]]
 name = "Quantaureum"
@@ -2289,7 +2289,7 @@ source = "https://github.com/EricWijesinghe/Maya2C"
 algorithms = ["ml-dsa", "slh-dsa", "ml-kem"]
 note = "Testnet only"
 links = [{ title = "Maya2C README", url = "https://github.com/EricWijesinghe/Maya2C/blob/master/README.md" }, { title = "Testnet status", url = "https://status.maya2c.dev/api/status" }]
-logo = "maya2c.png"
+logo = "maya2c.webp"
 
 [[chain]]
 name = "SorachanCoin (IUEC)"
@@ -2302,7 +2302,7 @@ source = "https://github.com/FromHDDtoSSD/SorachanCoin-qt"
 algorithms = []
 note = "IUEC; QAI addresses opt-in"
 links = [{ title = "SORA roadmap", url = "https://www.junkhdd.com/news/roadmap.html" }]
-logo = "sora-l1.png"
+logo = "sora-l1.webp"
 
 [[chain]]
 name = "Synergy Network"
