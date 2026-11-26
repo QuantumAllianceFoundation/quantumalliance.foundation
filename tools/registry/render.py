@@ -5,7 +5,6 @@ from __future__ import annotations
 from collections.abc import Sequence
 from html import escape
 from urllib.parse import urlsplit
-from string import Template
 
 from .model import (
     CATEGORY_LABELS,
@@ -224,7 +223,7 @@ def _notes_parts(table: str, row: int, name: str, note: str | None, links: Seque
         f'<button type="button" class="notes-toggle" popovertarget="{popover_id}" '
         f'aria-label="Notes for {_e(name)}">{INFO_ICON}</button>'
         f'<div id="{popover_id}" popover class="notes-popover">'
-        f"<h3>{_e(name)}</h3>"
+        f'<p class="notes-title">{_e(name)}</p>'
         f"<p>{inline}</p>"
         f'<button type="button" class="notes-close" popovertarget="{popover_id}" '
         'popovertargetaction="hide">Close</button>'
@@ -274,8 +273,16 @@ def format_size(size: Size | None) -> str:
     return f"{size.bytes} B ({size.parameter_set})"
 
 
+def _breadcrumb(*crumbs: tuple[str, str]) -> str:
+    sep = ' <span aria-hidden="true">/</span> '
+    links = sep.join(_link(url, text) for url, text in crumbs)
+    return f'<nav class="eyebrow breadcrumb" aria-label="Breadcrumb">{links}</nav>'
+
+
+REGISTRIES_CRUMB = ("/registry/", "Registries")
+
+
 def _registry_section(
-    eyebrow: str,
     heading: str,
     intro: str,
     data_file: str,
@@ -283,41 +290,44 @@ def _registry_section(
     table: str | None,
     extra: str = "",
 ) -> str:
-    links = edit_links(data_file, issue_template)
-    middle = f"{table}\n  {links}" if table else EMPTY_STATE
+    body = table or EMPTY_STATE
     return (
         '    <section class="section">\n'
         '      <div class="wrap">\n'
-        f'        <p class="eyebrow">{_e(eyebrow)}</p>\n'
+        f"        {_breadcrumb(REGISTRIES_CRUMB)}\n"
         f"        <h1>{_e(heading)}</h1>\n"
         f'        <p class="intro">{_e(intro)}</p>\n'
         f"        {extra}\n"
-        f"        {links}\n"
-        f"        {middle}\n"
+        f"        {body}\n"
+        f"        {edit_links(data_file, issue_template)}\n"
         "      </div>\n"
         "    </section>"
     )
 
 
-def render_hub(reg: Registry) -> str:
+def registry_cards(reg: Registry, heading: str, indent: str = "          ") -> str:
+    """The four registry cards, shared by the hub and the homepage."""
     cards = [
         ("Blockchains", "/registry/blockchains/", len(reg.chains),
          "Post-quantum readiness of blockchain networks."),
         ("Algorithms", "/registry/algorithms/", len(reg.algorithms),
          "Post-quantum algorithms, with safety and research papers."),
-        (LIBRARIES_TITLE, "/registry/libraries/", len(reg.libraries),
+        ("Libraries", "/registry/libraries/", len(reg.libraries),
          "Post-quantum cryptography libraries and their maturity."),
         ("Products", "/registry/products/", len(reg.products),
          "Products built by Quantum Alliance members."),
     ]
-    items = "\n".join(
-        '          <div class="card">\n'
-        f'            <h3>{_link(path, name)}</h3>\n'
-        f'            <p class="muted">{_e(blurb)}</p>\n'
-        f'            <p class="muted">{count} {"entry" if count == 1 else "entries"}</p>\n'
-        "          </div>"
+    return "\n".join(
+        f'{indent}<a href="{_e(path)}" class="card media-card">\n'
+        f"{indent}  <{heading}>{_e(name)}</{heading}>\n"
+        f'{indent}  <p class="muted">{_e(blurb)}</p>\n'
+        f'{indent}  <p class="muted">{count} {"entry" if count == 1 else "entries"}</p>\n'
+        f"{indent}</a>"
         for name, path, count, blurb in cards
     )
+
+
+def render_hub(reg: Registry) -> str:
     return (
         '    <section class="section">\n'
         '      <div class="wrap">\n'
@@ -325,8 +335,8 @@ def render_hub(reg: Registry) -> str:
         "        <h1>Quantum readiness registries</h1>\n"
         '        <p class="intro">Open, community-maintained records of post-quantum readiness. '
         "Anyone can propose a change on GitHub.</p>\n"
-        '        <div class="grid-3">\n'
-        f"{items}\n"
+        '        <div class="grid-2">\n'
+        f"{registry_cards(reg, 'h2')}\n"
         "        </div>\n"
         "      </div>\n"
         "    </section>"
@@ -392,7 +402,7 @@ def render_blockchains(reg: Registry) -> str:
         else None
     )
     return _registry_section(
-        "Registries", "Blockchains",
+        "Blockchains",
         "How ready each blockchain is for quantum computers.",
         "blockchains.toml", "registry-blockchain.yml", table, legend,
     )
@@ -469,7 +479,7 @@ def render_libraries(reg: Registry) -> str:
         else None
     )
     return _registry_section(
-        "Registries", LIBRARIES_TITLE,
+        LIBRARIES_TITLE,
         "Post-quantum cryptography libraries, with the smallest sizes each one offers.",
         "libraries.toml", "registry-library.yml", table, legend,
     )
@@ -505,7 +515,7 @@ def render_library(reg: Registry, slug: str) -> str:
     return (
         '    <section class="section">\n'
         '      <div class="wrap">\n'
-        '        <p class="eyebrow">Library</p>\n'
+        f"        {_breadcrumb(REGISTRIES_CRUMB, ('/registry/libraries/', 'Libraries'))}\n"
         f"        <h1>{_e(lib.name)}</h1>\n"
         f'        <p class="cap-tags">{_capability_tags(reg, lib)}</p>\n'
         f"        {_broken_callouts(library_broken_algorithms(lib, reg.algorithms))}\n"
@@ -544,7 +554,7 @@ def render_chain(reg: Registry, slug: str) -> str:
     return (
         '    <section class="section">\n'
         '      <div class="wrap">\n'
-        '        <p class="eyebrow">Blockchain</p>\n'
+        f"        {_breadcrumb(REGISTRIES_CRUMB, ('/registry/blockchains/', 'Blockchains'))}\n"
         f"        <h1>{_chain_name(chain, 32)}</h1>\n"
         f"        {_broken_callouts(chain_broken_algorithms(chain, reg.algorithms))}\n"
         '        <dl class="detail-list">\n' + "\n".join(rows) + "\n        </dl>\n"
@@ -579,7 +589,7 @@ def render_products(reg: Registry) -> str:
         else None
     )
     return _registry_section(
-        "Registries", "Products", "Products built by Quantum Alliance members.",
+        "Products", "Products built by Quantum Alliance members.",
         "products.toml", "registry-product.yml", table,
     )
 
@@ -615,7 +625,7 @@ def render_algorithms_index(reg: Registry) -> str:
         else None
     )
     return _registry_section(
-        "Registries", "Algorithms",
+        "Algorithms",
         "Post-quantum algorithms, with the libraries that implement each one.",
         "algorithms.toml", "registry-algorithm.yml", table,
     )
@@ -644,7 +654,7 @@ def render_algorithm(reg: Registry, algorithm_id: str) -> str:
     return (
         '    <section class="section">\n'
         '      <div class="wrap">\n'
-        '        <p class="eyebrow">Algorithm</p>\n'
+        f"        {_breadcrumb(REGISTRIES_CRUMB, ('/registry/algorithms/', 'Algorithms'))}\n"
         f"        <h1>{_e(a.name)}</h1>\n"
         f"        {warning}\n"
         f'        <p class="muted">Family: {_e(a.family)}.</p>\n'
@@ -663,8 +673,3 @@ def render_algorithm(reg: Registry, algorithm_id: str) -> str:
         "    </section>"
     )
 
-
-def render_page(template: str, *, title: str, description: str, path: str, body: str) -> str:
-    return Template(template).substitute(
-        title=_e(title), description=_e(description), path=_e(path), body=body
-    )

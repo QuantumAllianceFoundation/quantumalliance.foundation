@@ -27,7 +27,6 @@ from tools.registry.render import (
     render_hub,
     render_libraries,
     render_library,
-    render_page,
     render_products,
 )
 
@@ -319,7 +318,8 @@ class RenderTests(unittest.TestCase):
         positions = [
             out.index(needle)
             for needle in (
-                '<p class="eyebrow">Library</p>',
+                '<nav class="eyebrow breadcrumb" aria-label="Breadcrumb">',
+                '<a href="/registry/libraries/">Libraries</a>',
                 "<h1>Hash&lt;sigs&gt;</h1>",
                 ">Repositories<",
                 ">Algorithms<",
@@ -410,7 +410,8 @@ class RenderTests(unittest.TestCase):
         }
         reg = Registry(algs, (), (), ())
         out = render_algorithm(reg, "x")
-        self.assertIn('<p class="eyebrow">Algorithm</p>', out)
+        self.assertIn('<a href="/registry/">Registries</a>', out)
+        self.assertIn('<a href="/registry/algorithms/">Algorithms</a>', out)
         self.assertIn("<h1>Xsig</h1>", out)
         self.assertIn("hash-based", out)
         self.assertIn("High", out)
@@ -483,7 +484,7 @@ class RenderTests(unittest.TestCase):
         positions = [
             out.index(needle)
             for needle in (
-                '<p class="eyebrow">Blockchain</p>',
+                '<a href="/registry/blockchains/">Blockchains</a>',
                 "<h1>",
                 'width="32" height="32"',
                 ">Consensus<",
@@ -574,9 +575,8 @@ class RenderTests(unittest.TestCase):
         self.assertIn("<h1>Post-Quantum Cryptography Libraries</h1>", out)
         self.assertNotIn("signature libraries", out)
         hub = render_hub(reg)
-        self.assertIn(
-            '<h3><a href="/registry/libraries/">Post-Quantum Cryptography Libraries</a></h3>', hub
-        )
+        self.assertIn('<a href="/registry/libraries/" class="card media-card">', hub)
+        self.assertIn("<h2>Libraries</h2>", hub)
 
     def test_capability_tags_in_table_and_card(self):
         reg = registry(
@@ -754,10 +754,17 @@ class RenderTests(unittest.TestCase):
         self.assertIn(f"{REPO_URL}/issues/new?template=registry-blockchain.yml", html)
         self.assertIn("Spotted an error or a missing entry?", html)
 
-    def test_edit_links_around_table(self):
+    def test_edit_links_once_after_table(self):
         out = render_blockchains(load_registry(VALID, auditors_dir=VALID / "auditors"))
-        self.assertEqual(out.count("registry/data/blockchains.toml"), 2)
-        self.assertLess(out.index("registry/data/"), out.index("<table"))
+        self.assertEqual(out.count("registry/data/blockchains.toml"), 1)
+        self.assertLess(out.index("</table>"), out.index("registry/data/"))
+
+    def test_index_pages_link_back_to_hub(self):
+        out = render_blockchains(load_registry(VALID, auditors_dir=VALID / "auditors"))
+        self.assertIn(
+            '<nav class="eyebrow breadcrumb" aria-label="Breadcrumb"><a href="/registry/">Registries</a></nav>',
+            out,
+        )
 
     def test_empty_registry_shows_empty_state_and_edit_links(self):
         out = render_products(registry())
@@ -772,12 +779,8 @@ class RenderTests(unittest.TestCase):
         self.assertIn('href="/registry/libraries/"', out)
         self.assertIn('href="/registry/products/"', out)
         self.assertIn('href="/registry/algorithms/"', out)
-        self.assertEqual(out.count('class="card"'), 4)
-
-    def test_render_page_fills_template(self):
-        template = "<title>$title</title>$description|$path|$body"
-        out = render_page(template, title="T & U", description="D", path="/registry/", body="<b>x</b>")
-        self.assertEqual(out, "<title>T &amp; U</title>D|/registry/|<b>x</b>")
+        self.assertEqual(out.count('class="card media-card"'), 4)
+        self.assertIn('<div class="grid-2">', out)
 
 
 BROKEN_ALGS = {

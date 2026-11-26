@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /thanks/
 
 Sitemap: https://quantumalliance.foundation/sitemap.xml
