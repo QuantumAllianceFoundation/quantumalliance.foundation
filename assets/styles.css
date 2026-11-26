@@ -121,6 +121,11 @@ h2 { font-size: 1.5rem; margin-bottom: 12px; }
 .card { border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
 .card h3 { font-size: 1rem; margin-bottom: 8px; }
 .card .tag { font-family: var(--mono); font-size: .75rem; color: var(--signal); margin-bottom: 8px; display: block; }
+.card .card-cta { margin-top: 12px; font-size: .875rem; }
+.media-card { display: flex; flex-direction: column; }
+.media-card h3 { line-height: 1.4; flex: 1; }
+.media-card:hover { border-color: var(--content-40); color: inherit; }
+.media-card:hover h3 { color: var(--white); }
 .mb-40 { margin-bottom: 40px; }
 
 /* Definition rows */

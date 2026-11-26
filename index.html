@@ -34,6 +34,8 @@
         <a href="/registry/">Registries</a>
         <a href="/#signup">Stay informed</a>
         <a href="/news/launch/">News</a>
+        <a href="/media/">Media</a>
+        <a href="https://forum.quantumalliance.foundation/" target="_blank" rel="noopener noreferrer">Forum</a>
         <a href="https://github.com/QuantumAllianceFoundation" class="btn btn-outline" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
     </div>
@@ -51,7 +53,8 @@
           and how to test and verify any claim of quantum resistance.
         </p>
         <div class="btn-row">
-          <a href="https://github.com/QuantumAllianceFoundation" class="btn btn-signal" target="_blank" rel="noopener noreferrer">Contribute on GitHub</a>
+          <a href="https://forum.quantumalliance.foundation/" class="btn btn-signal" target="_blank" rel="noopener noreferrer">Participate Today</a>
+          <a href="https://github.com/QuantumAllianceFoundation" class="btn btn-outline" target="_blank" rel="noopener noreferrer">Contribute on GitHub</a>
           <a href="/news/launch/" class="btn btn-outline">Read the launch announcement</a>
         </div>
         <dl class="stats">
@@ -145,6 +148,7 @@
           <div class="card"><h3>Rough consensus and working code</h3><p class="muted">No voting. Chairs assess the strength of arguments. Implementations carry more weight than theory.</p></div>
           <div class="card"><h3>Evidence always</h3><p class="muted">No overstating quantum readiness. No fear-based marketing.</p></div>
         </div>
+        <p class="muted" style="margin-top:24px">This page is the authoritative charter. The forum keeps a <a href="https://forum.quantumalliance.foundation/t/quantum-alliance-charter/16" target="_blank" rel="noopener noreferrer">copy of the charter</a>. Propose charter changes in the <a href="https://forum.quantumalliance.foundation/c/governance/6" target="_blank" rel="noopener noreferrer">Governance</a> category.</p>
       </div>
     </section>
 
@@ -159,24 +163,28 @@
             <h3>PQC Migration</h3>
             <p class="lead-line">Standards for transitioning existing chains.</p>
             <p class="muted">How live networks can move funds and keys to post-quantum schemes, including accounts whose public keys are already exposed and coins whose owners have lost access. StarkWare's quantum-safe Bitcoin transaction, mined on mainnet in August 2026, shows both the progress made and the distance remaining. The Alliance's criteria make the gap between a single working demonstration and network-wide readiness visible to everyone.</p>
+            <p class="card-cta"><a href="https://forum.quantumalliance.foundation/c/wg-pqc-migration/8" target="_blank" rel="noopener noreferrer">Join the PQC Migration channel</a></p>
           </div>
           <div class="card">
             <span class="tag">WG 2</span>
             <h3>ZK-PQ</h3>
             <p class="lead-line">Post-quantum zero-knowledge implementations.</p>
             <p class="muted">Privacy networks, rollups, and many cross-chain tools depend on proof systems. Systems built on pairing-friendly elliptic curves carry the same quantum weakness as today's signatures. Hash-based designs such as zk-STARKs avoid those assumptions but produce larger proofs. The group defines how post-quantum proof systems are evaluated and benchmarked.</p>
+            <p class="card-cta"><a href="https://forum.quantumalliance.foundation/c/wg-zk-pq/9" target="_blank" rel="noopener noreferrer">Join the ZK-PQ channel</a></p>
           </div>
           <div class="card">
             <span class="tag">WG 3</span>
             <h3>Wallet Security</h3>
             <p class="lead-line">Hardware and software wallet PQC standards.</p>
             <p class="muted">How users and custodians generate, store, and sign with post-quantum keys, from hardware secure elements to recovery flows. The group builds on existing efforts such as Wallet Security for Post-Quantum Ethereum, an initiative co-authored by Dr. Carback and listed with TheDAO Security Fund.</p>
+            <p class="card-cta"><a href="https://forum.quantumalliance.foundation/c/wg-wallet-security/10" target="_blank" rel="noopener noreferrer">Join the Wallet Security channel</a></p>
           </div>
           <div class="card">
             <span class="tag">WG 4</span>
             <h3>Interoperability</h3>
             <p class="lead-line">Cross-chain PQC compatibility.</p>
             <p class="muted">Interoperability specifications that let wallets, bridges, and hardware signers handle post-quantum keys consistently across chains. A transfer that crosses several networks inherits the weakest protection among them, so shared rules at these junctions carry as much weight as upgrades to any single chain.</p>
+            <p class="card-cta"><a href="https://forum.quantumalliance.foundation/c/wg-interoperability/11" target="_blank" rel="noopener noreferrer">Join the Interoperability channel</a></p>
           </div>
         </div>
         <div class="grid-2 mb-40">
@@ -194,7 +202,7 @@
           <div class="row"><h3>Discussion tooling</h3><p class="muted">Working groups run as a structured debate tree, not a mailing list. Each open question is a node; contributions attach for or against, with evidence. An AI layer removes duplicates, summarizes each branch, surfaces the unresolved crux, and flags convergence. It keeps the record legible but does not decide: chairs assess consensus, members ratify. At Last Call the chair works from the branch summary, with open objections and agreed points laid out and auditable. Converged nodes feed the quarterly report and IETF submissions. The tool and its full record are public; the convening organization provides it as administration only. Until that tool is public, contribution happens on GitHub.</p></div>
           <div class="row"><h3>Rough consensus</h3><p class="muted">A chair declares consensus by issuing a two-week Last Call on the working group channel. If no unresolved objection remains at close, the document advances. The test is that most participants agree and no strong objection stands, not a headcount.</p></div>
           <div class="row"><h3>Deadlock</h3><p class="muted">If a working group cannot resolve a substantive objection, either side may escalate to the Steering Committee, which rules on process only, not on technical merits. Appeals must state numbered, specific objections. The Committee may uphold the chair's call, return the item with instructions (a narrower scope is common), or drop it. An item that cannot reach consensus returns to Discussion Paper status and is subject to the standard 6-month expiry. Where a working group has only two active participants, unanimity is required.</p></div>
-          <div class="row"><h3>New working groups</h3><div class="muted"><p>Used only when a topic fits no existing working group. A new working group requires:</p><ol class="steps"><li>A written charter</li><li>Three or more participants</li><li>Steering Committee approval</li></ol></div></div>
+          <div class="row"><h3>New working groups</h3><div class="muted"><p>Used only when a topic fits no existing working group. A new working group requires:</p><ol class="steps"><li>A written charter</li><li>Three or more participants</li><li>Steering Committee approval</li></ol><p>Post proposals in the <a href="https://forum.quantumalliance.foundation/c/governance/6" target="_blank" rel="noopener noreferrer">Governance</a> category.</p></div></div>
         </div>
       </div>
     </section>
@@ -218,7 +226,7 @@
           <h3>Submitting a Discussion Paper</h3>
           <p>
             Anyone may submit a Discussion Paper, and all submissions are posted publicly on the
-            working group list immediately. Nothing is silently rejected. To be scheduled for
+            <a href="https://forum.quantumalliance.foundation/t/how-working-groups-work/17" target="_blank" rel="noopener noreferrer">working group list</a> immediately. Nothing is silently rejected. To be scheduled for
             discussion on a working group call, a paper must (1) fall within the working group's
             charter scope and (2) have at least one supporter other than the author. Chairs schedule
             on those two criteria alone, not on their view of the idea. A paper unsupported after
@@ -258,6 +266,7 @@
           <div class="item"><p class="when">Quarterly</p><p class="muted">Full Alliance assembly and a published report covering working group progress, new documents, the threat landscape, and member milestones.</p></div>
           <div class="item"><p class="when">Annually</p><p class="muted">Alliance Summit, co-located with QDay.</p></div>
         </div>
+        <p class="muted mb-40">Agendas, notes, and recordings for calls and assemblies are in <a href="https://forum.quantumalliance.foundation/c/assemblies-and-calls/12" target="_blank" rel="noopener noreferrer">Assemblies and Calls</a>. Quarterly reports are posted in <a href="https://forum.quantumalliance.foundation/c/announcements/5" target="_blank" rel="noopener noreferrer">Announcements</a>.</p>
         <h3 class="mb-12">Amplification</h3>
         <div class="grid-2">
           <div class="card"><h3>Alliance shares member news</h3><p class="muted">When a member makes a post-quantum announcement, the Alliance distributes it. Member milestones are featured in quarterly reports.</p></div>
@@ -272,7 +281,7 @@
         <h2>Governance</h2>
         <div class="article">
           <h3>Steering Committee</h3>
-          <p>Five to seven individuals. Approves new working groups, signs off on document advancement (PS and AS), publishes quarterly reports, and hears appeals. It does not author standards.</p>
+          <p>Five to seven individuals. Approves new working groups, signs off on document advancement (PS and AS), publishes quarterly reports, and hears appeals. It does not author standards. Its decisions are on public record in the <a href="https://forum.quantumalliance.foundation/c/steering-committee/13" target="_blank" rel="noopener noreferrer">Steering Committee</a> category.</p>
           <h3>Composition</h3>
           <p>Founding members seed the initial Committee, one individual per founding member, up to the 5–7 cap. Individuals, not companies, hold seats; no organization holds more than one seat. The Committee is not limited to founding members beyond the initial term.</p>
           <h3>Elections</h3>
@@ -282,7 +291,7 @@
           <h3>Terms</h3>
           <p>Seats run 12 months, then rotate or renew. If founding members exceed the cap, seats rotate annually so every member cycles through.</p>
           <h3>Participation</h3>
-          <p>Join any working group channel or attend an assembly. Optionally register name and affiliation.</p>
+          <p>Join any <a href="https://forum.quantumalliance.foundation/categories" target="_blank" rel="noopener noreferrer">working group channel</a> or attend an <a href="https://forum.quantumalliance.foundation/c/assemblies-and-calls/12" target="_blank" rel="noopener noreferrer">assembly</a>. Optionally register name and affiliation.</p>
           <h3>Conflicts of interest</h3>
           <p>Participants must disclose any affiliation with, or funding from, an organization whose mission or goals materially conflict with the Alliance's mission. The test is the organization's mandate, not its sector: an agency tasked with building interoperable standards is not a conflict; an agency whose mandate includes compromising cryptography is, as is any group dedicated to banning cryptocurrency. Disclosed conflicts do not bar participation in open discussion, but individuals with an active conflict may not hold leadership roles (working group chair or Steering Committee seat) until at least 3 years after the affiliation or funding has ended. The Steering Committee may impose further limitations where needed and hears appeals from any affected individual.</p>
           <h3>Removal</h3>
@@ -440,13 +449,16 @@
     <section class="section cta">
       <div class="wrap">
         <div>
-          <h2>Contribute.</h2>
+          <h2>Participate today.</h2>
           <p class="intro" style="margin-bottom:0">
             Developers, researchers, and organizations can join a working group or submit a
-            Discussion Paper. Until the debate tree is public, GitHub is the contribution path.
+            Discussion Paper on the forum. The documents are on GitHub.
           </p>
         </div>
-        <a href="https://github.com/QuantumAllianceFoundation" class="btn btn-signal" target="_blank" rel="noopener noreferrer">Open GitHub</a>
+        <div class="btn-row" style="margin-bottom:0">
+          <a href="https://forum.quantumalliance.foundation/" class="btn btn-signal" target="_blank" rel="noopener noreferrer">Participate Today</a>
+          <a href="https://github.com/QuantumAllianceFoundation" class="btn btn-outline" target="_blank" rel="noopener noreferrer">Open GitHub</a>
+        </div>
       </div>
     </section>
   </main>
@@ -458,6 +470,8 @@
         <a href="/#principles">Principles</a>
         <a href="/#governance">Governance</a>
         <a href="/news/launch/">News</a>
+        <a href="/media/">Media</a>
+        <a href="https://forum.quantumalliance.foundation/" target="_blank" rel="noopener noreferrer">Forum</a>
         <a href="https://github.com/QuantumAllianceFoundation" target="_blank" rel="noopener noreferrer">GitHub</a>
       </nav>
     </div>
