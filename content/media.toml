@@ -1,0 +1,300 @@
+# Press coverage of the Quantum Alliance. The build renders the /media/ page
+# and the homepage slider from this file, in this order.
+# section: coverage, syndication, or press-release.
+# image: a file in assets/media/. Omit it to show the outlet name instead.
+
+[[item]]
+section = "coverage"
+outlet = "Alpha Wire"
+title = "Are Crypto Custodians Ready for Quantum Attacks? 14 Firms Face Scrutiny"
+url = "https://alphawire.xyz/learn/crypto-custodians-quantum-attack-readiness-14-firms/"
+format = "Feature article"
+date = 2026-11-25
+image = "f27343785c36.webp"
+
+[[item]]
+section = "coverage"
+outlet = "KuCoin"
+title = "Nine Crypto Groups Form Quantum Alliance to Address Bitcoin's Quantum Threat"
+url = "https://www.kucoin.com/blog/quantum-alliance-bitcoin-quantum-security-standards"
+format = "Feature article"
+date = 2026-10-22
+
+[[item]]
+section = "coverage"
+outlet = "Grafa"
+title = "Quantum Alliance launches as Bitcoin quantum risks grow"
+url = "https://grafa.com/en/news/crypto/quantum-alliance-launches-as-bitcoin-quantum-risks-grow"
+format = "Organic pickup"
+date = 2026-10-19
+image = "1fc029333c2f.webp"
+
+[[item]]
+section = "coverage"
+outlet = "Memeburn"
+title = "Quantum Alliance Says 6 Million Bitcoin Are Exposed. Here's How to Tell If Yours Are"
+url = "https://memeburn.com/quantum-alliance-bitcoin/"
+format = "Feature article"
+date = 2026-10-19
+image = "64840aca48f9.webp"
+
+[[item]]
+section = "coverage"
+outlet = "99Bitcoins (DE)"
+title = "6,04 Millionen BTC könnten künftig quantengefährdet sein"
+url = "https://99bitcoins.com/de/news/quantum-alliance-quantenresistenz/"
+format = "Organic pickup"
+date = 2026-10-18
+image = "2bb32817a1d0.webp"
+lang = "de"
+
+[[item]]
+section = "coverage"
+outlet = "Coin Gabbar"
+title = "Quantum Alliance News: Why Are 9 Crypto Groups Setting New Standards?"
+url = "https://www.coingabbar.com/en/quantum-alliance-news-nine-crypto-groups-launch-standards"
+format = "News article"
+date = 2026-10-18
+image = "0323ca3d1cdf.webp"
+
+[[item]]
+section = "coverage"
+outlet = "Coin Tribune"
+title = "Quantum Alliance Targets Bitcoin’s Future Security"
+url = "https://www.cointribune.com/en/quantum-alliance-targets-bitcoins-future-security/"
+format = "News article"
+date = 2026-10-18
+image = "c5b4d1f20a5e.webp"
+
+[[item]]
+section = "coverage"
+outlet = "Cointelegraph"
+title = "X post: Nine crypto firms just formed a Quantum Alliance to set post-quantum standards"
+url = "https://x.com/Cointelegraph/status/2111600725503394234"
+format = "News mention"
+date = 2026-10-18
+image = "51afe2f20a68.webp"
+
+[[item]]
+section = "coverage"
+outlet = "KuCoin"
+title = "Nine blockchain companies launch the Quantum Alliance to develop anti-quantum standards"
+url = "https://www.kucoin.com/news/flash/9-blockchain-firms-launch-quantum-alliance-to-develop-anti-quantum-standards"
+format = "Organic pickup"
+date = 2026-10-18
+
+[[item]]
+section = "coverage"
+outlet = "Bitcoin.com News"
+title = "Nine Blockchain Groups Unite as Quantum Threat Hangs Over Bitcoin"
+url = "https://news.bitcoin.com/featured/nine-blockchain-groups-unite-as-quantum-threat-hangs-over-bitcoin/"
+format = "News article"
+date = 2026-10-17
+image = "503c955eb2fb.webp"
+
+[[item]]
+section = "coverage"
+outlet = "Bitcoin.pl"
+title = "Komputery kwantowe mogą zagrozić 30% bitcoinów. Powstał sojusz 9 firm"
+url = "https://bitcoin.pl/komputery-kwantowe-moga-zagrozic-30-bitcoinow-powstal-sojusz-9-firm"
+format = "Organic pickup"
+date = 2026-10-17
+image = "fd570f291ed2.webp"
+lang = "pl"
+
+[[item]]
+section = "coverage"
+outlet = "Blockchain Reporter"
+title = "What Is the Quantum Alliance? Nine Blockchain Firms Set Post-Quantum Standards"
+url = "https://blockchainreporter.net/quantum-alliance-post-quantum-standards/"
+format = "News article"
+date = 2026-10-17
+image = "28c94c997518.webp"
+
+[[item]]
+section = "coverage"
+outlet = "Decrypt"
+title = "Crypto Firms Launch Quantum Alliance as 6 Million Bitcoin Sit Exposed"
+url = "https://decrypt.co/381236/crypto-firms-launch-quantum-alliance-as-6-million-bitcoin-sit-exposed"
+format = "News article"
+date = 2026-10-17
+image = "19ad83d1fff4.webp"
+
+[[item]]
+section = "coverage"
+outlet = "AMB Crypto"
+title = "9 blockchain firms just formed a quantum alliance - Here's the plan"
+url = "https://ambcrypto.com/quantus-ceo-leads-9-firm-alliance-to-standardize-cryptos-quantum-defenses/"
+format = "News article"
+date = 2026-10-16
+image = "05dc10276b33.webp"
+
+[[item]]
+section = "coverage"
+outlet = "Bloomingbit"
+title = "Quantum Alliance Forms as 6.4 Million Bitcoin Face Future Quantum Attack Risk"
+url = "https://en.bloomingbit.io/feed/news/122362"
+format = "News article"
+date = 2026-10-16
+image = "da65b1b5ec13.webp"
+
+[[item]]
+section = "coverage"
+outlet = "CoinDesk"
+title = "Quantum Alliance forms amid warnings 6.4 million bitcoin face future quantum threat"
+url = "https://www.coindesk.com/tech/2026/10/16/experts-agree-quantum-computers-could-put-satoshi-s-bitcoin-at-risk-but-not-on-what-s-next"
+format = "News article"
+date = 2026-10-16
+image = "de81316b090a.webp"
+
+[[item]]
+section = "coverage"
+outlet = "CoinTrust"
+title = "Quantum Alliance Sets Blockchain Security Standards for 2028"
+url = "https://www.cointrust.com/market-news/quantum-alliance-sets-blockchain-security-standards-for-2028"
+format = "Organic pickup"
+date = 2026-10-16
+
+[[item]]
+section = "coverage"
+outlet = "Forklog"
+title = "Nine Crypto Firms Form Alliance to Protect Blockchains from Quantum Attacks"
+url = "https://forklog.com/en/nine-crypto-firms-form-alliance-to-protect-blockchains-from-quantum-attacks/"
+format = "News article"
+date = 2026-10-16
+image = "f6ac1abcd3f3.webp"
+
+[[item]]
+section = "coverage"
+outlet = "TokenPost"
+title = "Nine Crypto Firms Form Quantum Alliance as 30.2% of Bitcoin (BTC) Supply Has Exposed Keys"
+url = "https://www.tokenpost.com/news/technology/33486"
+format = "News article"
+date = 2026-10-16
+image = "a082affc8412.webp"
+
+[[item]]
+section = "coverage"
+outlet = "Crypto Briefing"
+title = "Nine blockchain groups unite to set open standards for post-quantum readiness"
+url = "https://cryptobriefing.com/nine-blockchain-groups-unite-to-set-open-standards-for-post-quantum-readiness/"
+format = "News article"
+date = 2026-10-15
+image = "685172015420.webp"
+
+[[item]]
+section = "coverage"
+outlet = "The Quantum Insider"
+title = "Quantum Alliance Launches to Set Post-Quantum Standards for Blockchains"
+url = "https://thequantuminsider.com/2026/10/15/quantum-alliance-post-quantum-standards-blockchains/"
+format = "News article"
+date = 2026-10-15
+image = "e769e0cc5c18.webp"
+
+[[item]]
+section = "syndication"
+outlet = "CoinMarketCap"
+title = "Quantum Alliance Targets Bitcoin’s Future Security"
+url = "https://coinmarketcap.com/community/articles/6ad4cfb84644b97307cc56bf/"
+format = "Reprint"
+date = 2026-10-18
+image = "c5b4d1f20a5e.webp"
+
+[[item]]
+section = "syndication"
+outlet = "CoinMarketCap"
+title = "Quantum Alliance News: Why Are 9 Crypto Groups Setting New Standards?"
+url = "https://coinmarketcap.com/community/articles/6ad4744d8256976f79168cb9/"
+format = "Reprint"
+date = 2026-10-18
+image = "0323ca3d1cdf.webp"
+
+[[item]]
+section = "syndication"
+outlet = "CoinStats"
+title = "Quantum Alliance Targets Bitcoin’s Future Security"
+url = "https://coinstats.app/news/6cda64213e1acb80451ffa9bbf2aa08a6a544eab185c9904301baeb4a84b420f_Quantum-Alliance-Targets-Bitcoins-Future-Security/"
+format = "Reprint"
+date = 2026-10-18
+image = "c5b4d1f20a5e.webp"
+
+[[item]]
+section = "syndication"
+outlet = "Yahoo Tech"
+title = "Crypto Firms Launch Quantum Alliance as 6 Million Bitcoin Sit Exposed"
+url = "https://tech.yahoo.com/general/articles/crypto-firms-launch-quantum-alliance-160103214.html"
+format = "Reprint"
+date = 2026-10-17
+image = "19ad83d1fff4.webp"
+
+[[item]]
+section = "syndication"
+outlet = "Daily Dev"
+title = "Quantum Alliance Launches to Set Post-Quantum Standards for Blockchains"
+url = "https://daily.dev/posts/quantum-alliance-launches-to-set-post-quantum-standards-for-blockchains-gx4zj43py"
+format = "Reprint"
+date = 2026-10-15
+image = "fa0edc6c9f6f.webp"
+
+[[item]]
+section = "syndication"
+outlet = "TradingView"
+title = "Nine blockchain groups unite to set open standards for post-quantum readiness"
+url = "https://www.tradingview.com/news/cryptobriefing:86bdb0d2b094b:0-nine-crypto-firms-form-quantum-alliance-to-set-post-quantum-standards/"
+format = "Reprint"
+date = 2026-10-15
+image = "685172015420.webp"
+
+[[item]]
+section = "press-release"
+outlet = "AP News"
+title = "Quantum Alliance Forms to Define and Verify Post-Quantum Readiness for the Blockchain Industry"
+url = "https://apnews.com/press-release/globenewswire-mobile/press-release-38ff746642f041d9d555d0107e8962d9"
+format = "Press Release"
+date = 2026-10-16
+image = "db13a7d4d8f9.webp"
+
+[[item]]
+section = "press-release"
+outlet = "Benzinga"
+title = "Quantum Alliance Forms to Define and Verify Post-Quantum Readiness for the Blockchain Industry"
+url = "https://www.benzinga.com/pressreleases/26/10/g62407202/quantum-alliance-forms-define-and-verify-post-quantum-readiness-blockchain-industry"
+format = "Press Release"
+date = 2026-10-16
+image = "db13a7d4d8f9.webp"
+
+[[item]]
+section = "press-release"
+outlet = "Business Insider"
+title = "Quantum Alliance Forms to Define and Verify Post-Quantum Readiness for the Blockchain Industry"
+url = "https://markets.businessinsider.com/news/stocks/quantum-alliance-forms-to-define-and-verify-post-quantum-readiness-for-the-blockchain-industry-1036634077"
+format = "Press Release"
+date = 2026-10-16
+image = "db13a7d4d8f9.webp"
+
+[[item]]
+section = "press-release"
+outlet = "GlobeNewswire"
+title = "Quantum Alliance Forms to Define and Verify Post-Quantum Readiness for the Blockchain Industry"
+url = "https://www.globenewswire.com/news-release/2026/10/16/3382532/0/en/quantum-alliance-forms-to-define-and-verify-post-quantum-readiness-for-the-blockchain-industry.html"
+format = "Press Release"
+date = 2026-10-16
+image = "db13a7d4d8f9.webp"
+
+[[item]]
+section = "press-release"
+outlet = "Manila Times"
+title = "Quantum Alliance Forms to Define and Verify Post-Quantum Readiness for the Blockchain Industry"
+url = "https://www.manilatimes.net/2026/10/16/tmt-newswire/globenewswire/quantum-alliance-forms-to-define-and-verify-post-quantum-readiness-for-the-blockchain-industry/2447418"
+format = "Press Release"
+date = 2026-10-16
+image = "af8a3888faac.webp"
+
+[[item]]
+section = "press-release"
+outlet = "Street Insider"
+title = "Quantum Alliance Forms to Define and Verify Post-Quantum Readiness for the Blockchain Industry"
+url = "https://www.streetinsider.com/Globe+Newswire/Quantum+Alliance+Forms+to+Define+and+Verify+Post-Quantum+Readiness+for+the+Blockchain+Industry/27195777.html"
+format = "Press Release"
+date = 2026-10-16
+image = "db13a7d4d8f9.webp"

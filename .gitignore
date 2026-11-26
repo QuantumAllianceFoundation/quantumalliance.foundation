@@ -5,9 +5,5 @@ CLAUDE.md
 .beads-credential-key
 .dolt/
 .DS_Store
-/registry/index.html
-/registry/*/index.html
-/registry/algorithms/*/index.html
-/registry/blockchains/*/index.html
-/registry/libraries/*/index.html
+/dist/
 __pycache__/

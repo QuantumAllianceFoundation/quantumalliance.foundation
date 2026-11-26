@@ -1,0 +1,317 @@
+    <section class="hero">
+      <div class="wrap">
+        <p class="eyebrow">Open standards body</p>
+        <h1 class="title">Defining and verifying post-quantum readiness for blockchain.</h1>
+        <p class="lede">
+          The Quantum Alliance sets the criteria for judging quantum-resistance claims in
+          blockchain networks, wallets, and infrastructure, and writes the standards that keep
+          networks compatible as they migrate.
+        </p>
+        <div class="btn-row">
+          <a href="https://forum.quantumalliance.foundation/" class="btn btn-signal" target="_blank" rel="noopener noreferrer">Participate Today</a>
+          <a href="https://forum.quantumalliance.foundation/t/quantum-alliance-charter/16" class="btn btn-outline" target="_blank" rel="noopener noreferrer">Charter</a>
+          <a href="/news/launch/" class="btn btn-outline">Launch Announcement</a>
+        </div>
+        <div class="media-slider" data-media-slider role="region" aria-label="Media coverage">
+          <div class="media-slider-head">
+            <h2 class="eyebrow">In the media</h2>
+            <div class="media-slider-actions">
+              <a href="/media/">All coverage</a>
+              <span class="slider-buttons" hidden>
+                <button type="button" class="slider-btn" data-direction="-1" aria-label="Previous articles">&larr;</button>
+                <button type="button" class="slider-btn" data-direction="1" aria-label="Next articles">&rarr;</button>
+                <button type="button" class="slider-btn slider-toggle" data-autoplay>Pause</button>
+              </span>
+            </div>
+          </div>
+          <div class="media-track">
+<!-- media:slider -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="why" class="section">
+      <div class="wrap">
+        <p class="eyebrow">The threat</p>
+        <h2>Why now</h2>
+        <p class="intro">
+          Nearly every major blockchain secures its accounts with elliptic-curve signatures. Once an
+          account signs a transaction (for some address types, from the moment it is created), its
+          public key sits permanently on a public ledger. A sufficiently capable quantum computer
+          running Shor's algorithm could work backward from that public key to the private key and
+          take control of the funds.
+        </p>
+        <div class="figures">
+          <div class="figure"><span class="num">$2.9T</span><p class="muted">Approximate crypto market value that still relies on classical signatures.</p></div>
+          <div class="figure"><span class="num">6.04M BTC</span><p class="muted">Bitcoin counted as quantum-exposed at rest: 30.2% of supply.</p></div>
+          <div class="figure"><span class="num">&lt;500k</span><p class="muted">Physical qubits that may be enough to break the elliptic-curve cryptography behind most major coins, about a twentieth of earlier estimates.</p></div>
+        </div>
+        <p class="intro">
+          The same signatures protect stablecoin minting keys, governance contracts, bridges, and
+          oracle feeds, so one compromised privileged key could spread across many platforms at once.
+          A growing body of forecasts places the first practical attack around 2028.
+        </p>
+        <div class="timeline">
+          <div class="item"><p class="when">Aug 2024</p><p class="muted">NIST finalizes its first post-quantum cryptography standards. No single party can order a live blockchain to adopt them.</p></div>
+          <div class="item"><p class="when">Early 2025</p><p class="muted">The <a href="https://quantumdoomclock.com/" target="_blank" rel="noopener noreferrer">Quantum Doom Clock</a>, a model built by Alliance contributors Richard T. Carback III and Colton Dillion, points to March 2028 as an early window for a cryptographically relevant quantum computer.</p></div>
+          <div class="item"><p class="when">Nov 2025</p><p class="muted">Scott Aaronson writes that a fault-tolerant machine running Shor's algorithm before the next US presidential election has become a live possibility.</p></div>
+          <div class="item"><p class="when">Mar 2026</p><p class="muted">Google Quantum AI, with researchers from the Ethereum Foundation and Stanford, finds that cracking the elliptic-curve cryptography behind Bitcoin, Ether, and most major coins could take fewer than 500,000 physical qubits.</p></div>
+          <div class="item"><p class="when">Apr 2026</p><p class="muted">Aaronson relays the view of leading hardware experts that a machine able to break deployed cryptosystems could arrive around 2029: "This post is your warning."</p></div>
+          <div class="item"><p class="when">Sep 2026</p><p class="muted">IonQ estimates that a fault-tolerant trapped-ion computer with roughly 20,000 physical qubits could solve Bitcoin's secp256k1 problem in about 26 days per attempt. No existing machine can do this yet.</p></div>
+        </div>
+        <h3 class="mb-12">No shared yardstick</h3>
+        <p class="intro">
+          The industry has never agreed on what "quantum-ready" means for a network or how anyone
+          should check it. A May analysis of the qLABS Quantum Vulnerability Index ranked Ethereum
+          second among prepared networks, citing its roadmap and active research. The migration.fail
+          assessment, a scorecard that counts only cryptography already live, gives Ethereum an F.
+          Each method can be defended on its own terms, and neither gives exchanges, custodians,
+          developers, or asset holders a common reference point. The Quantum Alliance was formed to
+          set that bar.
+        </p>
+      </div>
+    </section>
+
+    <section id="work" class="section">
+      <div class="wrap">
+        <p class="eyebrow">Open work</p>
+        <h2>What we publish</h2>
+        <p class="intro">Proposals are discussed on the <a href="https://forum.quantumalliance.foundation/" target="_blank" rel="noopener noreferrer">forum</a>. Adopted standards are published in the <a href="https://github.com/QuantumAllianceFoundation/standards" target="_blank" rel="noopener noreferrer">standards repository</a> on GitHub, so projects can adopt them directly and anyone can measure a readiness claim against the same yardstick.</p>
+        <h3 class="mb-12">Registries</h3>
+        <p class="muted mb-16">Open, community-maintained records of post-quantum readiness. Anyone can propose a change on GitHub.</p>
+        <div class="grid-2 mb-40">
+<!-- registry:cards -->
+        </div>
+        <h3 class="mb-12">Standards in progress</h3>
+        <p class="muted mb-16">The working groups are drafting the first body of work.</p>
+        <div class="grid-3 mb-40">
+          <div class="card">
+            <span class="tag">01 · In progress</span>
+            <h4>A public definition of quantum readiness</h4>
+            <p class="muted">Covering transaction signatures, key management, consensus, zero-knowledge proof systems, and peer-to-peer connections.</p>
+          </div>
+          <div class="card">
+            <span class="tag">02 · In progress</span>
+            <h4>Open test criteria and benchmarks</h4>
+            <p class="muted">Tests that any team can run against its own implementation.</p>
+          </div>
+          <div class="card">
+            <span class="tag">03 · In progress</span>
+            <h4>Reference designs for migration</h4>
+            <p class="muted">Designs that address exposed keys, dormant accounts, and the larger transactions post-quantum signatures produce.</p>
+          </div>
+        </div>
+        <h3 class="mb-12">Partner trackers</h3>
+        <p class="muted mb-16">Live trackers built by Alliance contributors.</p>
+        <div class="grid-2">
+          <a href="https://migration.fail/" class="card media-card preview-card" target="_blank" rel="noopener noreferrer">
+            <img src="/assets/resources/migration-fail.webp" alt="migration.fail snapshot: 99.76% of crypto market cap is not yet quantum secure." width="800" height="420" loading="lazy">
+            <span class="tag">migration.fail</span>
+            <h4>Post-quantum crypto migration tracker</h4>
+            <span class="muted">Tracks the share of crypto market cap that has moved to post-quantum secure cryptography.</span>
+          </a>
+          <a href="https://exchange.fail/" class="card media-card preview-card" target="_blank" rel="noopener noreferrer">
+            <img src="/assets/resources/exchange-fail.webp" alt="exchange.fail snapshot: 827 of 932 exchanges list no post-quantum coins." width="800" height="420" loading="lazy">
+            <span class="tag">exchange.fail</span>
+            <h4>Exchanges versus post-quantum coin volume</h4>
+            <span class="muted">Counts the CoinGecko exchanges that list no post-quantum coins, and the 24-hour trading volume of post-quantum coins.</span>
+          </a>
+          <a href="https://vc.fail/" class="card media-card preview-card" target="_blank" rel="noopener noreferrer">
+            <img src="/assets/resources/vc-fail.webp" alt="vc.fail snapshot: 72 of 100 VCs have no quantum-related holding in their public portfolio." width="800" height="420" loading="lazy">
+            <span class="tag">vc.fail</span>
+            <h4>Quantum-related holdings in crypto VC portfolios</h4>
+            <span class="muted">Counts the top crypto VCs on RootData that have no quantum-related holding in their public portfolio.</span>
+          </a>
+          <a href="https://quantumdoomclock.com/" class="card media-card preview-card" target="_blank" rel="noopener noreferrer">
+            <img src="/assets/resources/quantumdoomclock-com.webp" alt="Quantum Doom Clock logo." width="800" height="400" loading="lazy">
+            <span class="tag">quantumdoomclock.com</span>
+            <h4>Quantum Doom Clock</h4>
+            <span class="muted">Tracks quantum computing progress and the timeline of the cryptographic threat, with monthly research updates.</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="groups" class="section">
+      <div class="wrap">
+        <p class="eyebrow">Technical work</p>
+        <h2>Working groups</h2>
+        <p class="intro">Technical work happens in four working groups. Each has a charter, defined deliverables, and one or two chairs.</p>
+        <div class="grid-2 mb-40">
+          <div class="card">
+            <span class="tag">WG 1</span>
+            <h3>PQC Migration</h3>
+            <p class="lead-line">Standards for transitioning existing chains.</p>
+            <p class="muted">How live networks can move funds and keys to post-quantum schemes, including accounts whose public keys are already exposed and coins whose owners have lost access. StarkWare's quantum-safe Bitcoin transaction, mined on mainnet in August 2026, shows both the progress made and the distance remaining. The Alliance's criteria make the gap between a single working demonstration and network-wide readiness visible to everyone.</p>
+            <p class="card-cta"><a href="https://forum.quantumalliance.foundation/c/wg-pqc-migration/8" target="_blank" rel="noopener noreferrer">Join the PQC Migration channel</a></p>
+          </div>
+          <div class="card">
+            <span class="tag">WG 2</span>
+            <h3>ZK-PQ</h3>
+            <p class="lead-line">Post-quantum zero-knowledge implementations.</p>
+            <p class="muted">Privacy networks, rollups, and many cross-chain tools depend on proof systems. Systems built on pairing-friendly elliptic curves carry the same quantum weakness as today's signatures. Hash-based designs such as zk-STARKs avoid those assumptions but produce larger proofs. The group defines how post-quantum proof systems are evaluated and benchmarked.</p>
+            <p class="card-cta"><a href="https://forum.quantumalliance.foundation/c/wg-zk-pq/9" target="_blank" rel="noopener noreferrer">Join the ZK-PQ channel</a></p>
+          </div>
+          <div class="card">
+            <span class="tag">WG 3</span>
+            <h3>Wallet Security</h3>
+            <p class="lead-line">Hardware and software wallet PQC standards.</p>
+            <p class="muted">How users and custodians generate, store, and sign with post-quantum keys, from hardware secure elements to recovery flows. The group builds on existing efforts such as Wallet Security for Post-Quantum Ethereum, an initiative co-authored by Richard T. Carback III and listed with TheDAO Security Fund.</p>
+            <p class="card-cta"><a href="https://forum.quantumalliance.foundation/c/wg-wallet-security/10" target="_blank" rel="noopener noreferrer">Join the Wallet Security channel</a></p>
+          </div>
+          <div class="card">
+            <span class="tag">WG 4</span>
+            <h3>Interoperability</h3>
+            <p class="lead-line">Cross-chain PQC compatibility.</p>
+            <p class="muted">Interoperability specifications that let wallets, bridges, and hardware signers handle post-quantum keys consistently across chains. A transfer that crosses several networks inherits the weakest protection among them, so shared rules at these junctions carry as much weight as upgrades to any single chain.</p>
+            <p class="card-cta"><a href="https://forum.quantumalliance.foundation/c/wg-interoperability/11" target="_blank" rel="noopener noreferrer">Join the Interoperability channel</a></p>
+          </div>
+        </div>
+        <div class="grid-2 mb-40">
+          <blockquote class="quote">
+            <p>"Zero-knowledge systems carry some of the most sensitive data on any chain, and their security assumptions have to survive the same transition as signatures. Agreeing on how to evaluate post-quantum proof systems now saves every team from solving it alone later."</p>
+            <footer><strong>Sebastien Guillemot</strong>, CTO, Midnight Foundation</footer>
+          </blockquote>
+          <blockquote class="quote">
+            <p>"Hardware wallets sit at the point where new cryptography meets real users. Common specifications let device makers support post-quantum keys once and have them work everywhere."</p>
+            <footer><strong>Aaron Chen</strong>, CTO, Keystone</footer>
+          </blockquote>
+        </div>
+        <p class="muted">The <a href="https://forum.quantumalliance.foundation/t/quantum-alliance-charter/16" target="_blank" rel="noopener noreferrer">Alliance charter</a> sets out the principles, the working group process, the standards maturity levels, the IP terms, and governance. <a href="https://forum.quantumalliance.foundation/t/how-working-groups-work/17" target="_blank" rel="noopener noreferrer">How working groups work</a> explains how a document advances. Propose a new working group in the <a href="https://forum.quantumalliance.foundation/c/governance/6" target="_blank" rel="noopener noreferrer">Governance</a> category.</p>
+      </div>
+    </section>
+
+    <section id="members" class="section">
+      <div class="wrap">
+        <p class="eyebrow">Members</p>
+        <h2>Founding members</h2>
+        <p class="intro">
+          CEOs, CTOs, and founders from nine blockchain organizations. Together they span every layer
+          a migration has to pass through: base-layer protocols, privacy networks, rollups, hardware
+          signers, addressing, security auditing, and quantum compute infrastructure. Individuals, not
+          companies, hold Steering Committee seats. Organizations interested in membership can
+          start a topic in the <a href="https://forum.quantumalliance.foundation/c/governance/6" target="_blank" rel="noopener noreferrer">Governance</a> category.
+        </p>
+        <div class="orgs">
+          <div class="org">
+            <div class="logo"><img src="/assets/logos/quantus.svg" alt="" width="1657" height="320" loading="lazy"></div>
+            <h3>Quantus</h3>
+            <p class="muted">A proof-of-work blockchain that uses NIST's ML-DSA post-quantum signature standard from its first block.</p>
+            <ul class="contributors"><li><strong>Christopher Smith</strong>, Founder and CEO</li></ul>
+            <a class="site" href="https://quantus.com/" target="_blank" rel="noopener noreferrer">quantus.com</a>
+          </div>
+          <div class="org">
+            <div class="logo"><img src="/assets/logos/quip.svg" alt="Quip Network" width="684" height="212" loading="lazy"></div>
+            <h3>Postquant Labs</h3>
+            <p class="muted">Develops Quip Network, a decentralized marketplace connecting users with quantum computing hardware.</p>
+            <ul class="contributors"><li><strong>Colton Dillion</strong>, Co-founder and CEO</li><li><strong>Dr. Richard T. Carback III</strong>, Co-founder and CTO</li></ul>
+            <a class="site" href="https://quip.network/" target="_blank" rel="noopener noreferrer">quip.network</a>
+          </div>
+          <div class="org">
+            <div class="logo"><img src="/assets/logos/midnight.svg" alt="" width="116" height="26" loading="lazy"></div>
+            <h3>Midnight Foundation</h3>
+            <p class="muted">Supports Midnight, a privacy-focused blockchain built around zero-knowledge proofs and linked to Cardano.</p>
+            <ul class="contributors"><li><strong>Sebastien Guillemot</strong>, CTO</li></ul>
+            <a class="site" href="https://midnight.network/" target="_blank" rel="noopener noreferrer">midnight.network</a>
+          </div>
+          <div class="org">
+            <div class="logo"><img src="/assets/logos/keystone.png" alt="" width="284" height="64" loading="lazy"></div>
+            <h3>Keystone</h3>
+            <p class="muted">Makes open-source, air-gapped hardware wallets that sign transactions through QR codes.</p>
+            <ul class="contributors"><li><strong>Aaron Chen</strong>, CTO</li></ul>
+            <a class="site" href="https://keyst.one/" target="_blank" rel="noopener noreferrer">keyst.one</a>
+          </div>
+          <div class="org">
+            <div class="logo"><img src="/assets/logos/americanfortress.svg" alt="" width="182" height="40" loading="lazy"></div>
+            <h3>American Fortress</h3>
+            <p class="muted">Builds Send-to-Name, a system of human-readable private payment addresses with quantum-resistant signing.</p>
+            <ul class="contributors"><li><strong>Michal "Mehow" Pospieszalski</strong>, CEO</li></ul>
+            <a class="site" href="https://americanfortress.io/" target="_blank" rel="noopener noreferrer">americanfortress.io</a>
+          </div>
+          <div class="org">
+            <div class="logo"><img src="/assets/logos/intmax.svg" alt="" width="175" height="36" loading="lazy"></div>
+            <h3>Intmax</h3>
+            <p class="muted">Operates a stateless zero-knowledge rollup on Ethereum designed for low-cost, private payments.</p>
+            <ul class="contributors"><li><strong>Leona Hioki</strong></li></ul>
+            <a class="site" href="https://intmax.io/" target="_blank" rel="noopener noreferrer">intmax.io</a>
+          </div>
+          <div class="org">
+            <div class="logo"><img src="/assets/logos/abelian.svg" alt="" width="156" height="18" loading="lazy"></div>
+            <h3>Abelian</h3>
+            <p class="muted">Runs a privacy-focused layer-1 blockchain secured with lattice-based post-quantum cryptography.</p>
+            <ul class="contributors"><li><strong>Richard Lee</strong>, Chief Business Officer</li></ul>
+            <a class="site" href="https://pqabelian.io/" target="_blank" rel="noopener noreferrer">pqabelian.io</a>
+          </div>
+          <div class="org">
+            <div class="logo"><img src="/assets/logos/hacken.svg" alt="" width="126" height="13" loading="lazy"></div>
+            <h3>Hacken</h3>
+            <p class="muted">A security and assurance partner for financial institutions and the infrastructure providers they rely on.</p>
+            <ul class="contributors"><li><strong>Katina Messinis</strong>, Head of Business Development</li></ul>
+            <a class="site" href="https://hacken.io/" target="_blank" rel="noopener noreferrer">hacken.io</a>
+          </div>
+          <div class="org">
+            <div class="logo"><img src="/assets/logos/thevault.svg" alt="" width="132" height="24" loading="lazy"></div>
+            <h3>The Vault</h3>
+            <p class="muted">Builds PQC custody environments for banks and enterprises that want to hold digital assets.</p>
+            <ul class="contributors"><li><strong>Bryn Bennett</strong>, Chief Revenue Officer</li></ul>
+            <a class="site" href="https://thevault.inc/" target="_blank" rel="noopener noreferrer">thevault.inc</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <blockquote class="quote quote-lg">
+          <p>"In the future, 'post-quantum cryptography' will just be called 'cryptography' and everything else will be in a museum. Our intention with the Quantum Alliance is to front-load a lot of the complex decision-making when making post-quantum blockchain products and create standards that others can simply pull off the shelf as the industry migrates."</p>
+          <footer><strong>Christopher Smith</strong>, Founder and CEO, Quantus</footer>
+        </blockquote>
+      </div>
+    </section>
+
+    <section id="signup" class="section">
+      <div class="wrap signup">
+        <div>
+          <p class="eyebrow">Stay informed</p>
+          <h2>Learn more about the Alliance</h2>
+          <p class="intro">
+            Leave your details to hear about new standards and Alliance news. We use your details
+            only for Alliance updates and do not share them.
+          </p>
+          <p class="intro">
+            To join a working group or submit a proposal, go to the
+            <a href="https://forum.quantumalliance.foundation/" target="_blank" rel="noopener noreferrer">forum</a>.
+          </p>
+        </div>
+        <form name="signup" method="POST" action="/thanks/" data-netlify="true" netlify-honeypot="company_website" class="form">
+          <input type="hidden" name="form-name" value="signup">
+          <p class="hp"><label>Leave this field empty <input name="company_website" tabindex="-1" autocomplete="off"></label></p>
+          <div class="field">
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="f-org">Organization <span class="opt">(optional)</span></label>
+            <input id="f-org" name="organization" type="text" autocomplete="organization">
+          </div>
+          <div class="field">
+            <label for="f-role">I am interested as a</label>
+            <select id="f-role" name="interest">
+              <option value="updates">Follower: send me updates</option>
+              <option value="organization">Organization considering membership</option>
+              <option value="press">Journalist or analyst</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-msg">Message <span class="opt">(optional)</span></label>
+            <textarea id="f-msg" name="message" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-signal">Sign up</button>
+        </form>
+      </div>
+    </section>
