@@ -119,6 +119,12 @@ class BuildTests(unittest.TestCase):
         self.assertIn('<a href="/registry/blockchains/" class="card media-card">', home)
         self.assertIn("/assets/media-slider.js", home)
 
+    def test_every_member_card_links_to_its_site(self):
+        home = self.read("index.html")
+        orgs = home[home.index('<div class="orgs">'):home.index('id="signup"')]
+        self.assertEqual(orgs.count('class="org"'), 9)
+        self.assertEqual(orgs.count('<h3><a href="https://'), 9)
+
     def test_page_specific_head(self):
         self.assertIn('content="2026-10-15"', self.read("news/launch/index.html"))
         self.assertIn('<meta name="robots" content="noindex">', self.read("thanks/index.html"))
