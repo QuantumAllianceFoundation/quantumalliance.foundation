@@ -11,7 +11,7 @@ from string import Template
 
 SITE_URL = "https://quantumalliance.foundation"
 FORUM_URL = "https://forum.quantumalliance.foundation/"
-CHARTER_URL = "https://forum.quantumalliance.foundation/t/quantum-alliance-charter/16"
+CHARTER_URL = "https://github.com/QuantumAllianceFoundation/governance/blob/main/CHARTER.md"
 
 # (href, label). External links open in a new tab.
 NAV = (
