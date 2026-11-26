@@ -144,7 +144,8 @@ h2 { font-size: 1.5rem; margin-bottom: 12px; }
 .preview-card > :last-child { margin-top: 0; }
 .media-card:hover { border-color: var(--content-40); color: inherit; }
 .media-card:hover h3 { color: var(--white); }
-.preview-card img { display: block; width: calc(100% + 40px); height: auto; aspect-ratio: 40 / 21; object-fit: cover; margin: -20px -20px 16px; border-radius: 7px 7px 0 0; border-bottom: 1px solid var(--border); }
+.preview-card img, .preview-fallback { display: block; width: calc(100% + 40px); height: auto; aspect-ratio: 40 / 21; object-fit: cover; margin: -20px -20px 16px; border-radius: 7px 7px 0 0; border-bottom: 1px solid var(--border); }
+.preview-fallback { display: grid; place-items: center; padding: 16px; font-family: var(--mono); font-size: 1.25rem; color: var(--signal); background: radial-gradient(circle at 30% 20%, #a78bfa26, transparent 60%), var(--void); }
 .mb-40 { margin-bottom: 40px; }
 
 /* Timeline */
