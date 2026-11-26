@@ -183,6 +183,8 @@ td:first-child { color: var(--white); font-weight: 500; white-space: nowrap; }
 .quote p { color: var(--content); line-height: 1.65; margin-bottom: 12px; }
 .quote footer { color: var(--content-60); font-size: .875rem; }
 .quote footer strong { color: var(--white); font-weight: 500; }
+.quote footer a { color: var(--signal); }
+.quote footer a:hover { text-decoration: underline; }
 .quote-lg p { font-size: 1.25rem; }
 
 /* Member organizations */
@@ -191,6 +193,7 @@ td:first-child { color: var(--white); font-weight: 500; white-space: nowrap; }
 .org .logo { height: 48px; display: flex; align-items: center; }
 .org .logo img { max-height: 40px; max-width: 180px; width: auto; height: auto; }
 .org h3 { font-size: 1rem; }
+.org h3 a:hover { color: var(--signal); }
 .contributors { list-style: none; margin: 0; padding: 0; font-size: .875rem; color: var(--content-60); line-height: 1.6; }
 .contributors strong { color: var(--white); font-weight: 500; }
 .org a.site { font-family: var(--mono); font-size: .75rem; color: var(--content-60); margin-top: auto; }
