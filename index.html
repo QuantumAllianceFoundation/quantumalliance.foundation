@@ -9,6 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preload" href="/assets/fonts/geist-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/styles.css">
+  <script type="module" src="/assets/media-slider.js"></script>
   <meta name="robots" content="index, follow">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Quantum Alliance">
@@ -28,15 +29,13 @@
       <div class="nav-links">
         <a href="/#why">Why now</a>
         <a href="/#groups">Working groups</a>
-        <a href="/#standards">Standards</a>
-        <a href="/#governance">Governance</a>
+        <a href="https://forum.quantumalliance.foundation/t/quantum-alliance-charter/16" target="_blank" rel="noopener noreferrer">Charter</a>
         <a href="/#members">Members</a>
         <a href="/registry/">Registries</a>
         <a href="/#signup">Stay informed</a>
         <a href="/news/launch/">News</a>
         <a href="/media/">Media</a>
-        <a href="https://forum.quantumalliance.foundation/" target="_blank" rel="noopener noreferrer">Forum</a>
-        <a href="https://github.com/QuantumAllianceFoundation" class="btn btn-outline" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://forum.quantumalliance.foundation/" class="btn btn-signal" target="_blank" rel="noopener noreferrer">Participate</a>
       </div>
     </div>
   </nav>
@@ -54,15 +53,152 @@
         </p>
         <div class="btn-row">
           <a href="https://forum.quantumalliance.foundation/" class="btn btn-signal" target="_blank" rel="noopener noreferrer">Participate Today</a>
-          <a href="https://github.com/QuantumAllianceFoundation" class="btn btn-outline" target="_blank" rel="noopener noreferrer">Contribute on GitHub</a>
-          <a href="/news/launch/" class="btn btn-outline">Read the launch announcement</a>
+          <a href="https://forum.quantumalliance.foundation/t/quantum-alliance-charter/16" class="btn btn-outline" target="_blank" rel="noopener noreferrer">Charter</a>
+          <a href="/news/launch/" class="btn btn-outline">Launch Announcement</a>
         </div>
-        <dl class="stats">
-          <div><dt>Working groups</dt><dd>4</dd></div>
-          <div><dt>Founding organizations</dt><dd>9</dd></div>
-          <div><dt>Founding contributors</dt><dd>10</dd></div>
-          <div><dt>Launched</dt><dd>Oct 2026</dd></div>
-        </dl>
+        <div class="media-slider" data-media-slider role="region" aria-label="Media coverage">
+          <div class="media-slider-head">
+            <h2 class="eyebrow">In the media</h2>
+            <div class="media-slider-actions">
+              <a href="/media/">All coverage</a>
+              <span class="slider-buttons" hidden>
+                <button type="button" class="slider-btn" data-direction="-1" aria-label="Previous articles">&larr;</button>
+                <button type="button" class="slider-btn" data-direction="1" aria-label="Next articles">&rarr;</button>
+              </span>
+            </div>
+          </div>
+          <div class="media-track" tabindex="0">
+            <a href="https://migration.fail/" class="card media-card preview-card" target="_blank" rel="noopener noreferrer">
+              <img src="/assets/media/migration-fail.webp" alt="migration.fail snapshot: 99.76% of crypto market cap is not yet quantum secure." width="800" height="420" loading="lazy">
+              <span class="tag">migration.fail</span>
+              <h3>Post-quantum crypto migration tracker</h3>
+              <span class="muted">Tracks the share of crypto market cap that has moved to post-quantum secure cryptography.</span>
+            </a>
+            <a href="https://exchange.fail/" class="card media-card preview-card" target="_blank" rel="noopener noreferrer">
+              <img src="/assets/media/exchange-fail.webp" alt="exchange.fail snapshot: 827 of 932 exchanges list no post-quantum coins." width="800" height="420" loading="lazy">
+              <span class="tag">exchange.fail</span>
+              <h3>Exchanges versus post-quantum coin volume</h3>
+              <span class="muted">Counts the CoinGecko exchanges that list no post-quantum coins, and the 24-hour trading volume of post-quantum coins.</span>
+            </a>
+            <a href="https://vc.fail/" class="card media-card preview-card" target="_blank" rel="noopener noreferrer">
+              <img src="/assets/media/vc-fail.webp" alt="vc.fail snapshot: 72 of 100 VCs have no quantum-related holding in their public portfolio." width="800" height="420" loading="lazy">
+              <span class="tag">vc.fail</span>
+              <h3>Quantum-related holdings in crypto VC portfolios</h3>
+              <span class="muted">Counts the top crypto VCs on RootData that have no quantum-related holding in their public portfolio.</span>
+            </a>
+            <a href="https://quantumdoomclock.com/" class="card media-card preview-card" target="_blank" rel="noopener noreferrer">
+              <img src="/assets/media/quantumdoomclock-com.webp" alt="Quantum Doom Clock logo." width="800" height="400" loading="lazy">
+              <span class="tag">quantumdoomclock.com</span>
+              <h3>Quantum Doom Clock</h3>
+              <span class="muted">Tracks quantum computing progress and the timeline of the cryptographic threat, with monthly research updates.</span>
+            </a>
+            <a href="https://alphawire.xyz/learn/crypto-custodians-quantum-attack-readiness-14-firms/" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Alpha Wire</span>
+              <h3>Are Crypto Custodians Ready for Quantum Attacks? 14 Firms Face Scrutiny</h3>
+              <span class="muted">Feature article · <time datetime="2026-11-25">November 25, 2026</time></span>
+            </a>
+            <a href="https://www.kucoin.com/blog/quantum-alliance-bitcoin-quantum-security-standards" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">KuCoin</span>
+              <h3>Nine Crypto Groups Form Quantum Alliance to Address Bitcoin&#x27;s Quantum Threat</h3>
+              <span class="muted">Feature article · <time datetime="2026-10-22">October 22, 2026</time></span>
+            </a>
+            <a href="https://grafa.com/en/news/crypto/quantum-alliance-launches-as-bitcoin-quantum-risks-grow" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Grafa</span>
+              <h3>Quantum Alliance launches as Bitcoin quantum risks grow</h3>
+              <span class="muted">Organic pickup · <time datetime="2026-10-19">October 19, 2026</time></span>
+            </a>
+            <a href="https://memeburn.com/quantum-alliance-bitcoin/" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Meme Burn</span>
+              <h3>Quantum Alliance Says 6 Million Bitcoin Are Exposed. Here&#x27;s How to Tell If Yours Are</h3>
+              <span class="muted">Feature article · <time datetime="2026-10-19">October 19, 2026</time></span>
+            </a>
+            <a href="https://99bitcoins.com/de/news/quantum-alliance-quantenresistenz/" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">99 Bitcoins (De)</span>
+              <h3 lang="de">6,04 Millionen BTC könnten künftig quantengefährdet sein</h3>
+              <span class="muted">Organic pickup · <time datetime="2026-10-18">October 18, 2026</time></span>
+            </a>
+            <a href="https://www.coingabbar.com/en/quantum-alliance-news-nine-crypto-groups-launch-standards" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Coin Gabbar</span>
+              <h3>Quantum Alliance News: Why Are 9 Crypto Groups Setting New Standards?</h3>
+              <span class="muted">News article · <time datetime="2026-10-18">October 18, 2026</time></span>
+            </a>
+            <a href="https://www.cointribune.com/en/quantum-alliance-targets-bitcoins-future-security/" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Coin Tribune</span>
+              <h3>Quantum Alliance Targets Bitcoin’s Future Security</h3>
+              <span class="muted">News article · <time datetime="2026-10-18">October 18, 2026</time></span>
+            </a>
+            <a href="https://x.com/Cointelegraph/status/2111600725503394234?s=20" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Cointelegraph</span>
+              <h3>X post: Nine crypto firms just formed a Quantum Alliance to set post-quantum standards</h3>
+              <span class="muted">News mention · <time datetime="2026-10-18">October 18, 2026</time></span>
+            </a>
+            <a href="https://www.kucoin.com/news/flash/9-blockchain-firms-launch-quantum-alliance-to-develop-anti-quantum-standards" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">KuCoin</span>
+              <h3>Nine blockchain companies launch the Quantum Alliance to develop anti-quantum standards</h3>
+              <span class="muted">Organic pickup · <time datetime="2026-10-18">October 18, 2026</time></span>
+            </a>
+            <a href="https://news.bitcoin.com/featured/nine-blockchain-groups-unite-as-quantum-threat-hangs-over-bitcoin/" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Bitcoin.com News</span>
+              <h3>Nine Blockchain Groups Unite as Quantum Threat Hangs Over Bitcoin</h3>
+              <span class="muted">News article · <time datetime="2026-10-17">October 17, 2026</time></span>
+            </a>
+            <a href="https://bitcoin.pl/komputery-kwantowe-moga-zagrozic-30-bitcoinow-powstal-sojusz-9-firm" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Bitcoin.pl</span>
+              <h3 lang="pl">Komputery kwantowe mogą zagrozić 30% bitcoinów. Powstał sojusz 9 firm</h3>
+              <span class="muted">Organic pickup · <time datetime="2026-10-17">October 17, 2026</time></span>
+            </a>
+            <a href="https://blockchainreporter.net/quantum-alliance-post-quantum-standards/" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Blockchain Reporter</span>
+              <h3>What Is the Quantum Alliance? Nine Blockchain Firms Set Post-Quantum Standards</h3>
+              <span class="muted">News article · <time datetime="2026-10-17">October 17, 2026</time></span>
+            </a>
+            <a href="https://decrypt.co/381236/crypto-firms-launch-quantum-alliance-as-6-million-bitcoin-sit-exposed" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Decrypt</span>
+              <h3>Crypto Firms Launch Quantum Alliance as 6 Million Bitcoin Sit Exposed</h3>
+              <span class="muted">News article · <time datetime="2026-10-17">October 17, 2026</time></span>
+            </a>
+            <a href="https://ambcrypto.com/quantus-ceo-leads-9-firm-alliance-to-standardize-cryptos-quantum-defenses/" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">AMB Crypto</span>
+              <h3>9 blockchain firms just formed a quantum alliance - Here&#x27;s the plan</h3>
+              <span class="muted">News article · <time datetime="2026-10-16">October 16, 2026</time></span>
+            </a>
+            <a href="https://en.bloomingbit.io/feed/news/122362" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Bloomingbit</span>
+              <h3>Quantum Alliance Forms as 6.4 Million Bitcoin Face Future Quantum Attack Risk</h3>
+              <span class="muted">News article · <time datetime="2026-10-16">October 16, 2026</time></span>
+            </a>
+            <a href="https://www.coindesk.com/tech/2026/10/16/experts-agree-quantum-computers-could-put-satoshi-s-bitcoin-at-risk-but-not-on-what-s-next" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">CoinDesk</span>
+              <h3>Quantum Alliance forms amid warnings 6.4 million bitcoin face future quantum threat</h3>
+              <span class="muted">News article · <time datetime="2026-10-16">October 16, 2026</time></span>
+            </a>
+            <a href="https://www.cointrust.com/market-news/quantum-alliance-sets-blockchain-security-standards-for-2028/amp" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">CoinTrust</span>
+              <h3>Quantum Alliance Sets Blockchain Security Standards for 2028</h3>
+              <span class="muted">Organic pickup · <time datetime="2026-10-16">October 16, 2026</time></span>
+            </a>
+            <a href="https://forklog.com/en/nine-crypto-firms-form-alliance-to-protect-blockchains-from-quantum-attacks/" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Forklog</span>
+              <h3>Nine Crypto Firms Form Alliance to Protect Blockchains from Quantum Attacks</h3>
+              <span class="muted">News article · <time datetime="2026-10-16">October 16, 2026</time></span>
+            </a>
+            <a href="https://www.tokenpost.com/news/technology/33486" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">TokenPost</span>
+              <h3>Nine Crypto Firms Form Quantum Alliance as 30.2% of Bitcoin (BTC) Supply Has Exposed Keys</h3>
+              <span class="muted">News article · <time datetime="2026-10-16">October 16, 2026</time></span>
+            </a>
+            <a href="https://cryptobriefing.com/nine-blockchain-groups-unite-to-set-open-standards-for-post-quantum-readiness/" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">Crypto Briefing</span>
+              <h3>Nine blockchain groups unite to set open standards for post-quantum readiness</h3>
+              <span class="muted">News article · <time datetime="2026-10-15">October 15, 2026</time></span>
+            </a>
+            <a href="https://thequantuminsider.com/2026/10/15/quantum-alliance-post-quantum-standards-blockchains/" class="card media-card" target="_blank" rel="noopener noreferrer">
+              <span class="tag">The Quantum Insider</span>
+              <h3>Quantum Alliance Launches to Set Post-Quantum Standards for Blockchains</h3>
+              <span class="muted">News article · <time datetime="2026-10-15">October 15, 2026</time></span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -133,24 +269,6 @@
       </div>
     </section>
 
-    <section id="principles" class="section">
-      <div class="wrap">
-        <p class="eyebrow">Charter</p>
-        <h2>Principles</h2>
-        <p class="intro">
-          The Alliance is modeled on the Internet Engineering Task Force. Proposals advance on public
-          evidence, rough consensus, and working implementations. Corporate size and token holdings
-          carry no voting weight. AI-moderated tooling keeps the process legible at scale.
-        </p>
-        <div class="grid-2">
-          <div class="card"><h3>Open participation</h3><p class="muted">There are no dues, no applications, and no prerequisites. Anyone can contribute.</p></div>
-          <div class="card"><h3>Individuals, not companies</h3><p class="muted">Contributions are judged on merit. Affiliation is disclosed, not weighted.</p></div>
-          <div class="card"><h3>Rough consensus and working code</h3><p class="muted">No voting. Chairs assess the strength of arguments. Implementations carry more weight than theory.</p></div>
-          <div class="card"><h3>Evidence always</h3><p class="muted">No overstating quantum readiness. No fear-based marketing.</p></div>
-        </div>
-        <p class="muted" style="margin-top:24px">This page is the authoritative charter. The forum keeps a <a href="https://forum.quantumalliance.foundation/t/quantum-alliance-charter/16" target="_blank" rel="noopener noreferrer">copy of the charter</a>. Propose charter changes in the <a href="https://forum.quantumalliance.foundation/c/governance/6" target="_blank" rel="noopener noreferrer">Governance</a> category.</p>
-      </div>
-    </section>
 
     <section id="groups" class="section">
       <div class="wrap">
@@ -197,110 +315,13 @@
             <footer><strong>Aaron Chen</strong>, CTO, Keystone</footer>
           </blockquote>
         </div>
-        <div class="rows">
-          <div class="row"><h3>Chairs</h3><p class="muted">One or two per working group, confirmed by the Steering Committee. Chairs facilitate and assess consensus. They do not decide outcomes, and may not act as the deciding voice on their own submissions.</p></div>
-          <div class="row"><h3>Discussion tooling</h3><p class="muted">Working groups run as a structured debate tree, not a mailing list. Each open question is a node; contributions attach for or against, with evidence. An AI layer removes duplicates, summarizes each branch, surfaces the unresolved crux, and flags convergence. It keeps the record legible but does not decide: chairs assess consensus, members ratify. At Last Call the chair works from the branch summary, with open objections and agreed points laid out and auditable. Converged nodes feed the quarterly report and IETF submissions. The tool and its full record are public; the convening organization provides it as administration only. Until that tool is public, contribution happens on GitHub.</p></div>
-          <div class="row"><h3>Rough consensus</h3><p class="muted">A chair declares consensus by issuing a two-week Last Call on the working group channel. If no unresolved objection remains at close, the document advances. The test is that most participants agree and no strong objection stands, not a headcount.</p></div>
-          <div class="row"><h3>Deadlock</h3><p class="muted">If a working group cannot resolve a substantive objection, either side may escalate to the Steering Committee, which rules on process only, not on technical merits. Appeals must state numbered, specific objections. The Committee may uphold the chair's call, return the item with instructions (a narrower scope is common), or drop it. An item that cannot reach consensus returns to Discussion Paper status and is subject to the standard 6-month expiry. Where a working group has only two active participants, unanimity is required.</p></div>
-          <div class="row"><h3>New working groups</h3><div class="muted"><p>Used only when a topic fits no existing working group. A new working group requires:</p><ol class="steps"><li>A written charter</li><li>Three or more participants</li><li>Steering Committee approval</li></ol><p>Post proposals in the <a href="https://forum.quantumalliance.foundation/c/governance/6" target="_blank" rel="noopener noreferrer">Governance</a> category.</p></div></div>
-        </div>
+        <p class="muted">The <a href="https://forum.quantumalliance.foundation/t/quantum-alliance-charter/16" target="_blank" rel="noopener noreferrer">Alliance charter</a> sets out the principles, the working group process, the standards maturity levels, the IP terms, and governance. <a href="https://forum.quantumalliance.foundation/t/how-working-groups-work/17" target="_blank" rel="noopener noreferrer">How working groups work</a> explains how a document advances. Propose a new working group in the <a href="https://forum.quantumalliance.foundation/c/governance/6" target="_blank" rel="noopener noreferrer">Governance</a> category.</p>
       </div>
     </section>
 
-    <section id="standards" class="section">
-      <div class="wrap">
-        <p class="eyebrow">Maturity</p>
-        <h2>Standards documents</h2>
-        <p class="intro">Three maturity levels. All documents are public.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Type</th><th>What it is</th></tr></thead>
-            <tbody>
-              <tr><td>Discussion Paper (DP)</td><td>Working proposal. Anyone can submit. Expires in 6 months if not advanced.</td></tr>
-              <tr><td>Proposed Standard (PS)</td><td>Achieved rough consensus in its working group and Steering Committee review. Stable for implementation.</td></tr>
-              <tr><td>Alliance Standard (AS)</td><td>Proven implementation across 2+ independent projects. Highest maturity.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="article">
-          <h3>Submitting a Discussion Paper</h3>
-          <p>
-            Anyone may submit a Discussion Paper, and all submissions are posted publicly on the
-            <a href="https://forum.quantumalliance.foundation/t/how-working-groups-work/17" target="_blank" rel="noopener noreferrer">working group list</a> immediately. Nothing is silently rejected. To be scheduled for
-            discussion on a working group call, a paper must (1) fall within the working group's
-            charter scope and (2) have at least one supporter other than the author. Chairs schedule
-            on those two criteria alone, not on their view of the idea. A paper unsupported after
-            6 months expires quietly and may be resubmitted. An author may ask the Steering Committee
-            to review any scheduling decision.
-          </p>
-        </div>
-      </div>
-    </section>
 
-    <section id="ip" class="section">
-      <div class="wrap">
-        <p class="eyebrow">Terms</p>
-        <h2>Intellectual property and licensing</h2>
-        <div class="article">
-          <h3>Scope</h3>
-          <p>These terms apply only to contributions made into Alliance work items (documents, standards, reports). Joining the Alliance grants no license over a member's pre-existing, patented, or unrelated IP. A member's portfolio is untouched unless they choose to contribute it into a work item.</p>
-          <h3>Copyright</h3>
-          <p>Contributors retain copyright in their contributions and grant the Alliance a perpetual, irrevocable, royalty-free license to publish, modify, and create derivative works from them.</p>
-          <h3>Standards</h3>
-          <p>Final Alliance standards and reports are published under CC BY 4.0: freely accessible to anyone, no paywall, no membership requirement. The license covers the document text, not the underlying technology.</p>
-          <h3>Implementations</h3>
-          <p>Reference implementations may carry their own licenses, provided they remain free and open for free and open derivative works.</p>
-          <h3>Patents</h3>
-          <p>Contributors must disclose any known essential IP (patents or pending applications) that read on a work item they participate in. Claims essential to implementing an Alliance standard must be licensed to implementers of that standard on royalty-free or RAND terms; the commitment covers implementation of the standard only and does not open-license the patent for any other use. Undisclosed essential IP disqualifies the affected contribution from standardization. Members who prefer to keep a patent fully proprietary simply keep it out of contributed standards.</p>
-        </div>
-      </div>
-    </section>
 
-    <section id="cadence" class="section">
-      <div class="wrap">
-        <p class="eyebrow">Rhythm</p>
-        <h2>Cadence</h2>
-        <p class="intro">Working groups meet in the open, and the Alliance reports on its progress every quarter. First quarterly report: Q3 2026.</p>
-        <div class="timeline">
-          <div class="item"><p class="when">Monthly</p><p class="muted">Each working group holds an open call.</p></div>
-          <div class="item"><p class="when">Quarterly</p><p class="muted">Full Alliance assembly and a published report covering working group progress, new documents, the threat landscape, and member milestones.</p></div>
-          <div class="item"><p class="when">Annually</p><p class="muted">Alliance Summit, co-located with QDay.</p></div>
-        </div>
-        <p class="muted mb-40">Agendas, notes, and recordings for calls and assemblies are in <a href="https://forum.quantumalliance.foundation/c/assemblies-and-calls/12" target="_blank" rel="noopener noreferrer">Assemblies and Calls</a>. Quarterly reports are posted in <a href="https://forum.quantumalliance.foundation/c/announcements/5" target="_blank" rel="noopener noreferrer">Announcements</a>.</p>
-        <h3 class="mb-12">Amplification</h3>
-        <div class="grid-2">
-          <div class="card"><h3>Alliance shares member news</h3><p class="muted">When a member makes a post-quantum announcement, the Alliance distributes it. Member milestones are featured in quarterly reports.</p></div>
-          <div class="card"><h3>Members share Alliance work</h3><p class="muted">Members redistribute Alliance publications, reference Alliance standards in their documentation, and promote working group activity to their communities.</p></div>
-        </div>
-      </div>
-    </section>
 
-    <section id="governance" class="section">
-      <div class="wrap">
-        <p class="eyebrow">Process</p>
-        <h2>Governance</h2>
-        <div class="article">
-          <h3>Steering Committee</h3>
-          <p>Five to seven individuals. Approves new working groups, signs off on document advancement (PS and AS), publishes quarterly reports, and hears appeals. It does not author standards. Its decisions are on public record in the <a href="https://forum.quantumalliance.foundation/c/steering-committee/13" target="_blank" rel="noopener noreferrer">Steering Committee</a> category.</p>
-          <h3>Composition</h3>
-          <p>Founding members seed the initial Committee, one individual per founding member, up to the 5–7 cap. Individuals, not companies, hold seats; no organization holds more than one seat. The Committee is not limited to founding members beyond the initial term.</p>
-          <h3>Elections</h3>
-          <p>From the first term rotation, seats are filled by election every year. Eligible voters and candidates: authors of Alliance work items in the preceding 5 years, individuals with recorded contributions in the current period, current or former working group chairs, and founding members for the first 5 years. Committee structure and eligibility rules are amendable by supermajority (two-thirds) of eligible voters.</p>
-          <h3>Neutrality</h3>
-          <p>The Committee carries no company's branding, name, or logo. The convening organization provides administration only and holds no vote or veto. No organization chairs the Committee for two terms running.</p>
-          <h3>Terms</h3>
-          <p>Seats run 12 months, then rotate or renew. If founding members exceed the cap, seats rotate annually so every member cycles through.</p>
-          <h3>Participation</h3>
-          <p>Join any <a href="https://forum.quantumalliance.foundation/categories" target="_blank" rel="noopener noreferrer">working group channel</a> or attend an <a href="https://forum.quantumalliance.foundation/c/assemblies-and-calls/12" target="_blank" rel="noopener noreferrer">assembly</a>. Optionally register name and affiliation.</p>
-          <h3>Conflicts of interest</h3>
-          <p>Participants must disclose any affiliation with, or funding from, an organization whose mission or goals materially conflict with the Alliance's mission. The test is the organization's mandate, not its sector: an agency tasked with building interoperable standards is not a conflict; an agency whose mandate includes compromising cryptography is, as is any group dedicated to banning cryptocurrency. Disclosed conflicts do not bar participation in open discussion, but individuals with an active conflict may not hold leadership roles (working group chair or Steering Committee seat) until at least 3 years after the affiliation or funding has ended. The Steering Committee may impose further limitations where needed and hears appeals from any affected individual.</p>
-          <h3>Removal</h3>
-          <p>For sustained violation of Alliance principles or material non-disclosure of a conflict, including conduct discovered after the fact. Decided by the Steering Committee.</p>
-          <h3>Confidentiality</h3>
-          <p>Working group discussions, minutes, and records are public by default. A session may reserve time at its end for off-the-record discussion under the Chatham House Rule, declared explicitly on entry. Members may share confidential or unreleased work in these slots or via privately distributed materials. Nothing shared off the record enters a public document without the owner's written consent.</p>
-        </div>
-      </div>
-    </section>
 
     <section id="members" class="section">
       <div class="wrap">
@@ -467,8 +488,7 @@
     <div class="wrap">
       <span>© 2026 Quantum Alliance</span>
       <nav>
-        <a href="/#principles">Principles</a>
-        <a href="/#governance">Governance</a>
+        <a href="https://forum.quantumalliance.foundation/t/quantum-alliance-charter/16" target="_blank" rel="noopener noreferrer">Charter</a>
         <a href="/news/launch/">News</a>
         <a href="/media/">Media</a>
         <a href="https://forum.quantumalliance.foundation/" target="_blank" rel="noopener noreferrer">Forum</a>
