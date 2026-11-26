@@ -30,6 +30,7 @@ from tools.registry.render import (
     render_library,
     render_products,
 )
+from tools.llms import llms_txt
 from tools.site import fill_markers, load_media, media_cards, render_page, sitemap
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -207,6 +208,7 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         reg = load_registry(args.data, args.logos, args.auditors)
+        llms = llms_txt(reg)
         template = TEMPLATE.read_text(encoding="utf-8")
         year = date.today().year
         outputs = build_static(args.content, reg, template, year)
@@ -233,6 +235,7 @@ def main(argv: list[str] | None = None) -> int:
         file = out / item.file
         file.parent.mkdir(parents=True, exist_ok=True)
         file.write_text(item.html, encoding="utf-8")
+    (out / "llms.txt").write_text(llms, encoding="utf-8")
     (out / "sitemap.xml").write_text(
         sitemap([item.path for item in outputs if item.in_sitemap and item.path]),
         encoding="utf-8",
